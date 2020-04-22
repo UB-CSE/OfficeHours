@@ -14,15 +14,19 @@ object Database {
 
   def setupTable(): Unit = {
     val statement = connection.createStatement()
-    statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT)")
+    statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT, issue TEXT)")
   }
 
 
+
   def addStudentToQueue(student: StudentInQueue): Unit = {
-    val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?)")
+
+
+    val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?, ?)")
 
     statement.setString(1, student.username)
-    statement.setLong(2, student.timestamp)
+    statement.setDouble(2, student.timestamp)
+    statement.setString(3,student.issue)
 
     statement.execute()
   }
@@ -37,7 +41,7 @@ object Database {
   }
 
 
-  def getQueue(): List[StudentInQueue] = {
+  def getQueue(getIssue: Boolean = false): List[StudentInQueue] = {
     val statement = connection.prepareStatement("SELECT * FROM queue")
     val result: ResultSet = statement.executeQuery()
 
@@ -45,10 +49,19 @@ object Database {
 
     while (result.next()) {
       val username = result.getString("username")
-      val timestamp = result.getLong("timestamp")
-      queue = new StudentInQueue(username, timestamp) :: queue
+      val timestamp = result.getDouble("timestamp")
+      val issue = result.getString("issue")
+      if (getIssue) {
+        queue = new StudentInQueue(username, timestamp) :: queue
+      }
+      else{
+        queue = new StudentInQueue(username, timestamp,issue) :: queue
+      }
     }
-
+    queue = queue.sortBy(_.timestamp)
+    for(student <- queue){
+      student.positionInQueue = queue.indexOf(student)
+    }
     queue
   }
 

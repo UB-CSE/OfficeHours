@@ -46,30 +46,48 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
       if (server.usernameToSocket.contains(username)) {
         server.usernameToSocket -= username
       }
+      //if the student disconnects, remove them from the queue
+      Database.removeStudentFromQueue(username)
     }
   }
 }
 
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
-  override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    Database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+  override def onData(socket: SocketIOClient, data: String, ackRequest: AckRequest): Unit = {
+    val studentToAdd: Tuple2[String,String] = StudentInQueue.convertToStudent(data)
+    val username: String = studentToAdd._1
+    val issueTxt: String = studentToAdd._2
+    Database.addStudentToQueue(StudentInQueue(username, System.nanoTime().toDouble/1000000000,issueTxt))
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    for(student <- Database.getQueue()){
+      if(server.usernameToSocket.contains(student.username)){
+        server.usernameToSocket(student.username).sendEvent("queuePos", "Your Position in the Queue is: " + student.positionInQueue)
+      }
+    }
   }
 }
 
 
 class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[Nothing] {
   override def onData(socket: SocketIOClient, dirtyMessage: Nothing, ackRequest: AckRequest): Unit = {
-    val queue = Database.getQueue().sortBy(_.timestamp)
+    val queue = Database.getQueue(true)
     if(queue.nonEmpty){
       val studentToHelp = queue.head
       Database.removeStudentFromQueue(studentToHelp.username)
+      //sends the conformation message to the TA and the student
       socket.sendEvent("message", "You are now helping " + studentToHelp.username)
+      socket.sendEvent("issue", studentToHelp.username + "'s" + "issue is: " + studentToHelp.issue)
       if(server.usernameToSocket.contains(studentToHelp.username)){
-        server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")
+        server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you, " + studentToHelp.username)
+        server.usernameToSocket(studentToHelp.username).sendEvent("message", "Your Issue is: " + studentToHelp.issue)
+      }
+      for(student <- queue){
+        if(server.usernameToSocket.contains(student.username)){
+          server.usernameToSocket(student.username).sendEvent("queuePos", "There is/are " + student.positionInQueue + "(s) ahead of you")
+        }
       }
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     }
