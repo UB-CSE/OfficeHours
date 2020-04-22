@@ -20,13 +20,13 @@ object Database {
 
 
   def addStudentToQueue(student: StudentInQueue): Unit = {
-
+    val studentApplied: StudentInQueue = StudentInQueue.apply(student.username,student.timestamp,student.issue)
 
     val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?, ?)")
 
-    statement.setString(1, student.username)
-    statement.setDouble(2, student.timestamp)
-    statement.setString(3,student.issue)
+    statement.setString(1, studentApplied.username)
+    statement.setDouble(2, studentApplied.timestamp)
+    statement.setString(3,studentApplied.issue)
 
     statement.execute()
   }
