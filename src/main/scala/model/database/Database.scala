@@ -1,8 +1,10 @@
-package model
+package model.database
 
 import java.sql.{Connection, DriverManager, ResultSet}
 
-object Database {
+import model.StudentInQueue
+
+class Database extends DatabaseAPI {
 
   val url = "jdbc:mysql://mysql/officehours"
   val username: String = sys.env("DB_USERNAME")
@@ -41,7 +43,7 @@ object Database {
   }
 
 
-  def getQueue(getIssue: Boolean = false): List[StudentInQueue] = {
+  def getQueue(): List[StudentInQueue] = {
     val statement = connection.prepareStatement("SELECT * FROM queue")
     val result: ResultSet = statement.executeQuery()
 
@@ -51,16 +53,11 @@ object Database {
       val username = result.getString("username")
       val timestamp = result.getDouble("timestamp")
       val issue = result.getString("issue")
-      if (getIssue) {
-        queue = new StudentInQueue(username, timestamp) :: queue
-      }
-      else{
-        queue = new StudentInQueue(username, timestamp,issue) :: queue
-      }
+      queue = new StudentInQueue(username, timestamp, issue) :: queue
     }
     queue = queue.sortBy(_.timestamp)
     for(student <- queue){
-      student.positionInQueue = queue.indexOf(student)
+      student.positionInQueue = queue.indexOf(student) + 1
     }
     queue
   }

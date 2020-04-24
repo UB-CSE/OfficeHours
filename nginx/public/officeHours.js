@@ -1,4 +1,5 @@
-const socket = io.connect({transports: ['websocket']});
+//const socket = io.connect({transports: ['websocket']});
+const socket = io.connect("http://localhost:8081", {transports: ['websocket']});
 
 socket.on('queue', displayQueue);
 socket.on('message', displayMessage);
@@ -6,7 +7,8 @@ socket.on('issue', displayIssue);
 socket.on('queuePos', displayQueueIndex)
 
 function displayIssue(Issue){
-    document.getElementById("issue").innerHTML = Issue;
+    console.log("called!")
+    document.getElementById("issuetxt").innerHTML = Issue;
 }
 
 function displayQueueIndex(message){
@@ -22,7 +24,7 @@ function displayQueue(queueJSON) {
     const queue = JSON.parse(queueJSON);
     let formattedQueue = "";
     for (const student of queue) {
-        formattedQueue += student['username'] + " has been waiting since " + student['timestamp'] + "<br/>"
+        formattedQueue += student['username'] + " has been waiting " + student['timestamp'] + " seconds." + "<br/>"
     }
     document.getElementById("queue").innerHTML = formattedQueue;
 }
