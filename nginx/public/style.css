@@ -11,6 +11,14 @@ select {
     display: block;
     margin: 0 auto;
 }
+input {
+    display: block;
+    margin: 0 auto;
+}
+button {
+    display: block;
+    margin: 0 auto;
+}
 
 .optionButton {
     font-family:'Open Sans Condensed', sans-serif;
