@@ -3,9 +3,6 @@ const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
 socket.on('queue', displayQueue);
 socket.on('message', displayMessage);
 
-var student=""
-var topic=""
-
 let lecture=Array("Unit Testing","Test Factoring","Voting Class","Reference Referee","Reference Trader","Reference Batteries",
     "Inheritance Batteries","Polymorphic Electronics","JSON Store","Player States","TV States","Car States",
     "Function and Type Parameters","Recursive Fibonacci","Recursive Factoring","Average in Range","Immutable Point",
@@ -29,6 +26,9 @@ function displayMessage(newMessage) {
 }
 
 function displayQueue(queueJSON) {
+
+    document.getElementById("subtile").innerHTML="You are in queue now";
+
     const queue = JSON.parse(queueJSON);
     let formattedQueue = "";
     for (const student of queue) {
@@ -56,9 +56,6 @@ function displayNameTopic() {
 }
 
 function displaySubtopic() {
-    // student=document.getElementById("name").value
-    // topic=document.getElementById("topic").value
-    // document.getElementById("optionButtons").innerHTML="";
     document.getElementById("topic2").innerHTML="";
 
     let subtopic=topicMap[document.getElementById("topic").value]
@@ -68,18 +65,26 @@ function displaySubtopic() {
     for(const element of subtopic){
         selections+="<option value="+element+">"+element+"</option>\n"
     }
-    selections+= "</select><br/>"+"<button id=\"finish\" onclick=\"sendData();\">Finsh</button>"
+    selections+= "</select><br/>"+"<button id=\"finish\" onclick=\"enterQueue();\">Finsh</button>"
 
     document.getElementById("topic2").innerHTML=selections;
-}
-function sendData() {
 }
 
 
 function enterQueue() {
     let name = document.getElementById("name").value;
-    socket.emit("enter_queue", name);
-    document.getElementById("name").value = "";
+    let topic = document.getElementById("topic").value;
+    let subtopic = document.getElementById("subtopic2").value;
+
+    var data={
+        "username":name,
+        "topic":topic,
+        "subtopic":subtopic,
+    }
+    document.getElementById("topic2").innerHTML = "";
+    document.getElementById("optionButtons").innerHTML = "";
+    socket.emit("enter_queue", JSON.stringify(data));
+
 }
 
 function readyToHelp() {
