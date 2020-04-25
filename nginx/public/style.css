@@ -7,19 +7,25 @@ h2 {
     text-align: center;
 }
 
-.optionButton,.optionButton
-{
+.optionButton {
     font-family:'Open Sans Condensed', sans-serif;
     text-align: center;
-    border: 2px solid #4d4d4d;
+    border: 2px solid #666666;
     margin: auto;
     text-transform: uppercase;
     font-weight: bold;
-    background-color: #b7e3fb ;
+    background-color: #005bbb  ;
     width: 35%;
     font-size: 17px;
     line-height: 1.33333em;
     padding: 7px 18px;
     margin-top: 0.8em;
     border-radius: 18px;
+}
+
+.optionButton:hover {
+    background-color: #666666;
+    border: 2px solid #005bbb;
+
+
 }
