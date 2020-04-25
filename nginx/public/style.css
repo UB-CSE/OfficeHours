@@ -7,6 +7,11 @@ h2 {
     text-align: center;
 }
 
+select {
+    display: block;
+    margin: 0 auto;
+}
+
 .optionButton {
     font-family:'Open Sans Condensed', sans-serif;
     text-align: center;
@@ -26,6 +31,4 @@ h2 {
 .optionButton:hover {
     background-color: #666666;
     border: 2px solid #005bbb;
-
-
 }

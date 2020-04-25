@@ -28,10 +28,19 @@ function displayQueue(queueJSON) {
 }
 
 function studentSide() {
-    document.getElementById("test").innerHTML=""
-    document.getElementById("subtile").innerHTML="Select what you need assistance in"
+    document.getElementById("optionButtons").innerHTML="";
+    document.getElementById("subtile").innerHTML="Select what you need assistance in";
 
-    let formatSelections=""
+    let selections="<select id=\"HelpSelect\">\n" +
+        "        <option value=\"lecture\">Lecture</option>\n" +
+        "        <option value=\"hw\">Homework</option>\n" +
+        "        <option value=\"appObj\">Application Obj</option>\n" +
+        "        <option value=\"lab\">Lab</option>\n" +
+        "        </select>"
+
+    document.getElementById("optionButtons").innerHTML=selections;
+
+
 
 }
 
