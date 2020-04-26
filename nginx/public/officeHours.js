@@ -80,10 +80,23 @@ function enterQueue() {
         "username":name,
         "topic":topic,
         "subtopic":subtopic,
-    }
+    };
+
     document.getElementById("topic2").innerHTML = "";
     document.getElementById("optionButtons").innerHTML = "";
     socket.emit("enter_queue", JSON.stringify(data));
+
+}
+function displayTA() {
+    document.getElementById("optionButtons").innerHTML="";
+    document.getElementById("subtile").innerText="You are viewing the student queue"
+
+    let format="<div class=\"optionButton2\" onclick=\"();\"> Next Student </div>\n"
+
+    document.getElementById("optionButtons").innerHTML=format;
+
+
+
 
 }
 
