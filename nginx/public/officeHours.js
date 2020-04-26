@@ -50,7 +50,7 @@ function displayNameTopic() {
         "        </select><br/>" +
         "        <div id=\"topic2\">"+
         "        <button id=\"buttonNext\" onclick=\"displaySubtopic();\">Next</button>"+
-        "        </div>\n"
+        "        </div>\n";
 
     document.getElementById("optionButtons").innerHTML=selections;
 }
@@ -58,14 +58,15 @@ function displayNameTopic() {
 function displaySubtopic() {
     document.getElementById("topic2").innerHTML="";
 
-    let subtopic=topicMap[document.getElementById("topic").value]
+    let subtopic=topicMap[document.getElementById("topic").value];
 
-    var selections="<select id=\"subtopic2\">\n"
+    var selections="<select id=\"subtopic2\">\n";
 
     for(const element of subtopic){
         selections+="<option value="+element+">"+element+"</option>\n"
     }
-    selections+= "</select><br/>"+"<button id=\"finish\" onclick=\"enterQueue();\">Finsh</button>"
+
+    selections+= "</select><br/>"+"<button id=\"finish\" onclick=\"enterQueue();\">Finsh</button>";
 
     document.getElementById("topic2").innerHTML=selections;
 }
@@ -84,16 +85,23 @@ function enterQueue() {
 
     document.getElementById("topic2").innerHTML = "";
     document.getElementById("optionButtons").innerHTML = "";
+
+    let queueFormat="<div id=\"queue\"></div>";
+    document.getElementById("queueSection").innerHTML=queueFormat;
+
     socket.emit("enter_queue", JSON.stringify(data));
 
 }
 function displayTA() {
     document.getElementById("optionButtons").innerHTML="";
-    document.getElementById("subtile").innerText="You are viewing the student queue"
+    document.getElementById("subtile").innerText="You are viewing the student queue";
 
-    let format="<div class=\"optionButton2\" onclick=\"();\"> Next Student </div>\n"
+    let format="<div class=\"optionButton2\" onclick=\"();\"> Next Student </div>\n";
 
     document.getElementById("optionButtons").innerHTML=format;
+
+    let queueFormat="<div id=\"queue\"></div>";
+    document.getElementById("queueSection").innerHTML=queueFormat;
 
 
 
