@@ -1,10 +1,13 @@
 package model
 
+import java.time.{LocalDate, ZoneId}
+
 import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
-
+import java.text.SimpleDateFormat
+import java.util.{Date, TimeZone}
 
 class OfficeHoursServer() {
 
@@ -60,10 +63,21 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
-    server.socketToUsername += (socket -> username)
-    server.usernameToSocket += (username -> socket)
-    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+
+    //Gets the current time based on UTC
+    // * Time is no longer nanoTime, its current date UTC
+    val date: Date = new Date()
+    val dateFormatted = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss")
+    dateFormatted.setTimeZone(TimeZone.getTimeZone("UTC"))
+
+    //Only if the user isn't there AND the name isn't taken, they will be added to the Q
+    if(!server.socketToUsername.contains(socket) && !server.usernameToSocket.contains(username)){
+      server.database.addStudentToQueue(StudentInQueue(username, dateFormatted.format(date) + " UTC" ))
+      server.socketToUsername += (socket -> username)
+      server.usernameToSocket += (username -> socket)
+      server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    }
+
   }
 }
 
@@ -77,6 +91,10 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
       socket.sendEvent("message", "You are now helping " + studentToHelp.username)
       if(server.usernameToSocket.contains(studentToHelp.username)){
         server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")
+
+        //Removes the socket and name from the server's data so they can rejoin the q
+        server.socketToUsername -= server.usernameToSocket(studentToHelp.username)
+        server.usernameToSocket -= studentToHelp.username
       }
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     }
