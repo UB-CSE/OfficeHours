@@ -21,6 +21,19 @@ class Database extends DatabaseAPI{
   }
 
 
+  override def inQueue(username: String): Boolean = {
+    val queue: List[StudentInQueue] = getQueue
+    val userNamesInQueue: List[String] = for(studentInQueue <- queue) yield {
+      studentInQueue.username
+    }
+    if(userNamesInQueue.contains(username)){
+      true
+    } else {
+      false
+    }
+  }
+
+
   override def addStudentToQueue(student: StudentInQueue): Unit = {
     val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?)")
 

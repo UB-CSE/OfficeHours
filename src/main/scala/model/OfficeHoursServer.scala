@@ -17,6 +17,8 @@ class OfficeHoursServer() {
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
 
+  val password: String = "JesseIsTheBestProfessor"
+
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
     setPort(8080)
@@ -59,11 +61,50 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
+
+  def formatUsername(username: String): String = {
+    if(username.trim != "") {
+      val onlyOneSpace: String = username.replaceAll("( +)"," ").trim()
+      val splitUsername: Array[String] = onlyOneSpace.split(" ")
+      var formattedUserName: String = ""
+      for (string <- splitUsername) {
+        if (string != splitUsername.last) {
+          formattedUserName += (string.head.toUpper + string.tail.toLowerCase + " ")
+        }
+        else {
+          formattedUserName += (string.head.toUpper + string.tail.toLowerCase)
+        }
+      }
+      formattedUserName
+    } else {
+      ""
+    }
+  }
+
+  def errorHandling(InQueue: Boolean, username: String, password: String, socket: SocketIOClient): Unit = {
+    if(InQueue){
+      socket.sendEvent("message", "You're Already In The Queue, Wait Your Turn!")
+    } else if (username == ""){
+      socket.sendEvent("message", "Invalid Username, Please Select Another One!")
+    } else if (password != server.password) {
+      socket.sendEvent("message", "Wrong Password, Please See A TA For The Password")
+    } else {
+      socket.sendEvent("message", "There Was A Error Entering You Into The Queue, Please Try Again!")
+    }
+  }
+
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
-    server.socketToUsername += (socket -> username)
-    server.usernameToSocket += (username -> socket)
-    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    val userNameAndPassword: Array[String] = username.split("#")
+    val formattedUserName: String = formatUsername(userNameAndPassword.head)
+    if (!server.database.inQueue(formattedUserName) && formattedUserName != "" && userNameAndPassword.last.trim() == server.password) {
+      server.database.addStudentToQueue(StudentInQueue(formattedUserName, System.nanoTime()))
+      server.socketToUsername += (socket -> formattedUserName)
+      server.usernameToSocket += (formattedUserName -> socket)
+      server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+      server.usernameToSocket(formattedUserName).sendEvent("message", formattedUserName + ", you have been added to the queue!")
+    } else {
+      errorHandling(server.database.inQueue(formattedUserName), formattedUserName, userNameAndPassword.last.trim(), socket)
+    }
   }
 }
 
