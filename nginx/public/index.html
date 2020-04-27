@@ -14,6 +14,12 @@
 <p>Name</p>
 <input type="text" id="name"/>
 <button onclick="enterQueue();">Enter Queue</button>
+<button onclick="leaveQueue();">Leave Queue</button>
+<br/><br/>
+
+<p>Feedback</p>
+<input type="text" id="feedback"/>
+    <button id = "feedbackBtn" onclick="submitFeedback();">Submit</button>
 <br/><br/>
 
 <button onclick="readyToHelp();">TA Ready to Help</button>
@@ -21,6 +27,8 @@
 <br/>
 
 <div id="queue"></div>
+
+<div id="fbArea"></div>
 
 <script src="officeHours.js"></script>
 

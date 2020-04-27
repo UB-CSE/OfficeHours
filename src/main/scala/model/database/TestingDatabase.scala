@@ -5,10 +5,15 @@ import model.StudentInQueue
 class TestingDatabase extends DatabaseAPI {
 
   var data: List[StudentInQueue] = List()
+  var feedback: List[String] = List()
 
 
   override def addStudentToQueue(student: StudentInQueue): Unit = {
     data ::= student
+  }
+
+  override def addFeedback(message: String): Unit = {
+    feedback ::= message
   }
 
 
@@ -19,6 +24,10 @@ class TestingDatabase extends DatabaseAPI {
 
   override def getQueue: List[StudentInQueue] = {
     data.reverse
+  }
+
+  override def getfbQueue: List[String] = {
+    feedback.reverse
   }
 
 }

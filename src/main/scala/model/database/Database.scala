@@ -17,7 +17,9 @@ class Database extends DatabaseAPI{
 
   def setupTable(): Unit = {
     val statement = connection.createStatement()
+    val statement2 = connection.createStatement()
     statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT)")
+    statement2.execute("CREATE TABLE IF NOT EXISTS feedback (message TEXT)")
   }
 
 
@@ -26,6 +28,13 @@ class Database extends DatabaseAPI{
 
     statement.setString(1, student.username)
     statement.setLong(2, student.timestamp)
+
+    statement.execute()
+  }
+
+  override def addFeedback(message: String): Unit = {
+    val statement = connection.prepareStatement("INSERT INTO feedback VALUE(?)")
+    statement.setString(1, message)
 
     statement.execute()
   }
@@ -52,6 +61,18 @@ class Database extends DatabaseAPI{
       queue = new StudentInQueue(username, timestamp) :: queue
     }
 
+    queue.reverse
+  }
+
+  override def getfbQueue: List[String] = {
+    val statement = connection.prepareStatement("SELECT * FROM feedback")
+    val result: ResultSet = statement.executeQuery()
+
+    var queue: List[String] = List()
+    while(result.next()){
+      val m = result.getString("message")
+      queue = m :: queue
+    }
     queue.reverse
   }
 
