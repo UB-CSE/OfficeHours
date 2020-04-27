@@ -72,7 +72,7 @@ class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String]
 
     //Only if the user isn't there AND the name isn't taken, they will be added to the Q
     if(!server.socketToUsername.contains(socket) && !server.usernameToSocket.contains(username)){
-      server.database.addStudentToQueue(StudentInQueue(username, dateFormatted.format(date) + " UTC" ))
+      server.database.addStudentToQueue(StudentInQueue(username, dateFormatted.format(date) ))
       server.socketToUsername += (socket -> username)
       server.usernameToSocket += (username -> socket)
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())

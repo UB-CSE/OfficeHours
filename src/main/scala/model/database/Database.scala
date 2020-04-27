@@ -7,9 +7,10 @@ import model.StudentInQueue
 
 class Database extends DatabaseAPI{
 
-  val url = "jdbc:mysql://mysql/officehours?autoReconnect=true"
-  val username: String = sys.env("DB_USERNAME")
-  val password: String = sys.env("DB_PASSWORD")
+  val url = "jdbc:mysql://localhost/mysql"
+  val username: String = "root"
+  val password: String = "29SAlexWQ03L_"
+
 
   var connection: Connection = DriverManager.getConnection(url, username, password)
   setupTable()
@@ -17,7 +18,7 @@ class Database extends DatabaseAPI{
 
   def setupTable(): Unit = {
     val statement = connection.createStatement()
-    statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT)")
+    statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp TEXT)")
   }
 
 
