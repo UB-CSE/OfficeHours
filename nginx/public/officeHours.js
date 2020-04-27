@@ -11,32 +11,34 @@ socket.on('failedSubmit', displayError2);
 socket.on('failedLeave', displayError3);
 
 function submitFeedback(){
-    let message = document.getElementById("feedback").innerHTML)
-    document.getElementById("feedback").innerHTML = ""
-    document.getElementById("message").innerHTML = "Thank you for your feedback."
-    socket.emit("fb", message)
+    let message = document.getElementById("feedback").value;
+    document.getElementById("feedback").value = "";
+    document.getElementById("message").innerHTML = "Thank you for your feedback.";
+    socket.emit("fb", message);
 }
 
-function displayError3 {
-    document.getElementById("message").innerHTML = "Not in queue. Cannot Leave"
+function displayError3() {
+    document.getElementById("message").innerHTML = "Not in queue. Cannot Leave";
 }
 
-function displayError2 {
-    document.getElementById("message").innerHTML = "Not in queue. Cannot submit feedback"
+function displayError2() {
+    document.getElementById("message").innerHTML = "Not in queue. Cannot submit feedback";
 }
 
-function displayShow {
-    document.getElementById("feedback").style.display = "block"
-    document.getElementById("feedbackBtn").style.display = "block"
+function displayShow() {
+    document.getElementById("feedback").style.display = "block";
+    document.getElementById("feedbackBtn").style.display = "block";
+    document.getElementById("feedbackTitle").style.display = "block";
 }
 
-function displayHide {
-    document.getElementById("feedback").style.display = "none"
-    document.getElementById("feedbackBtn").style.display = "none"
+function displayHide() {
+    document.getElementById("feedback").style.display = "none";
+    document.getElementById("feedbackBtn").style.display = "none";
+    document.getElementById("feedbackTitle").style.display = "none";
 }
 
 function displayLeave(usern){
-    document.getElementById("message").innerHTML = usern + " has left the queue"
+    document.getElementById("message").innerHTML = usern + " has left the queue";
 }
 
 function displayMessage(newMessage) {
@@ -44,7 +46,7 @@ function displayMessage(newMessage) {
 }
 
 function displayError() {
-    document.getElementById("message").innerHTML = "Already in the queue"
+    document.getElementById("message").innerHTML = "Already in the queue";
 }
 
 function displayQueue(queueJSON) {
