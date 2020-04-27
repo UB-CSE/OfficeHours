@@ -18,8 +18,25 @@ class Database extends DatabaseAPI{
   def setupTable(): Unit = {
     val statement = connection.createStatement()
     statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT)")
+    //creates table for storing username and passwords or registered people and storing the salt for there password
+    statement.execute("CREATE TABLE IF NOT EXISTS authentication (username TEXT, password TEXT, salt TEXT)")
   }
 
+  override def addUserToAuthenticate(username: String, hashpass: String, salt: String): Unit = {
+   val statement = connection.prepareStatement("INSERT INTO authentication VALUE (?, ?, ?)")
+
+   statement.setString(1, username)
+   statement.setString(2, hashpass)
+   statement.setString(3, salt)
+
+   statement.execute
+  }
+
+  def authenticate(username: String, hashpass: String): Boolean = {
+
+
+    true
+  }
 
   override def addStudentToQueue(student: StudentInQueue): Unit = {
     val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?)")

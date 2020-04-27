@@ -27,7 +27,8 @@ class OfficeHoursServer() {
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
-
+  //listens for event register and adds student and password to database // expects json in formate {username: "username", password: "password"}
+  server.addEventListener("register", classOf[String], new Register(this))
   server.start()
 
   def queueJSON(): String = {
@@ -44,6 +45,14 @@ object OfficeHoursServer {
   }
 }
 
+class Register(server: OfficeHoursServer) extends DataListener[String]{
+  override def onData(client: SocketIOClient, data: String, ackSender: AckRequest): Unit = {
+    val json = Json.parse(data)
+    val password = (json \ "password").as[String]
+    val username = (json \ "username").as[String]
+
+  }
+}
 
 class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListener {
   override def onDisconnect(socket: SocketIOClient): Unit = {
