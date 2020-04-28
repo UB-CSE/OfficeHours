@@ -15,9 +15,9 @@ let lab=Array("Program Execution","Object-Oriented Programming","Functional Prog
 
 let topicMap={
     "Lecture":lecture,
-    "hw":hw,
-    "appObj":appObj,
-    "lab":lab
+    "Hw":hw,
+    "AppObj":appObj,
+    "Lab":lab
 }
 
 
