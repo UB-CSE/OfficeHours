@@ -30,10 +30,13 @@ function displayQueue(queueJSON) {
     document.getElementById("subtile").innerHTML="You are in queue now";
 
     const queue = JSON.parse(queueJSON);
-    let formattedQueue = "";
+    let formattedQueue = "<ol>";
     for (const student of queue) {
-        formattedQueue += student['username'] + " has been waiting since " + student['timestamp'] + "<br/>"
+        // formattedQueue +="<li>"+ student['username'] + " has been waiting since " + student['timestamp'] +"</li>"+ "<br/>"
+        formattedQueue +="<li>"+ student['username'] + "</li>"+"<br/>"
     }
+
+    formattedQueue+="</ol>"
     document.getElementById("queue").innerHTML = formattedQueue;
 }
 
@@ -102,10 +105,6 @@ function displayTA() {
 
     let queueFormat="<div id=\"queue\"></div>";
     document.getElementById("queueSection").innerHTML=queueFormat;
-
-
-
-
 }
 
 function readyToHelp() {
