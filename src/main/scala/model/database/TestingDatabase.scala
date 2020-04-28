@@ -6,9 +6,19 @@ class TestingDatabase extends DatabaseAPI {
 
   var data: List[StudentInQueue] = List()
 
-
+//Genevieve Gray's Edit: No duplicate names, no empty names
   override def addStudentToQueue(student: StudentInQueue): Unit = {
-    data ::= student
+    if(student.username != ""){
+      var alreadyExists = false
+      for(i <- data){
+        if(student.username == i.username){
+          alreadyExists = true
+        }
+      }
+      if(!alreadyExists){
+        data ::= student
+      }
+    }
   }
 
 
