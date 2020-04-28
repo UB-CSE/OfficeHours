@@ -21,4 +21,7 @@ class TestingDatabase extends DatabaseAPI {
     data.reverse
   }
 
+  override def checkTACredentials(credentials: String): Boolean = ???
+
+  override def sendQueueStudent(user: String): List[StudentInQueue] = ???
 }
