@@ -14,7 +14,7 @@ let appObj=Array("Program Execution","Object-Oriented Programming","Functional P
 let lab=Array("Program Execution","Object-Oriented Programming","Functional Programming","Data Structures & Algorithms","Event-Based Architectures")
 
 let topicMap={
-    "lecture":lecture,
+    "Lecture":lecture,
     "hw":hw,
     "appObj":appObj,
     "lab":lab
@@ -33,7 +33,7 @@ function displayQueue(queueJSON) {
     let formattedQueue = "<ol>";
     for (const student of queue) {
         // formattedQueue +="<li>"+ student['username'] + " has been waiting since " + student['timestamp'] +"</li>"+ "<br/>"
-        formattedQueue +="<li>"+ student['username'] + "</li>"+"<br/>"
+        formattedQueue +="<li>"+ student['username'] +" ~ "+student['topic']+" / "+student['subtopic']+ "</li>"+"<br/>"
     }
 
     formattedQueue+="</ol>"
@@ -46,10 +46,10 @@ function displayNameTopic() {
 
     let selections="<input type=\"text\" id=\"name\"/><br/>" +
         "        <select id=\"topic\">\n" +
-        "        <option value=\"lecture\">Lecture</option>\n" +
-        "        <option value=\"hw\">Homework</option>\n" +
-        "        <option value=\"appObj\">Application Obj</option>\n" +
-        "        <option value=\"lab\">Lab</option>\n" +
+        "        <option value=\"Lecture\">Lecture</option>\n" +
+        "        <option value=\"Hw\">Homework</option>\n" +
+        "        <option value=\"AppObj\">Application Obj</option>\n" +
+        "        <option value=\"Lab\">Lab</option>\n" +
         "        </select><br/>" +
         "        <div id=\"topic2\">"+
         "        <button id=\"buttonNext\" onclick=\"displaySubtopic();\">Next</button>"+
