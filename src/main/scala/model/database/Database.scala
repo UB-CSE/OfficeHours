@@ -1,10 +1,13 @@
-package model
+package model.database
 
 import java.sql.{Connection, DriverManager, ResultSet}
 
-object Database {
+import model.StudentInQueue
 
-  val url = "jdbc:mysql://mysql/officehours"
+
+class Database extends DatabaseAPI{
+
+  val url = "jdbc:mysql://mysql/officehours?autoReconnect=true"
   val username: String = sys.env("DB_USERNAME")
   val password: String = sys.env("DB_PASSWORD")
 
@@ -18,7 +21,7 @@ object Database {
   }
 
 
-  def addStudentToQueue(student: StudentInQueue): Unit = {
+  override def addStudentToQueue(student: StudentInQueue): Unit = {
     val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?)")
 
     statement.setString(1, student.username)
@@ -28,7 +31,7 @@ object Database {
   }
 
 
-  def removeStudentFromQueue(username: String): Unit = {
+  override def removeStudentFromQueue(username: String): Unit = {
     val statement = connection.prepareStatement("DELETE FROM queue WHERE username=?")
 
     statement.setString(1, username)
@@ -37,7 +40,7 @@ object Database {
   }
 
 
-  def getQueue(): List[StudentInQueue] = {
+  override def getQueue: List[StudentInQueue] = {
     val statement = connection.prepareStatement("SELECT * FROM queue")
     val result: ResultSet = statement.executeQuery()
 
@@ -49,7 +52,7 @@ object Database {
       queue = new StudentInQueue(username, timestamp) :: queue
     }
 
-    queue
+    queue.reverse
   }
 
 }

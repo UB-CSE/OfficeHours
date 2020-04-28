@@ -2,10 +2,17 @@ package model
 
 import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
+import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
 
 
 class OfficeHoursServer() {
+
+  val database: DatabaseAPI = if(Configuration.DEV_MODE){
+    new TestingDatabase
+  }else{
+    new Database
+  }
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
@@ -24,7 +31,7 @@ class OfficeHoursServer() {
   server.start()
 
   def queueJSON(): String = {
-    val queue: List[StudentInQueue] = Database.getQueue()
+    val queue: List[StudentInQueue] = database.getQueue
     val queueJSON: List[JsValue] = queue.map((entry: StudentInQueue) => entry.asJsValue())
     Json.stringify(Json.toJson(queueJSON))
   }
@@ -53,7 +60,7 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    Database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
@@ -63,10 +70,10 @@ class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String]
 
 class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[Nothing] {
   override def onData(socket: SocketIOClient, dirtyMessage: Nothing, ackRequest: AckRequest): Unit = {
-    val queue = Database.getQueue().sortBy(_.timestamp)
+    val queue = server.database.getQueue.sortBy(_.timestamp)
     if(queue.nonEmpty){
       val studentToHelp = queue.head
-      Database.removeStudentFromQueue(studentToHelp.username)
+      server.database.removeStudentFromQueue(studentToHelp.username)
       socket.sendEvent("message", "You are now helping " + studentToHelp.username)
       if(server.usernameToSocket.contains(studentToHelp.username)){
         server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")

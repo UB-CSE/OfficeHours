@@ -1,4 +1,4 @@
-const socket = io.connect({transports: ['websocket']});
+const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
 
 socket.on('queue', displayQueue);
 socket.on('message', displayMessage);
