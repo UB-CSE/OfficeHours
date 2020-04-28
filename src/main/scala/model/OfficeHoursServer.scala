@@ -16,6 +16,10 @@ class OfficeHoursServer() {
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
+  var UsernameToAssignId: Map[String,Int]=Map()
+  var AssignIdToUsername: Map[Int,String]=Map()
+
+
 
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
@@ -44,16 +48,19 @@ object OfficeHoursServer {
   }
 }
 
-
 class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListener {
   override def onDisconnect(socket: SocketIOClient): Unit = {
     if (server.socketToUsername.contains(socket)) {
       val username = server.socketToUsername(socket)
-        server.socketToUsername -= socket
+
+      server.database.removeStudentFromQueue(username)
+
+      server.socketToUsername -= socket
       if (server.usernameToSocket.contains(username)) {
         server.usernameToSocket -= username
       }
     }
+    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
   }
 }
 
