@@ -96,6 +96,7 @@ function enterQueue() {
 
 }
 function displayTA() {
+
     document.getElementById("optionButtons").innerHTML="";
     document.getElementById("subtile").innerText="You are viewing the student queue";
 
@@ -105,6 +106,8 @@ function displayTA() {
 
     let queueFormat="<div id=\"queue\"></div>";
     document.getElementById("queueSection").innerHTML=queueFormat;
+
+    socket.emit("display_TA")
 }
 
 function readyToHelp() {
