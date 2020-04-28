@@ -1,5 +1,6 @@
 package model
 
+import com.corundumstudio.socketio
 import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
@@ -8,7 +9,7 @@ import play.api.libs.json.{JsValue, Json}
 
 class OfficeHoursServer() {
 
-  val database: DatabaseAPI = if(Configuration.DEV_MODE){
+  val database: DatabaseAPI = if(model.Configuration.DEV_MODE){
     new TestingDatabase
   }else{
     new Database
@@ -26,7 +27,7 @@ class OfficeHoursServer() {
 
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
-  server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
+  server.addEventListener("ready_for_student", classOf[Int], new ReadyForStudentListener(this))
 
   server.start()
 
@@ -57,22 +58,34 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
   }
 }
 
+//Made Changes in EnterQueueListener by introducing preferred TA and if no TA is selected, assign a random TA (Not the professor).
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
-    server.socketToUsername += (socket -> username)
-    server.usernameToSocket += (username -> socket)
+    val r = new scala.util.Random
+    val TA_list = List("Logan","Megan","John_D","Jon","Joseph","Kevin","Taisia","Snigdha","Shamroy")
+    var student_name = username.split(",").head
+    var ta_name = username.split(",")(1)
+    if(ta_name == "any"){
+      ta_name = (TA_list)(r.nextInt(TA_list.length))
+    }
+    val structured = student_name + "," + ta_name
+
+
+    server.database.addStudentToQueue(StudentInQueue(structured, System.nanoTime()))
+    server.socketToUsername += (socket -> structured)
+    server.usernameToSocket += (structured -> socket)
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
   }
 }
 
-
-class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[Nothing] {
-  override def onData(socket: SocketIOClient, dirtyMessage: Nothing, ackRequest: AckRequest): Unit = {
+// Made changes in ReadyForStudentListener. It now takes an Int of the RowIndex to remove (Student who have completed his OH).
+class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[Int] {
+  override def onData(socket: SocketIOClient, dirtyMessage: Int, ackRequest: AckRequest): Unit = {
     val queue = server.database.getQueue.sortBy(_.timestamp)
     if(queue.nonEmpty){
-      val studentToHelp = queue.head
+      println(dirtyMessage)
+      val studentToHelp = queue(dirtyMessage)
       server.database.removeStudentFromQueue(studentToHelp.username)
       socket.sendEvent("message", "You are now helping " + studentToHelp.username)
       if(server.usernameToSocket.contains(studentToHelp.username)){

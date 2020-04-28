@@ -3,25 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <title>Office Hours</title>
+
+    <style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 </head>
 <body>
 
 <br/>
 
-<h3 id="message">Welcome!</h3>
+<h3 id="message">Welcome to the Office Hours!</h3>
 
-<p>Name</p>
-<input type="text" id="name"/>
+<label>Student's name: </label>
+<input type="text" id="name"/><br><br>
+
+<!-- Made changes in HTML by introducing the concept of choosing preferred TA -->
+<label>Preferred TA: </label>
+<select id="ta">
+    <option value="any">Select TA</option>
+    <option value="Logan">Logan</option>
+    <option value="Megan">Megan</option>
+    <option value="John_D">John_D</option>
+    <option value="Jon">Jon</option>
+    <option value="Joseph">Joseph</option>
+    <option value="Kevin">Kevin</option>
+    <option value="Taisia">Taisia</option>
+    <option value="Snigdha">Snigdha</option>
+    <option value="Shamroy">Shamroy</option>
+    <option value="Jesse">Jesse</option>
+</select>
+
+<br><br>
 <button onclick="enterQueue();">Enter Queue</button>
 <br/><br/>
 
-<button onclick="readyToHelp();">TA Ready to Help</button>
 
-<br/>
-
-<div id="queue"></div>
-
+<!-- Student's information will display here along with the preferred TA info. -->
+<table border = "1px" width = "100%" id = "queue">
+</table>
 <script src="officeHours.js"></script>
 
 
