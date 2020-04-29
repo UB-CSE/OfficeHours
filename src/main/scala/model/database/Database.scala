@@ -3,7 +3,7 @@ package model.database
 import java.sql.{Connection, DriverManager, ResultSet}
 
 import model.StudentInQueue
-
+import com.github.t3hnar.bcrypt._
 
 class Database extends DatabaseAPI{
 
@@ -22,20 +22,51 @@ class Database extends DatabaseAPI{
     statement.execute("CREATE TABLE IF NOT EXISTS authentication (username TEXT, password TEXT, salt TEXT)")
   }
 
-  override def addUserToAuthenticate(username: String, hashpass: String, salt: String): Unit = {
-   val statement = connection.prepareStatement("INSERT INTO authentication VALUE (?, ?, ?)")
+  override def addUserToAuthenticate(username: String, hashpass: String, salt: String): Boolean = {
+   //gets user if they exist in database
+   val result = connection.prepareStatement("SELECT * FROM authentication WHERE username=?")
+   result.setString(1, username)
+   val result2 = result.executeQuery()
 
-   statement.setString(1, username)
-   statement.setString(2, hashpass)
-   statement.setString(3, salt)
+   //checks to make sure user does not exist
+   if(!result2.next()) {
+     //adds user to database
+     val statement = connection.prepareStatement("INSERT INTO authentication VALUE (?, ?, ?)")
 
-   statement.execute
+     statement.setString(1, username)
+     statement.setString(2, hashpass)
+     statement.setString(3, salt)
+
+     statement.execute
+     true
+   }
+   else
+     //tell server that account exists already
+     false
   }
 
-  def authenticate(username: String, hashpass: String): Boolean = {
+  override def authenticate(username: String, pass: String): String = {
+    //gets data if the student exists
+    val result = connection.prepareStatement("SELECT * FROM authentication WHERE username=?")
+    result.setString(1, username)
+    val result2 = result.executeQuery()
 
-
-    true
+    // checks if student exits
+    if(result2.next()) {
+      //hashes password and checks if it is correct based on the salt
+      val hashpass = result2.getString("password")
+      val salt = result2.getString("salt")
+      if(pass.bcrypt(salt) == hashpass) {
+        //sends string back to tell that password was correct
+        "logged in"
+      }
+      else
+        // sends string back to tell that password was wrong
+        "bad pass"
+    }
+    else
+      // tells server the account does not exist
+      "DNE"
   }
 
   override def addStudentToQueue(student: StudentInQueue): Unit = {

@@ -10,10 +10,16 @@
         <scala.version>2.12.9</scala.version>
     </properties>
 
-    <!-- https://mvnrepository.com/artifact/com.github.t3hnar/scala-bcrypt -->
 
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/com.github.t3hnar/scala-bcrypt -->
+        <dependency>
+            <groupId>com.github.t3hnar</groupId>
+            <artifactId>scala-bcrypt_2.12</artifactId>
+            <version>4.1</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/com.typesafe.play/play-json -->
         <dependency>
             <groupId>com.typesafe.play</groupId>

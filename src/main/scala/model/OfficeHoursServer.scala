@@ -4,7 +4,7 @@ import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
-
+import com.github.t3hnar.bcrypt._
 
 class OfficeHoursServer() {
 
@@ -27,8 +27,10 @@ class OfficeHoursServer() {
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
-  //listens for event register and adds student and password to database // expects json in formate {username: "username", password: "password"}
+  //listens for event register and adds student and password to database // expects json in format {username: "username", password: "password"}
   server.addEventListener("register", classOf[String], new Register(this))
+  //listens for event login and attempts to login in student // expects json in format {username : "username", password: "password"}
+  server.addEventListener("login", classOf[String], new Login(this))
   server.start()
 
   def queueJSON(): String = {
@@ -45,12 +47,53 @@ object OfficeHoursServer {
   }
 }
 
+class Login(server: OfficeHoursServer) extends DataListener[String] {
+  override def onData(client: SocketIOClient, data: String, ackSender: AckRequest): Unit = {
+    val json = Json.parse(data)
+    //parses expected json
+    val username = (json \ "username").as[String]
+    val password = (json \ "password").as[String]
+    //checks if password is correct and sends back if the password is invalid or other error messages
+    val login: String = server.database.authenticate(username, password)
+    if (login == "logged in") {
+      // sends back event if login was successful
+      client.sendEvent("successful login")
+      //add actor creation here if you would like for concurrency
+    }
+    else if ("bad pass" == login) {
+      //if password is invalid/wrong this is sent back to client
+      client.sendEvent("bad pass")
+    }
+    else if ("DNE" == login) {
+      //send back event DNE if acount does not exist
+      client.sendEvent("DNE")
+    }
+    else {
+      //all other errors fall in this category and send back an error message to the client
+      client.sendEvent("error")
+    }
+  }
+}
+
 class Register(server: OfficeHoursServer) extends DataListener[String]{
   override def onData(client: SocketIOClient, data: String, ackSender: AckRequest): Unit = {
     val json = Json.parse(data)
+    //parses expected json
     val password = (json \ "password").as[String]
     val username = (json \ "username").as[String]
-
+    //creates salt for password
+    val salt = generateSalt
+    // hashes password using salt
+    val hashpass = password.bcrypt(salt)
+    //checks if that user can be added to data base or if it already exists
+    if(server.database.addUserToAuthenticate(username, hashpass, salt)) {
+      //if it was created successfully event is sent back to like
+      client.sendEvent("successCreate")
+    }
+    else {
+      //if unsuccessful creation occurs this event is sent back to client
+      client.sendEvent("failedCreate")
+    }
   }
 }
 
