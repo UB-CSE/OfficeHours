@@ -7,9 +7,13 @@ import model.StudentInQueue
 
 class Database extends DatabaseAPI{
 
-  val url = "jdbc:mysql://mysql/officehours?autoReconnect=true"
-  val username: String = sys.env("DB_USERNAME")
-  val password: String = sys.env("DB_PASSWORD")
+//  val url = "jdbc:mysql://mysql/officehours?autoReconnect=true"
+//  val username: String = sys.env("DB_USERNAME")
+//  val password: String = sys.env("DB_PASSWORD")
+
+    val url =  "jdbc:mysql://localhost/mysql?serverTimezone=UTC"
+  val username: String = "root"
+    val password: String = "get ur own password"
 
   var connection: Connection = DriverManager.getConnection(url, username, password)
 //  setupTable()
@@ -52,7 +56,7 @@ class Database extends DatabaseAPI{
 
     while (result.next()) {
       val no = result.getInt("queueNo")
-      val username = result.getString("username")
+      val username = result.getString("ubit")
       val timestamp = result.getLong("timestamp")
       queue = new StudentInQueue(no,username, timestamp) :: queue
     }
