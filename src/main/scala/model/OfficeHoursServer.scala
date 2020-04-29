@@ -36,6 +36,7 @@ class OfficeHoursServer() {
     Json.stringify(Json.toJson(queueJSON))
   }
 
+
 }
 
 object OfficeHoursServer {
@@ -60,10 +61,14 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+    var studentToAdd:StudentInQueue=StudentInQueue(username, System.nanoTime())
+    server.database.addStudentToQueue(studentToAdd)
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+
+    val posInQueue: Int= server.database.getQueue.indexOf(studentToAdd)+1
+    socket.sendEvent("message", "Your position in queue is: "+posInQueue.toString)
   }
 }
 
