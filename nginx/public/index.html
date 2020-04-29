@@ -5,21 +5,36 @@
     <title>Office Hours</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 </head>
-<body>
+<body onload="getDisplay()">
 
 <br/>
 
 <h3 id="message">Welcome!</h3>
 
-<p>Name</p>
+
+<p>Student</p>
 <input type="text" id="name"/>
 <button onclick="enterQueue();">Enter Queue</button>
 <br/><br/>
+
+<p>TA</p>
+<input type="text" id="ta_name"/>
+<button onclick="checkIn();">Check In</button>
+<button onclick="checkOut();">Check Out</button>
+<br/><br/>
+
+
 
 <button onclick="readyToHelp();">TA Ready to Help</button>
 
 <br/>
 
+<p>Checked in TA</p>
+<div id="ta_list"></div>
+
+<br/>
+
+<p>Queue</p>
 <div id="queue"></div>
 
 <script src="officeHours.js"></script>
