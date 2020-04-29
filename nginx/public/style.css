@@ -23,7 +23,7 @@ button {
 .optionButton {
     font-family:'Open Sans Condensed', sans-serif;
     text-align: center;
-    border: 2px solid #666666;
+    border: 2px solid #b3b3b3;
     margin: auto;
     text-transform: uppercase;
     font-weight: bold;
@@ -37,7 +37,7 @@ button {
 }
 
 .optionButton:hover {
-    background-color: #666666;
+    background-color: #b3b3b3;
     border: 2px solid #005bbb;
 }
 
@@ -45,7 +45,7 @@ button {
     font-family:'Open Sans Condensed', sans-serif;
     font-size: medium;
     text-align: center;
-    border: 2px solid #666666;
+    border: 2px solid #b3b3b3;
     margin-left: 5%;
     text-transform: uppercase;
     font-weight: bold;
@@ -59,6 +59,15 @@ button {
 }
 
 .optionButton2:hover {
-    background-color: #666666;
+    background-color: #b3b3b3;
     border: 2px solid #005bbb;
+}
+
+.queue {
+    background-color: #b3b3b3 ;
+    width: 500px;
+    height: 400px;
+    overflow: auto;
+    margin: 0 auto;
+    /*opacity: 0.75;*/
 }

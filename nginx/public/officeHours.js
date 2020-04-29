@@ -89,7 +89,7 @@ function enterQueue() {
     document.getElementById("topic2").innerHTML = "";
     document.getElementById("optionButtons").innerHTML = "";
 
-    let queueFormat="<div id=\"queue\"></div>";
+    let queueFormat="<div id=\"queue\" class=\"queue\"></div>";
     document.getElementById("queueSection").innerHTML=queueFormat;
 
     socket.emit("enter_queue", JSON.stringify(data));
@@ -104,7 +104,7 @@ function displayTA() {
 
     document.getElementById("optionButtons").innerHTML=format;
 
-    let queueFormat="<div id=\"queue\"></div>";
+    let queueFormat="<div id=\"queue\" class=\"queue\"></div>";
     document.getElementById("queueSection").innerHTML=queueFormat;
 
     socket.emit("display_TA")
