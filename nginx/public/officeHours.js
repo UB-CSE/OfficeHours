@@ -27,7 +27,7 @@ function displayMessage(newMessage) {
 
 function displayQueue(queueJSON) {
 
-    document.getElementById("subtile").innerHTML="You are in queue now";
+    document.getElementById("subtile").innerHTML="You're viewing the queue!";
 
     const queue = JSON.parse(queueJSON);
     let formattedQueue = "<ol>";
@@ -39,6 +39,10 @@ function displayQueue(queueJSON) {
     formattedQueue+="</ol>"
     document.getElementById("queue").innerHTML = formattedQueue;
 }
+
+
+
+
 
 function displayNameTopic() {
     document.getElementById("optionButtons").innerHTML="";
@@ -76,23 +80,35 @@ function displaySubtopic() {
 
 
 function enterQueue() {
-    let name = document.getElementById("name").value;
-    let topic = document.getElementById("topic").value;
-    let subtopic = document.getElementById("subtopic2").value;
 
-    var data={
-        "username":name,
-        "topic":topic,
-        "subtopic":subtopic,
-    };
+    var name = document.getElementById("name").value;
+    var topic = document.getElementById("topic").value;
+    var subtopic = document.getElementById("subtopic2").value;
 
-    document.getElementById("topic2").innerHTML = "";
-    document.getElementById("optionButtons").innerHTML = "";
+    if(name.length>0){
 
-    let queueFormat="<div id=\"queue\" class=\"queue\"></div>";
-    document.getElementById("queueSection").innerHTML=queueFormat;
+        var data={
+            "username":name,
+            "topic":topic,
+            "subtopic":subtopic,
+        };
 
-    socket.emit("enter_queue", JSON.stringify(data));
+        document.getElementById("topic2").innerHTML = "";
+        document.getElementById("optionButtons").innerHTML = "";
+        document.getElementById("HelpInfo").innerHTML=""
+
+
+        let queueFormat="<div id=\"queue\" class=\"queue\"></div>";
+        document.getElementById("queueSection").innerHTML=queueFormat;
+
+        socket.emit("enter_queue", JSON.stringify(data));
+    }
+    else{
+        let usernameError="<br/><p style=\"color:red\" class=\"center\" >Enter a username!</p>"
+        document.getElementById("HelpInfo").innerHTML=usernameError
+    }
+
+
 
 }
 function displayTA() {

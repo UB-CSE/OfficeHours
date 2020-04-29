@@ -56,6 +56,8 @@ button {
     padding: 7px 18px;
     margin-top: 0.8em;
     border-radius: 18px;
+    margin-bottom: 50px;
+
 }
 
 .optionButton2:hover {
@@ -70,4 +72,8 @@ button {
     overflow: auto;
     margin: 0 auto;
     /*opacity: 0.75;*/
+}
+.center {
+    margin: 0 auto;
+    text-align: center;
 }
