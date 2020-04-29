@@ -17,7 +17,7 @@ object StudentInQueue {
   }
 
   def apply(username: String, timestamp: Long): StudentInQueue = {
-    new StudentInQueue(cleanString(username), timestamp)
+        new StudentInQueue(cleanString(username), timestamp)
   }
 
 

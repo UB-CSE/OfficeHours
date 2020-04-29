@@ -18,6 +18,7 @@ function displayQueue(queueJSON) {
 
 
 function enterQueue() {
+    document.getElementById("message").innerHTML = "Welcome!";
     let name = document.getElementById("name").value;
     socket.emit("enter_queue", name);
     document.getElementById("name").value = "";
