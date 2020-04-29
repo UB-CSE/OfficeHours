@@ -6,10 +6,10 @@ import model.{CheckedInTA, StudentInQueue}
 
 
 class Database extends DatabaseAPI{
-  //"jdbc:mysql://mysql/officehours?autoReconnect=true"
-  val url = "jdbc:mysql://localhost/mysql?serverTimezone=UTC"
-  val username: String = "root"
-  val password: String = "Andy123"
+  //"jdbc:mysql://localhost/mysql?serverTimezone=UTC"
+  val url = "jdbc:mysql://mysql/officehours?autoReconnect=true"
+  val username: String = sys.env("DB_USERNAME")
+  val password: String = sys.env("DB_PASSWORD")
 
   var connection: Connection = DriverManager.getConnection(url, username, password)
   setupTable()
