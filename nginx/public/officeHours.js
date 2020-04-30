@@ -1,17 +1,21 @@
 const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
 
 socket.on('queue', displayQueue);
-socket.on('message', displayMessage);
+socket.on('message', displayMessageTA);
+socket.on('message2', displayMessageStu);
+socket.on('alert', alertWindow);
 
-let lecture=Array("Unit Testing","Test Factoring","Voting Class","Reference Referee","Reference Trader","Reference Batteries",
-    "Inheritance Batteries","Polymorphic Electronics","JSON Store","Player States","TV States","Car States",
-    "Function and Type Parameters","Recursive Fibonacci","Recursive Factoring","Average in Range","Immutable Point",
-    "Linked-List Reduce","Backlog","Expression Trees","BST toList","Graph Connections","Graph Distance",
-    "Actors","Banking Actor","Traffic Actors","Websocket","Echo Server","DM Server")
 
-let hw=Array("Physics Engine","Rhyming Dictionary","Calculator","Microwave","Genetic Algorithm","Recommendations","Decision Tree","Maze Solver","Clicker")
-let appObj=Array("Program Execution","Object-Oriented Programming","Functional Programming","Data Structures & Algorithms","Event-Based Architectures")
-let lab=Array("Program Execution","Object-Oriented Programming","Functional Programming","Data Structures & Algorithms","Event-Based Architectures")
+
+let lecture=Array("Unit-Testing","Test-Factoring","Voting-Class","Reference-Referee","Reference-Trader","Reference-Batteries",
+    "Inheritance-Batteries","Polymorphic-Electronics","JSON-Store","Player-States","TV-States","Car-States",
+    "Function-and-Type-Parameters","Recursive-Fibonacci","Recursive-Factoring","Average-in-Range","Immutable-Point",
+    "Linked-List-Reduce","Backlog","Expression-Trees","BST-toList","Graph-Connections","Graph-Distance",
+    "Actors","Banking-Actor","Traffic-Actors","Websocket","Echo-Server","DM-Server")
+
+let hw=Array("Physics-Engine","Rhyming-Dictionary","Calculator","Microwave","Genetic-Algorithm","Recommendations","Decision-Tree","Maze-Solver","Clicker")
+let appObj=Array("Program-Execution","Object-Oriented-Programming","Functional-Programming","Data-Structures-&-Algorithms","Event-Based-Architectures")
+let lab=Array("Program-Execution","Object-Oriented-Programming","Functional-Programming","Data-Structures-&-Algorithms","Event-Based-Architectures")
 
 let topicMap={
     "Lecture":lecture,
@@ -21,13 +25,19 @@ let topicMap={
 }
 
 
-function displayMessage(newMessage) {
-    document.getElementById("message").innerHTML = newMessage;
+function displayMessageTA(newMessage) {
+
+    document.getElementById("currentStudent").innerHTML = "<h2 style=\"color:green\">"+"You are now helping "+newMessage+"</h2>\n";
+    socket.emit("alert_page",newMessage)
+}
+
+function displayMessageStu(newMessage) {
+    document.getElementById("currentStudent").innerHTML = "<h2 style=\"color:green\">"+newMessage+"</h2>\n";
 }
 
 function displayQueue(queueJSON) {
 
-    document.getElementById("subtile").innerHTML="You're viewing the queue!";
+    document.getElementById("subtitle").innerHTML="You're viewing the queue!";
 
     const queue = JSON.parse(queueJSON);
     let formattedQueue = "<ol>";
@@ -46,7 +56,7 @@ function displayQueue(queueJSON) {
 
 function displayNameTopic() {
     document.getElementById("optionButtons").innerHTML="";
-    document.getElementById("subtile").innerHTML="Enter your name and select what you need assistance in";
+    document.getElementById("subtitle").innerHTML="Enter your name and select what you need assistance in";
 
     let selections="<input type=\"text\" id=\"name\"/><br/>" +
         "        <select id=\"topic\">\n" +
@@ -114,11 +124,13 @@ function enterQueue() {
 function displayTA() {
 
     document.getElementById("optionButtons").innerHTML="";
-    document.getElementById("subtile").innerText="You are viewing the student queue";
+    document.getElementById("subtitle").innerText="You are viewing the student queue";
 
-    let format="<div class=\"optionButton2\" onclick=\"();\"> Next Student </div>\n";
+    let format="<div class=\"optionButton\" onclick=\"readyToHelp();\"> Next Student </div>\n";
+    let format2="<div class=\"optionButton\" onclick=\"doneHelping();\"> Done Helping </div>\n<br/>\n";
 
-    document.getElementById("optionButtons").innerHTML=format;
+
+    document.getElementById("optionButtons").innerHTML=format+format2;
 
     let queueFormat="<div id=\"queue\" class=\"queue\"></div>";
     document.getElementById("queueSection").innerHTML=queueFormat;
@@ -127,5 +139,13 @@ function displayTA() {
 }
 
 function readyToHelp() {
-    socket.emit("ready_for_student");
+    if(document.getElementById("currentStudent").innerHTML<=0){
+        socket.emit("ready_for_student");
+    }
+}
+function doneHelping() {
+
+}
+function alertWindow() {
+    window.alert("It's your turn! Have your question prepared");
 }

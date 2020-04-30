@@ -16,10 +16,8 @@ class OfficeHoursServer() {
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
-  var UsernameToAssignId: Map[String,Int]=Map()
-  var AssignIdToUsername: Map[Int,String]=Map()
-
-
+  var TAtoSocket: Map[String,SocketIOClient]= Map()
+  var SocketToTA: Map[SocketIOClient,String]=Map()
 
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
@@ -32,6 +30,8 @@ class OfficeHoursServer() {
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
   server.addEventListener("display_TA", classOf[Nothing], new displayTAListener(this))
+  server.addEventListener("alert_page", classOf[String], new alertListener(this))
+
 
 
   server.start()
@@ -75,6 +75,9 @@ class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String]
     val topic:String= (parsed\"topic").as[String]
     val subtopic:String= (parsed\"subtopic").as[String]
 
+    println(topic)
+    println(subtopic)
+
     server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime(),topic,subtopic))
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
@@ -85,14 +88,21 @@ class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String]
 
 class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[Nothing] {
   override def onData(socket: SocketIOClient, dirtyMessage: Nothing, ackRequest: AckRequest): Unit = {
+
+
     val queue = server.database.getQueue.sortBy(_.timestamp)
     if(queue.nonEmpty){
+
       val studentToHelp = queue.head
       server.database.removeStudentFromQueue(studentToHelp.username)
-      socket.sendEvent("message", "You are now helping " + studentToHelp.username)
+
+//      socket.sendEvent("message", "You are now helping " + studentToHelp.username)
+      socket.sendEvent("message", studentToHelp.username)
+
       if(server.usernameToSocket.contains(studentToHelp.username)){
-        server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")
+        server.usernameToSocket(studentToHelp.username).sendEvent("message2", "A TA is ready to help you!")
       }
+
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     }
   }
@@ -101,6 +111,13 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
 class displayTAListener(server:OfficeHoursServer) extends DataListener[Nothing]{
   override def onData(socketIOClient: SocketIOClient, t: Nothing, ackRequest: AckRequest): Unit = {
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+  }
+}
+
+class alertListener(server: OfficeHoursServer) extends DataListener[String] {
+  override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
+    val socketToSend=server.usernameToSocket(username)
+    socketToSend.sendEvent("alert")
   }
 }
 
