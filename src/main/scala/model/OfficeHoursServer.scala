@@ -27,6 +27,7 @@ class OfficeHoursServer() {
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
+  server.addEventListener("check_position", classOf[String], new MyPositionListener(this))
 
   server.start()
 
@@ -81,6 +82,42 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     }
   }
+}
+
+class MyPositionListener(server: OfficeHoursServer) extends DataListener[String] {
+
+  override def onData(socket: SocketIOClient, myName: String, ackRequest: AckRequest): Unit = {
+
+    val queue : List[StudentInQueue] = server.database.getQueue.sortBy(_.timestamp)
+
+    for(student <- queue){
+      if (student.username == myName){
+
+        println(student.username)
+
+        val index : Int = queue.indexOf(student)
+
+        val map = Map ("name" -> Json.toJson(myName), "index" -> Json.toJson(index))
+
+        socket.sendEvent("position", Json.stringify(Json.toJson(map)))
+
+      }
+    }
+
+
+
+
+
+
+
+
+
+
+  }
+
+
+
+
 }
 
 
