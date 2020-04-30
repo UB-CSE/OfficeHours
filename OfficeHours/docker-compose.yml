@@ -1,0 +1,19 @@
+version: '3.3'
+services:
+  nginx:
+    build: ./nginx
+    ports:
+      - '9005:80'
+  mysql:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 'changeme'
+      MYSQL_DATABASE: 'officehours'
+      MYSQL_USER: 'sqluser'
+      MYSQL_PASSWORD: 'changeme'
+  app:
+    build: .
+    environment:
+      WAIT_HOSTS: mysql:3306
+      DB_USERNAME: 'sqluser'
+      DB_PASSWORD: 'changeme'
