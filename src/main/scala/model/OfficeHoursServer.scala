@@ -1,10 +1,9 @@
 package model
 
-import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
+import com.corundumstudio.socketio.listener.{ConnectListener, DataListener, DisconnectListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
-
 
 class OfficeHoursServer() {
 
@@ -24,6 +23,7 @@ class OfficeHoursServer() {
 
   val server: SocketIOServer = new SocketIOServer(config)
 
+  server.addConnectListener(new ConnectionListener(this))
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
@@ -35,7 +35,6 @@ class OfficeHoursServer() {
     val queueJSON: List[JsValue] = queue.map((entry: StudentInQueue) => entry.asJsValue())
     Json.stringify(Json.toJson(queueJSON))
   }
-
 }
 
 object OfficeHoursServer {
@@ -44,6 +43,11 @@ object OfficeHoursServer {
   }
 }
 
+class ConnectionListener(server: OfficeHoursServer) extends ConnectListener{
+  override def onConnect(client: SocketIOClient): Unit = {
+
+  }
+}
 
 class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListener {
   override def onDisconnect(socket: SocketIOClient): Unit = {
@@ -60,10 +64,22 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
-    server.socketToUsername += (socket -> username)
-    server.usernameToSocket += (username -> socket)
-    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    var toPrint: String = ""
+    if (!server.usernameToSocket.contains(username) && !server.socketToUsername.contains(socket)) {
+      server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+      server.socketToUsername += (socket -> username)
+      server.usernameToSocket += (username -> socket)
+      toPrint = "You have created a request successfully."
+      server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    } else {
+      if (server.usernameToSocket.contains(username)) {
+        toPrint = "This username has been using now, please try another one."
+      }
+      if (server.socketToUsername.contains(socket)) {
+        toPrint = "You have already submit a request, please be patient. A TA will be here soon."
+      }
+    }
+    socket.sendEvent("message", toPrint)
   }
 }
 
@@ -73,7 +89,11 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
     val queue = server.database.getQueue.sortBy(_.timestamp)
     if(queue.nonEmpty){
       val studentToHelp = queue.head
-      server.database.removeStudentFromQueue(studentToHelp.username)
+      val username: String = studentToHelp.username
+      val student: SocketIOClient = server.usernameToSocket(username)
+      server.usernameToSocket -= username
+      server.socketToUsername -= student
+      server.database.removeStudentFromQueue(username)
       socket.sendEvent("message", "You are now helping " + studentToHelp.username)
       if(server.usernameToSocket.contains(studentToHelp.username)){
         server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")
