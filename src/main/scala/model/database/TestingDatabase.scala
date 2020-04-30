@@ -1,24 +1,21 @@
 package model.database
 
-import model.StudentInQueue
+import model.{Configuration, StudentInQueue}
+
+case class Record(username: String, timestamp: Long, var archived: Boolean)
 
 class TestingDatabase extends DatabaseAPI {
 
-  var data: List[StudentInQueue] = List()
+  var data: List[Record] = List()
 
-
-  override def addStudentToQueue(student: StudentInQueue): Unit = {
-    data ::= student
-  }
-
+  override def addStudentToQueue(student: StudentInQueue): Unit = data ::= Record(student.username, student.timestamp, archived = false)
 
   override def removeStudentFromQueue(username: String): Unit = {
-    data = data.filter(_.username != username)
+    if(Configuration.ARCHIVE_MODE) data.filter(_.username == username).head.archived = true
+    else data = data.filter(_.username != username)
   }
-
 
   override def getQueue: List[StudentInQueue] = {
-    data.reverse
+    data.filter(_.archived == false).map(r => StudentInQueue(r.username, r.timestamp))
   }
-
 }
