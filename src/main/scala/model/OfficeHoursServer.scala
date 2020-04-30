@@ -99,7 +99,7 @@ class MyPositionListener(server: OfficeHoursServer) extends DataListener[String]
 
         val map = Map ("name" -> Json.toJson(myName), "index" -> Json.toJson(index))
 
-        socket.sendEvent("position", Json.stringify(Json.toJson(map)))
+        return socket.sendEvent("position", Json.stringify(Json.toJson(map)))
 
       }
     }
