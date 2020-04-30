@@ -1,6 +1,6 @@
 package model.database
 
-import model.{Configuration, StudentInQueue}
+import model.{Configuration, LookupResult, StudentInQueue}
 
 case class Record(username: String, timestamp: Long, var archived: Boolean)
 
@@ -18,4 +18,6 @@ class TestingDatabase extends DatabaseAPI {
   override def getQueue: List[StudentInQueue] = {
     data.filter(_.archived == false).map(r => StudentInQueue(r.username, r.timestamp))
   }
+
+  override def studentLookup(username: String): LookupResult = LookupResult(username, data.filter(_.username == username).map(_.timestamp))
 }

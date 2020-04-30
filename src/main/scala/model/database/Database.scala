@@ -2,7 +2,7 @@ package model.database
 
 import java.sql.{Connection, DriverManager, ResultSet}
 
-import model.{Configuration, StudentInQueue}
+import model.{Configuration, LookupResult, StudentInQueue}
 
 
 class Database extends DatabaseAPI{
@@ -60,4 +60,16 @@ class Database extends DatabaseAPI{
     queue.reverse
   }
 
+  override def studentLookup(username: String): LookupResult = {
+    val statement = connection.prepareStatement("SELECT * FROM queue WHERE username=?;")
+    statement.setString(1, username)
+    val result: ResultSet = statement.executeQuery()
+
+    var history: List[Long] = List()
+    while (result.next()) {
+      val timestamp = result.getLong("timestamp")
+      history = timestamp :: history
+    }
+    LookupResult(username, history)
+  }
 }
