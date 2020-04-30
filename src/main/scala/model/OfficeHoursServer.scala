@@ -16,6 +16,7 @@ class OfficeHoursServer() {
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
+  var UsernameToIssue: Map[String, String] = Map()
 
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
@@ -26,6 +27,7 @@ class OfficeHoursServer() {
 
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
+  server.addEventListener("issue", classOf[String], new IssueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
 
   server.start()
@@ -33,6 +35,7 @@ class OfficeHoursServer() {
   def queueJSON(): String = {
     val queue: List[StudentInQueue] = database.getQueue
     val queueJSON: List[JsValue] = queue.map((entry: StudentInQueue) => entry.asJsValue())
+    //println(Json.stringify(Json.toJson(queueJSON)))
     Json.stringify(Json.toJson(queueJSON))
   }
 
@@ -60,9 +63,17 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+    //server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
+    //server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+  }
+}
+
+class IssueListener(server: OfficeHoursServer) extends DataListener[String] {
+  override def onData(socket: SocketIOClient, issue: String, ackRequest: AckRequest): Unit = {
+    server.database.addStudentToQueue(StudentInQueue(server.socketToUsername(socket), issue, System.nanoTime()))
+    server.UsernameToIssue += (server.socketToUsername(socket) -> issue)
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
   }
 }
