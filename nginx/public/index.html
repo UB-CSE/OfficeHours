@@ -5,8 +5,7 @@
     <title>Office Hours</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 </head>
-<body>
-
+<body onload="displayEverything();">
 <br/>
 
 <h3 id="message">Welcome!</h3>
@@ -18,9 +17,18 @@
 
 <button onclick="readyToHelp();">TA Ready to Help</button>
 
+<br/><br/>
+<p1>TA Login Here</p1>
+<br/><br/>
+<input type="text" id="ta"/>
+<button onclick="taLogin();">Login</button>
+<button onclick="taLogout();">Logout</button>
+
 <br/>
 
 <div id="queue"></div>
+<br/><br/>
+<div id="taq"></div>
 
 <script src="officeHours.js"></script>
 

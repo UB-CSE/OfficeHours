@@ -4,6 +4,7 @@ import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
+import java.util.{Calendar,TimeZone}
 
 
 class OfficeHoursServer() {
@@ -17,6 +18,8 @@ class OfficeHoursServer() {
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
 
+  var taList:List[String] = List()
+
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
     setPort(8080)
@@ -27,6 +30,9 @@ class OfficeHoursServer() {
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
+  server.addEventListener("ta_login",classOf[String], new TALoginListener(this))
+  server.addEventListener("ta_logout", classOf[String], new TALogoutListener(this))
+  server.addEventListener("refresh",classOf[Nothing],new RefreshListener(this))
 
   server.start()
 
@@ -60,7 +66,7 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+    server.database.addStudentToQueue(StudentInQueue(username, Calendar.getInstance(TimeZone.getTimeZone("EST")).getTime.toString))
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
@@ -80,6 +86,28 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
       }
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     }
+  }
+}
+
+class TALoginListener(server: OfficeHoursServer) extends DataListener[String]{
+  override def onData(socketIOClient: SocketIOClient, t: String, ackRequest: AckRequest): Unit = {
+    server.taList = server.taList :+ t
+    server.server.getBroadcastOperations.sendEvent("talog", Json.stringify(Json.toJson(server.taList)))
+  }
+
+}
+class TALogoutListener(server: OfficeHoursServer) extends DataListener[String]{
+  override def onData(socketIOClient: SocketIOClient, t: String, ackRequest: AckRequest): Unit = {
+    if(server.taList.contains(t)){
+      server.taList = server.taList.filter(_!=t)
+      server.server.getBroadcastOperations.sendEvent("talog", Json.stringify(Json.toJson(server.taList)))
+    }
+  }
+}
+
+class RefreshListener(server: OfficeHoursServer) extends  DataListener[Nothing]{
+  override def onData(socketIOClient: SocketIOClient, t: Nothing, ackRequest: AckRequest): Unit = {
+    server.server.getBroadcastOperations.sendEvent("talog", Json.stringify(Json.toJson(server.taList)))
   }
 }
 
