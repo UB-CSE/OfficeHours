@@ -2,7 +2,7 @@ package model.database
 
 import java.sql.{Connection, DriverManager, ResultSet}
 
-import model.StudentInQueue
+import model.{Configuration, StudentInQueue}
 
 
 class Database extends DatabaseAPI{
@@ -17,12 +17,12 @@ class Database extends DatabaseAPI{
 
   def setupTable(): Unit = {
     val statement = connection.createStatement()
-    statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT)")
+    statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT, archived BOOLEAN)")
   }
 
 
   override def addStudentToQueue(student: StudentInQueue): Unit = {
-    val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?)")
+    val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?, 0)")
 
     statement.setString(1, student.username)
     statement.setLong(2, student.timestamp)
@@ -32,7 +32,12 @@ class Database extends DatabaseAPI{
 
 
   override def removeStudentFromQueue(username: String): Unit = {
-    val statement = connection.prepareStatement("DELETE FROM queue WHERE username=?")
+    val queryString: String = if (Configuration.ARCHIVE_MODE) {
+      "UPDATE queue SET archived=1 WHERE username=?;"
+    }else{
+      "DELETE FROM queue WHERE username=?"
+    }
+    val statement = connection.prepareStatement(queryString)
 
     statement.setString(1, username)
 
@@ -41,7 +46,7 @@ class Database extends DatabaseAPI{
 
 
   override def getQueue: List[StudentInQueue] = {
-    val statement = connection.prepareStatement("SELECT * FROM queue")
+    val statement = connection.prepareStatement("SELECT * FROM queue WHERE archived=0;")
     val result: ResultSet = statement.executeQuery()
 
     var queue: List[StudentInQueue] = List()
