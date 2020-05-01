@@ -5,11 +5,14 @@
     <title>Office Hours</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 </head>
-<body>
+<body onload=onLoadFunctions()>
 
 <br/>
 
 <h3 id="message">Welcome!</h3>
+
+<h3>Number of user sessions connected to the site: <span id="number_connected"></span>.</h3>
+<h3>Number of students currently waiting-in-queue: <span id="number_waiting"></span>.</h3>
 
 <p>Name</p>
 <input type="text" id="name"/>

@@ -1,10 +1,9 @@
 package model
 
-import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
+import com.corundumstudio.socketio.listener.{ConnectListener, DataListener, DisconnectListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
-
 
 class OfficeHoursServer() {
 
@@ -16,6 +15,7 @@ class OfficeHoursServer() {
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
+  var currently_connected: Int = 0
 
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
@@ -27,6 +27,13 @@ class OfficeHoursServer() {
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
+  server.addConnectListener((client: SocketIOClient) => {currently_connected += 1})
+
+  server.addEventListener("current_usage_stats_request", classOf[Nothing], (client: SocketIOClient, data: Nothing, ackSender: AckRequest) => {
+    client.sendEvent(
+      "current_usage_stats_response",
+      Json.stringify(Json.obj("number_connected" -> currently_connected, "number_waiting"  -> database.getQueue.length)))
+  })
 
   server.start()
 
@@ -47,9 +54,10 @@ object OfficeHoursServer {
 
 class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListener {
   override def onDisconnect(socket: SocketIOClient): Unit = {
+    server.currently_connected -= 1
     if (server.socketToUsername.contains(socket)) {
       val username = server.socketToUsername(socket)
-        server.socketToUsername -= socket
+      server.socketToUsername -= socket
       if (server.usernameToSocket.contains(username)) {
         server.usernameToSocket -= username
       }
@@ -82,5 +90,3 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
     }
   }
 }
-
-
