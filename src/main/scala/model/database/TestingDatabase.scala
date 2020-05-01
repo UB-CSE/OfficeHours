@@ -23,5 +23,5 @@ class TestingDatabase extends DatabaseAPI {
 
   override def checkTACredentials(credentials: String): Boolean = ???
 
-  override def sendQueueStudent(user: String): List[StudentInQueue] = ???
+  override def getStudent_queue(user: String): List[StudentInQueue] = List()
 }

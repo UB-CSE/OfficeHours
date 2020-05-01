@@ -8,5 +8,5 @@ trait DatabaseAPI {
   def removeStudentFromQueue(username: String): Unit
   def getQueue: List[StudentInQueue]
   def checkTACredentials(credentials: String): Boolean
-  def sendQueueStudent(user: String): List[StudentInQueue]
+  def getStudent_queue(user: String): List[StudentInQueue]
 }

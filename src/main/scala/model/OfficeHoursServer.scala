@@ -36,7 +36,7 @@ class OfficeHoursServer() {
   server.start()
 
   def queueJSON_Student(sock: SocketIOClient): String = {
-    val queue: List[StudentInQueue] = database.sendQueueStudent(this.socketToUsername.apply(sock))
+    val queue: List[StudentInQueue] = database.getStudent_queue(this.socketToUsername.apply(sock))
     val queueJSON: List[JsValue] = queue.map((entry: StudentInQueue) => entry.asJsValue())
     Json.stringify(Json.toJson(queueJSON))
   }
@@ -71,11 +71,13 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 //noinspection DuplicatedCode
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
-    server.socketToUsername += (socket -> username)
-    server.usernameToSocket += (username -> socket)
-    for (i <- server.socketToUsername.keys) i.sendEvent("queue", server.queueJSON_Student(i))
-    for (i <- server.TA_socketToUsername.keys) i.sendEvent("queue", server.queueJSON_TA())
+    if (!server.TA_socketToUsername.contains(socket) && !server.socketToUsername.contains(socket)) {
+      server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+      server.socketToUsername += (socket -> username)
+      server.usernameToSocket += (username -> socket)
+      for (i <- server.socketToUsername.keys) i.sendEvent("queue", server.queueJSON_Student(i))
+      for (i <- server.TA_socketToUsername.keys) i.sendEvent("queue", server.queueJSON_TA())
+    }
   }
 }
 
