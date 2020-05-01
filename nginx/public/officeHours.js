@@ -35,7 +35,8 @@ function displayMessageTA(newMessage) {
 }
 
 function displayMessageStu(newMessage) {
-    document.getElementById("currentStudent").innerHTML = "<h2 style=\"color:green\">"+newMessage+"</h2>\n";
+    var studentValues=newMessage.split("#")
+    document.getElementById("currentStudent").innerHTML = "<h2 style=\"color:green\">"+studentValues[0]+"</h2>\n";
 }
 
 function displayQueue(queueJSON) {
@@ -58,11 +59,7 @@ function displayQueue(queueJSON) {
     else{
         document.getElementById("queue").innerHTML = "<h2>Empty Queue</h2>\n";
     }
-
 }
-
-
-
 
 
 function displayNameTopic() {
