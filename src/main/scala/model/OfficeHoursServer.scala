@@ -77,6 +77,7 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
       socket.sendEvent("message", "You are now helping " + studentToHelp.username)
       if(server.usernameToSocket.contains(studentToHelp.username)){
         server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")
+        println("test commit")
       }
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     }
