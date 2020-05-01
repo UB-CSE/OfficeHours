@@ -4,6 +4,8 @@ socket.on('queue', displayQueue);
 socket.on('message', displayMessageTA);
 socket.on('message2', displayMessageStu);
 socket.on('alert', alertWindow);
+socket.on('done', studentDone);
+
 
 
 
@@ -27,7 +29,7 @@ let topicMap={
 
 function displayMessageTA(newMessage) {
 
-    document.getElementById("currentStudent").innerHTML = "<h2 style=\"color:green\">"+"You are now helping "+newMessage+"</h2>\n";
+    document.getElementById("currentStudent").innerHTML = "<h2  id=\"currentStudentName\" style=\"color:green\" value=newMessage>"+"You are now helping "+newMessage+"</h2>\n";
     socket.emit("alert_page",newMessage)
 }
 
@@ -40,14 +42,21 @@ function displayQueue(queueJSON) {
     document.getElementById("subtitle").innerHTML="You're viewing the queue!";
 
     const queue = JSON.parse(queueJSON);
-    let formattedQueue = "<ol>";
-    for (const student of queue) {
-        // formattedQueue +="<li>"+ student['username'] + " has been waiting since " + student['timestamp'] +"</li>"+ "<br/>"
-        formattedQueue +="<li>"+ student['username'] +" ~ "+student['topic']+" / "+student['subtopic']+ "</li>"+"<br/>"
+
+    if(queue.length>0) {
+        let formattedQueue = "<ol>";
+        for (const student of queue) {
+            // formattedQueue +="<li>"+ student['username'] + " has been waiting since " + student['timestamp'] +"</li>"+ "<br/>"
+            formattedQueue += "<li>" + student['username'] + " ~ " + student['topic'] + " / " + student['subtopic'] + "</li>" + "<br/>"
+        }
+
+        formattedQueue += "</ol>"
+        document.getElementById("queue").innerHTML = formattedQueue;
+    }
+    else{
+        document.getElementById("queue").innerHTML = "<h2>Empty Queue</h2>\n";
     }
 
-    formattedQueue+="</ol>"
-    document.getElementById("queue").innerHTML = formattedQueue;
 }
 
 
@@ -117,10 +126,8 @@ function enterQueue() {
         let usernameError="<br/><p style=\"color:red\" class=\"center\" >Enter a username!</p>"
         document.getElementById("HelpInfo").innerHTML=usernameError
     }
-
-
-
 }
+
 function displayTA() {
 
     document.getElementById("optionButtons").innerHTML="";
@@ -139,13 +146,26 @@ function displayTA() {
 }
 
 function readyToHelp() {
-    if(document.getElementById("currentStudent").innerHTML<=0){
+
+
+    if(document.getElementById("queue").innerHTML.length>23){
         socket.emit("ready_for_student");
     }
 }
 function doneHelping() {
+    if(document.getElementById("currentStudent").innerHTML.length>0) {
 
+        let text=document.getElementById("currentStudentName").innerText;
+        let words=text.split(" ")
+        let name= words[4]
+        document.getElementById("currentStudent").innerHTML = "";
+        socket.emit("done_helping",name)
+    }
 }
 function alertWindow() {
     window.alert("It's your turn! Have your question prepared");
+}
+
+function studentDone() {
+    document.getElementById('currentStudent').innerHTML="<h2 style=\"color:green\">Thanks for attending Office Hours! See you next TIME </h2>\n";
 }

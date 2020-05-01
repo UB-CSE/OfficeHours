@@ -31,6 +31,8 @@ class OfficeHoursServer() {
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
   server.addEventListener("display_TA", classOf[Nothing], new displayTAListener(this))
   server.addEventListener("alert_page", classOf[String], new alertListener(this))
+  server.addEventListener("done_helping", classOf[String], new doneHelpingListener(this))
+
 
 
 
@@ -118,6 +120,13 @@ class alertListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
     val socketToSend=server.usernameToSocket(username)
     socketToSend.sendEvent("alert")
+  }
+}
+class doneHelpingListener(server: OfficeHoursServer) extends DataListener[String] {
+  override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
+    println("Done Helping Called")
+    val socketToSend=server.usernameToSocket(username)
+    socketToSend.sendEvent("done")
   }
 }
 
