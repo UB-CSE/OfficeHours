@@ -22,6 +22,8 @@ class OfficeHoursServer() {
   var loggedInClients:List[SocketIOClient]=List()
   var studentCount:Int=0
   var taCount:Int=0
+  val random = new scala.util.Random
+
 
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
@@ -100,13 +102,20 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, data: String, ackRequest: AckRequest): Unit = {
 
+    val  num:Int=server.random.nextInt(1000)
+    println(num)
+
     server.loggedInClients = server.loggedInClients :+ socket
 
     server.studentCount+=1
 
     val parsed:JsValue=Json.parse(data)
-    val username:String= (parsed\"username").as[String]
+
+    var username:String= (parsed\"username").as[String]
+    username=username+"#"+num.toString()
+
     val topic:String= (parsed\"topic").as[String]
+
     val subtopic:String= (parsed\"subtopic").as[String]
 
     server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime(),topic,subtopic))

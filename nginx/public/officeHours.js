@@ -47,8 +47,9 @@ function displayQueue(queueJSON) {
     if(queue.length>0) {
         let formattedQueue = "<ol>";
         for (const student of queue) {
+            var studentValues=student['username'].split("#")
             // formattedQueue +="<li>"+ student['username'] + " has been waiting since " + student['timestamp'] +"</li>"+ "<br/>"
-            formattedQueue += "<li>" + student['username'] + " ~ " + student['topic'] + " / " + student['subtopic'] + "</li>" + "<br/>"
+            formattedQueue += "<li>" + studentValues[0] + " ~ " + student['topic'] + " / " + student['subtopic'] + "</li>" + "<br/>"
         }
 
         formattedQueue += "</ol>"
