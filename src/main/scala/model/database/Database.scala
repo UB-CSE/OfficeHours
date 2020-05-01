@@ -60,7 +60,7 @@ class Database extends DatabaseAPI {
       val timestamp = result.getLong("timestamp")
       queue = new StudentInQueue(username, timestamp) :: queue
     }
-    queue.reverse
+    queue
   }
 
   override def getStudent_queue(user: String): List[StudentInQueue] = {
