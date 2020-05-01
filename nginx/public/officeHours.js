@@ -5,6 +5,7 @@ socket.on('message', displayMessageTA);
 socket.on('message2', displayMessageStu);
 socket.on('alert', alertWindow);
 socket.on('done', studentDone);
+socket.on('count', counter);
 
 
 
@@ -148,7 +149,7 @@ function displayTA() {
 function readyToHelp() {
 
 
-    if(document.getElementById("queue").innerHTML.length>23){
+    if(document.getElementById("currentStudent").innerHTML.length==0){
         socket.emit("ready_for_student");
     }
 }
@@ -168,4 +169,15 @@ function alertWindow() {
 
 function studentDone() {
     document.getElementById('currentStudent').innerHTML="<h2 style=\"color:green\">Thanks for attending Office Hours! See you next TIME </h2>\n";
+}
+function counter(count) {
+    let values=JSON.parse(count)
+    let student=values["student"]
+    let ta=values["ta"]
+
+    document.getElementById("Counter").innerHTML="TA Count: "+ta+" Student Count: "+student
+}
+function firstcounter(){
+    socket.emit("first_count")
+
 }

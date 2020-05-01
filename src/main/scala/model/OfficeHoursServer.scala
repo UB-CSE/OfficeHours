@@ -19,6 +19,10 @@ class OfficeHoursServer() {
   var TAtoSocket: Map[String,SocketIOClient]= Map()
   var SocketToTA: Map[SocketIOClient,String]=Map()
 
+  var loggedInClients:List[SocketIOClient]=List()
+  var studentCount:Int=0
+  var taCount:Int=0
+
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
     setPort(8080)
@@ -32,8 +36,7 @@ class OfficeHoursServer() {
   server.addEventListener("display_TA", classOf[Nothing], new displayTAListener(this))
   server.addEventListener("alert_page", classOf[String], new alertListener(this))
   server.addEventListener("done_helping", classOf[String], new doneHelpingListener(this))
-
-
+  server.addEventListener("first_count", classOf[Nothing], new countListener(this))
 
 
   server.start()
@@ -42,6 +45,21 @@ class OfficeHoursServer() {
     val queue: List[StudentInQueue] = database.getQueue
     val queueJSON: List[JsValue] = queue.map((entry: StudentInQueue) => entry.asJsValue())
     Json.stringify(Json.toJson(queueJSON))
+  }
+
+  def countJSON():String={
+    var counter:Map[String,JsValue]=Map(
+      "student"->Json.toJson(studentCount),
+      "ta"->Json.toJson(taCount)
+    )
+    Json.stringify(Json.toJson(counter))
+  }
+
+  def removeSocket(socket: SocketIOClient,server:OfficeHoursServer): Unit ={
+    server.loggedInClients=server.loggedInClients.filter(_!=socket)
+  }
+  def broadcastQueue(server: OfficeHoursServer,messageType:String,value:String): Unit ={
+    server.loggedInClients.foreach(_.sendEvent(messageType,value))
   }
 
 }
@@ -54,7 +72,12 @@ object OfficeHoursServer {
 
 class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListener {
   override def onDisconnect(socket: SocketIOClient): Unit = {
+
+    server.removeSocket(socket,server)
+
     if (server.socketToUsername.contains(socket)) {
+
+      server.studentCount-=1
       val username = server.socketToUsername(socket)
 
       server.database.removeStudentFromQueue(username)
@@ -64,7 +87,12 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
         server.usernameToSocket -= username
       }
     }
-    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    else{
+      server.taCount-=1
+    }
+    server.server.getBroadcastOperations.sendEvent("count", server.countJSON())
+//    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    server.broadcastQueue(server,"queue",server.queueJSON())
   }
 }
 
@@ -72,25 +100,28 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, data: String, ackRequest: AckRequest): Unit = {
 
+    server.loggedInClients = server.loggedInClients :+ socket
+
+    server.studentCount+=1
+
     val parsed:JsValue=Json.parse(data)
     val username:String= (parsed\"username").as[String]
     val topic:String= (parsed\"topic").as[String]
     val subtopic:String= (parsed\"subtopic").as[String]
 
-    println(topic)
-    println(subtopic)
-
     server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime(),topic,subtopic))
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
-    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+//    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    server.broadcastQueue(server,"queue",server.queueJSON())
+
+    server.server.getBroadcastOperations.sendEvent("count", server.countJSON())
   }
 }
 
 
 class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[Nothing] {
   override def onData(socket: SocketIOClient, dirtyMessage: Nothing, ackRequest: AckRequest): Unit = {
-
 
     val queue = server.database.getQueue.sortBy(_.timestamp)
     if(queue.nonEmpty){
@@ -105,14 +136,24 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
         server.usernameToSocket(studentToHelp.username).sendEvent("message2", "A TA is ready to help you!")
       }
 
-      server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+//      server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+      server.broadcastQueue(server,"queue",server.queueJSON())
+
     }
   }
 }
 
 class displayTAListener(server:OfficeHoursServer) extends DataListener[Nothing]{
-  override def onData(socketIOClient: SocketIOClient, t: Nothing, ackRequest: AckRequest): Unit = {
-    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+  override def onData(socket: SocketIOClient, t: Nothing, ackRequest: AckRequest): Unit = {
+
+    server.loggedInClients = server.loggedInClients :+ socket
+
+    server.taCount+=1
+//    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    server.broadcastQueue(server,"queue",server.queueJSON())
+
+    server.server.getBroadcastOperations.sendEvent("count", server.countJSON())
+
   }
 }
 
@@ -122,11 +163,17 @@ class alertListener(server: OfficeHoursServer) extends DataListener[String] {
     socketToSend.sendEvent("alert")
   }
 }
+
 class doneHelpingListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    println("Done Helping Called")
     val socketToSend=server.usernameToSocket(username)
     socketToSend.sendEvent("done")
+  }
+}
+
+class countListener(server:OfficeHoursServer) extends DataListener[Nothing]{
+  override def onData(socketIOClient: SocketIOClient, t: Nothing, ackRequest: AckRequest): Unit = {
+    server.server.getBroadcastOperations.sendEvent("count", server.countJSON())
   }
 }
 

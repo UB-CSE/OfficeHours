@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Office Hours</title>
-
     <!--stylesheets Css-->
     <link rel="stylesheet" type="text/css" href="style.css">
-
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 </head>
-<body>
+<body onload="firstcounter()">
 
 <br/>
 
@@ -24,25 +22,13 @@
 
 <div id="currentStudent"></div>
 
-<div id="queueSection">
+<div id="queueSection"></div>
 
-<!--<div id="queue"></div>-->
-</div>
+<div id="HelpInfo" ></div>
 
-<div id="HelpInfo" >
-</div>
-
-<!--<button onclick="enterQueue();">Enter Queue</button>-->
-<!--<br/><br/>-->
-<!--<p>What do you need help in?</p><select id="topic"></select>-->
-<!--<button onclick="readyToHelp();">TA Ready to Help</button>-->
-<!--<br/>-->
-
-
-
+<div id="Counter" class="bar"></div>
 
 <script src="officeHours.js"></script>
-
 
 </body>
 </html>

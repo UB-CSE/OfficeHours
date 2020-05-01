@@ -41,54 +41,6 @@ button {
     border: 2px solid #005bbb;
 }
 
-/*.optionButton2 {*/
-/*    font-family:'Open Sans Condensed', sans-serif;*/
-/*    font-size: medium;*/
-/*    text-align: center;*/
-/*    border: 2px solid #b3b3b3;*/
-/*    margin-left: 5%;*/
-/*    text-transform: uppercase;*/
-/*    font-weight: bold;*/
-/*    background-color: #005bbb  ;*/
-/*    width: 15%;*/
-/*    font-size: 17px;*/
-/*    line-height: 1.33333em;*/
-/*    padding: 7px 18px;*/
-/*    margin-top: 0.8em;*/
-/*    border-radius: 18px;*/
-/*    !*margin-bottom: 50px;*!*/
-
-/*}*/
-
-/*.optionButton2:hover {*/
-/*    background-color: #b3b3b3;*/
-/*    border: 2px solid #005bbb;*/
-/*}*/
-
-/*.optionButton3 {*/
-/*    font-family:'Open Sans Condensed', sans-serif;*/
-/*    font-size: medium;*/
-/*    text-align: center;*/
-/*    border: 2px solid #b3b3b3;*/
-/*    margin-right: 20%;*/
-/*    text-transform: uppercase;*/
-/*    font-weight: bold;*/
-/*    background-color: #005bbb  ;*/
-/*    width: 15%;*/
-/*    font-size: 17px;*/
-/*    line-height: 1.33333em;*/
-/*    padding: 7px 18px;*/
-/*    margin-top: 0.8em;*/
-/*    border-radius: 18px;*/
-/*    !*margin-bottom: 50px;*!*/
-
-/*}*/
-
-/*.optionButton3:hover {*/
-/*    background-color: #b3b3b3;*/
-/*    border: 2px solid #005bbb;*/
-/*}*/
-
 .queue {
     background-color: #b3b3b3 ;
     width: 500px;
@@ -100,4 +52,18 @@ button {
 .center {
     margin: 0 auto;
     text-align: center;
+}
+.bar {
+    text-align: center;
+    height: 25px;
+    margin-left: 25%;
+    margin-right: auto;
+    overflow: hidden;
+    background-color: #005bbb;
+    border: 2px solid #b3b3b3;
+    position: fixed;
+    bottom: 2px;
+    width: 50%;
+    border-radius: 5px;
+
 }
