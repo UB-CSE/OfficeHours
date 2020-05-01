@@ -33,6 +33,7 @@ class OfficeHoursServer() {
   def queueJSON(): String = {
     val queue: List[StudentInQueue] = database.getQueue
     val queueJSON: List[JsValue] = queue.map((entry: StudentInQueue) => entry.asJsValue())
+    println(queueJSON)
     Json.stringify(Json.toJson(queueJSON))
   }
 
@@ -60,10 +61,16 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
-    server.socketToUsername += (socket -> username)
-    server.usernameToSocket += (username -> socket)
-    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    if(server.socketToUsername.contains(socket)){
+      println("You are already in queue")
+    }
+    else {
+      val waitTime : Int = server.database.getQueue.length * 5
+      server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime(),waitTime))
+      server.socketToUsername += (socket -> username)
+      server.usernameToSocket += (username -> socket)
+      server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    }
   }
 }
 
