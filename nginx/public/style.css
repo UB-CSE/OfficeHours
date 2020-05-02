@@ -13,6 +13,11 @@ select {
     display: block;
     margin: 0 auto;
 }
+label {
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+}
 input {
     display: block;
     margin: 0 auto;

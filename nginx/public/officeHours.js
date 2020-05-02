@@ -66,7 +66,8 @@ function displayNameTopic() {
     document.getElementById("optionButtons").innerHTML="";
     document.getElementById("subtitle").innerHTML="Enter your name and select what you need assistance in";
 
-    let selections="<input type=\"text\" id=\"name\"/><br/>" +
+    let selections="<label>Username:</label>"+
+        "        <input type=\"text\" id=\"name\"/><br/>" +
         "        <select id=\"topic\">\n" +
         "        <option value=\"Lecture\">Lecture</option>\n" +
         "        <option value=\"Hw\">Homework</option>\n" +
