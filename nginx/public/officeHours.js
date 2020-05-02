@@ -4,8 +4,10 @@ const socket = io.connect({transports: ['websocket']});
 
 socket.on('queue', displayQueue);
 socket.on('message', displayMessage);
+socket.on('login_successful', showAlert);
 socket.on('release_help_button', release_button);
 socket.on('login_failed', invalid_login);
+socket.on('already_logged_in', already_in);
 
 function displayMessage(newMessage) {
     document.getElementById("message").innerHTML = newMessage;
@@ -45,9 +47,16 @@ function release_button() {
     buttonElement.innerHTML = "Help Next Student";
     buttonElement.onclick = readyToHelp;
     document.body.appendChild(buttonElement);
-    alert("Login successful!")
 }
 
 function invalid_login() {
     alert("Incorrect username or password. Try Again.")
+}
+
+function showAlert() {
+    alert("Login Successful!")
+}
+
+function already_in() {
+    alert("You are already logged in!")
 }

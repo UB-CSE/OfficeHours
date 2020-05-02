@@ -109,7 +109,9 @@ class TALogin(server: OfficeHoursServer) extends DataListener[String] {
       server.TA_socketToUsername += (socketIOClient -> TA_username)
       socketIOClient.sendEvent("queue", server.queueJSON_TA())
       socketIOClient.sendEvent("release_help_button", "")
+      socketIOClient.sendEvent("login_successful", "")
     }
+    else if (server.TA_usernameToSocket.contains(TA_username) && server.database.checkTACredentials(t)) socketIOClient.sendEvent("already_logged_in", "")
     else socketIOClient.sendEvent("login_failed", "")
   }
 }
