@@ -17,6 +17,7 @@ class OfficeHoursServer() {
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
+
   var TAtoSocket: Map[String,SocketIOClient]= Map()
   var SocketToTA: Map[SocketIOClient,String]=Map()
 
@@ -26,6 +27,7 @@ class OfficeHoursServer() {
   val random = new scala.util.Random
 
   val cred=Source.fromFile("credentials.json").mkString
+  var TAonline:Map[String,Boolean]=createdTaOnline(cred)
 
 
   val config: Configuration = new Configuration {
@@ -38,7 +40,7 @@ class OfficeHoursServer() {
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
-  server.addEventListener("display_TA", classOf[Nothing], new displayTAListener(this))
+  server.addEventListener("display_TA", classOf[String], new displayTAListener(this))
   server.addEventListener("alert_page", classOf[String], new alertListener(this))
   server.addEventListener("done_helping", classOf[String], new doneHelpingListener(this))
   server.addEventListener("first_count", classOf[Nothing], new countListener(this))
@@ -67,14 +69,49 @@ class OfficeHoursServer() {
   def broadcastQueue(server: OfficeHoursServer,messageType:String,value:String): Unit ={
     server.loggedInClients.foreach(_.sendEvent(messageType,value))
   }
-  def validateLogin(file:String,username:String,password:String): Boolean ={
+  def createdTaOnline(file:String): Map[String,Boolean]={
+    var TaMap: Map[String,Boolean]=Map()
+    val pasred=Json.parse(file)
+    val ListofTA:Array[Map[String,String]]=(pasred\"TA_Credentials").as[Array[Map[String,String]]]
+
+    for(elem<-ListofTA){
+      val name=elem("ubit")
+      val bool=elem("online").toBoolean
+      TaMap+=(name->bool)
+    }
+    TaMap
+  }
+  def updateTaOnline(file:String,username:String,status:Boolean): Map[String,Boolean]={
+    var TaMap: Map[String,Boolean]=Map()
+    val pasred=Json.parse(file)
+    val ListofTA:Array[Map[String,String]]=(pasred\"TA_Credentials").as[Array[Map[String,String]]]
+
+    for(elem<-ListofTA){
+      val name=elem("ubit")
+      val bool=elem("online").toBoolean
+      if(name==username){
+        TaMap+=(name->status)
+      }
+      else{
+        println(name)
+        println(status)
+        TaMap+=(name->bool)
+      }
+    }
+    TaMap
+  }
+
+  def validateLogin(file:String,username:String,password:String,server:OfficeHoursServer): Boolean ={
     var check:Boolean=false
     val pasred=Json.parse(file)
     val ListofTA:Array[Map[String,String]]=(pasred\"TA_Credentials").as[Array[Map[String,String]]]
 
     for(elem<-ListofTA){
-      if( elem("ubit")==username && elem("password")== password){
+      val name=elem("ubit")
+      println(server.TAonline(name))
+      if( elem("ubit")==username && elem("password")== password && !server.TAonline(name) ){
         check=true
+        server.TAonline=server.updateTaOnline(file,name,true)
       }
     }
     check
@@ -105,11 +142,23 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
         server.usernameToSocket -= username
       }
     }
-    else{
-//      server.taCount-=1
+
+    if(server.SocketToTA.contains(socket)){
+
+      server.taCount-=1
+
+      val usernameTA = server.SocketToTA(socket)
+
+      server.TAonline=server.updateTaOnline(server.cred,usernameTA,false)
+
+      server.SocketToTA -= socket
+
+      if (server.TAtoSocket.contains(usernameTA)) {
+        server.TAtoSocket -= usernameTA
+      }
     }
+
     server.server.getBroadcastOperations.sendEvent("count", server.countJSON())
-//    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     server.broadcastQueue(server,"queue",server.queueJSON())
   }
 }
@@ -137,7 +186,6 @@ class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String]
     server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime(),topic,subtopic))
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
-//    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     server.broadcastQueue(server,"queue",server.queueJSON())
 
     server.server.getBroadcastOperations.sendEvent("count", server.countJSON())
@@ -154,27 +202,27 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
       val studentToHelp = queue.head
       server.database.removeStudentFromQueue(studentToHelp.username)
 
-//      socket.sendEvent("message", "You are now helping " + studentToHelp.username)
       socket.sendEvent("message", studentToHelp.username)
 
       if(server.usernameToSocket.contains(studentToHelp.username)){
         server.usernameToSocket(studentToHelp.username).sendEvent("message2", "A TA is ready to help you!")
       }
 
-//      server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
       server.broadcastQueue(server,"queue",server.queueJSON())
 
     }
   }
 }
 
-class displayTAListener(server:OfficeHoursServer) extends DataListener[Nothing]{
-  override def onData(socket: SocketIOClient, t: Nothing, ackRequest: AckRequest): Unit = {
+class displayTAListener(server:OfficeHoursServer) extends DataListener[String]{
+  override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
 
     server.loggedInClients = server.loggedInClients :+ socket
 
+    server.SocketToTA += (socket -> username)
+    server.TAtoSocket += (username -> socket)
+
     server.taCount+=1
-//    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     server.broadcastQueue(server,"queue",server.queueJSON())
 
     server.server.getBroadcastOperations.sendEvent("count", server.countJSON())
@@ -209,13 +257,12 @@ class loginListener(server: OfficeHoursServer) extends DataListener[String] {
     val username:String= (loginInfo\"username").as[String]
     val password:String= (loginInfo\"password").as[String]
 
-    if(server.validateLogin(server.cred,username,password)){
+    if(server.validateLogin(server.cred,username,password,server)){
       socket.sendEvent("valid_Check")
     }
     else{
       socket.sendEvent("invalid")
     }
-
   }
 }
 
