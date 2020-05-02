@@ -86,7 +86,7 @@ class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String]
 class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[Nothing] {
   override def onData(socket: SocketIOClient, dirtyMessage: Nothing, ackRequest: AckRequest): Unit = {
     val queue = server.database.getQueue.sortBy(_.timestamp)
-    if(queue.nonEmpty){
+    if(queue.nonEmpty && server.TA_socketToUsername.contains(socket)){
       val studentToHelp = queue.head
       server.database.removeStudentFromQueue(studentToHelp.username)
       socket.sendEvent("message", "You are now helping " + studentToHelp.username)
@@ -101,14 +101,16 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
 
 class TALogin(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socketIOClient: SocketIOClient, t: String, ackRequest: AckRequest): Unit = {
-    if (server.database.checkTACredentials(t)) {
-      val parsed = Json.parse(t)
-      val TA_username = (parsed \ "username").as[String]
+    val parsed = Json.parse(t)
+    val TA_username = (parsed \ "username").as[String]
+
+    if (!server.TA_usernameToSocket.contains(TA_username) && server.database.checkTACredentials(t)) {
       server.TA_usernameToSocket += (TA_username -> socketIOClient)
       server.TA_socketToUsername += (socketIOClient -> TA_username)
       socketIOClient.sendEvent("queue", server.queueJSON_TA())
       socketIOClient.sendEvent("release_help_button", "")
     }
+    else socketIOClient.sendEvent("login_failed", "")
   }
 }
 

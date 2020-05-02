@@ -3,29 +3,37 @@
     <head>
         <meta charset="UTF-8">
         <title>Office Hours</title>
-        <input type="text" id="ta_user"/>
-        <input type="password" id="ta_password"/>
-        <button onclick="ta_login();">Login</button>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+        <h2 class="text-center">CSE116 Office Hours</h2>
     </head>
 
-    <body>
+    <body class="container">
+        <br>
+        <p>TA's, Login here!</p>
+        <input type="text" id="ta_user" placeholder="Username"/>
+        <input type="password" id="ta_password" placeholder="Password" />
+        <button class="btn btn-success btn-sm" onclick="ta_login();">Login</button>
 
         <div id="help_button_div"></div>
         <br/>
-        <h3 id="message">Welcome!</h3>
+        <h4 id="message" class="display1">Welcome to Office Hours!</h4>
+        <p>Enter your name, enqueue and wait for a TA!</p>
 
-        <p>Name</p>
-        <input type="text" id="name"/>
+        <input type="text" id="name" placeholder="Name" />
         <button onclick="enterQueue();">Enter Queue</button>
 
-        <br/>
         <br/>
         <br/>
 
         <div id="queue"></div>
 
         <script src="officeHours.js"></script>
-
     </body>
 </html>
+

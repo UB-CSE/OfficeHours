@@ -5,6 +5,7 @@ const socket = io.connect({transports: ['websocket']});
 socket.on('queue', displayQueue);
 socket.on('message', displayMessage);
 socket.on('release_help_button', release_button);
+socket.on('login_failed', invalid_login);
 
 function displayMessage(newMessage) {
     document.getElementById("message").innerHTML = newMessage;
@@ -31,16 +32,22 @@ function readyToHelp() {
 }
 
 function ta_login() {
-    let username = document.getElementById("ta_user").value;
-    let password = document.getElementById("ta_password").value;
-    let object = {"username": username, "password": password};
-    socket.emit("ta_login", JSON.stringify(object))
+    let username = document.getElementById("ta_user");
+    let password = document.getElementById("ta_password");
+    let object = {"username": username.value, "password": password.value};
+    socket.emit("ta_login", JSON.stringify(object));
+    username.value = "";
+    password.value ="";
 }
 
 function release_button() {
-    let id = document.getElementById("help_button");
     let buttonElement = document.createElement("BUTTON");
     buttonElement.innerHTML = "Help Next Student";
     buttonElement.onclick = readyToHelp;
-    document.body.appendChild(buttonElement)
+    document.body.appendChild(buttonElement);
+    alert("Login successful!")
+}
+
+function invalid_login() {
+    alert("Incorrect username or password. Try Again.")
 }
