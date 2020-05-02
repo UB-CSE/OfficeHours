@@ -6,6 +6,8 @@ socket.on('message2', displayMessageStu);
 socket.on('alert', alertWindow);
 socket.on('done', studentDone);
 socket.on('count', counter);
+socket.on('valid_Check',displayTA);
+socket.on("invalid",displayInvalid);
 
 
 
@@ -26,17 +28,17 @@ let topicMap={
     "AppObj":appObj,
     "Lab":lab
 }
-
+let username=""
 
 function displayMessageTA(newMessage) {
-
-    document.getElementById("currentStudent").innerHTML = "<h2  id=\"currentStudentName\" style=\"color:green\" value=newMessage>"+"You are now helping "+newMessage+"</h2>\n";
+    username=newMessage
+    var studentValues=newMessage.split("#")
+    document.getElementById("currentStudent").innerHTML = "<h2  id=\"currentStudentName\" style=\"color:green\" value=newMessage>"+"You are now helping "+studentValues[0]+"</h2>\n";
     socket.emit("alert_page",newMessage)
 }
 
 function displayMessageStu(newMessage) {
-    var studentValues=newMessage.split("#")
-    document.getElementById("currentStudent").innerHTML = "<h2 style=\"color:green\">"+studentValues[0]+"</h2>\n";
+    document.getElementById("currentStudent").innerHTML = "<h2 style=\"color:green\">"+newMessage+"</h2>\n";
 }
 
 function displayQueue(queueJSON) {
@@ -64,7 +66,7 @@ function displayQueue(queueJSON) {
 
 function displayNameTopic() {
     document.getElementById("optionButtons").innerHTML="";
-    document.getElementById("subtitle").innerHTML="Enter your name and select what you need assistance in";
+    document.getElementById("subtitle").innerHTML="Enter your Username and select what you need assistance in";
 
     let selections="<label>Username:</label>"+
         "        <input type=\"text\" id=\"name\"/><br/>" +
@@ -158,8 +160,9 @@ function doneHelping() {
         let text=document.getElementById("currentStudentName").innerText;
         let words=text.split(" ")
         let name= words[4]
+
         document.getElementById("currentStudent").innerHTML = "";
-        socket.emit("done_helping",name)
+        socket.emit("done_helping",username)
     }
 }
 function alertWindow() {
@@ -178,5 +181,31 @@ function counter(count) {
 }
 function firstcounter(){
     socket.emit("first_count")
+}
 
+function displayLogin() {
+    document.getElementById("optionButtons").innerHTML="";
+    document.getElementById("subtitle").innerHTML="Enter your Username and Password";
+
+    let selections="<label>Username:</label>\n"+
+        "<input type=\"text\" id=\"username\" name=\"username\">\n"+
+        "<label for=\"pass\">Password:</label>\n"+
+        "<input type=\"password\" id=\"pass\" name=\"password\" required>\n<br/>"+
+        "<button id=\"login\" onclick=\"checkLogin();\">Login</button>"
+
+    document.getElementById("optionButtons").innerHTML=selections;
+}
+function checkLogin() {
+    let name=document.getElementById("username").value
+    let password=document.getElementById("pass").value
+    let message={
+        "username":name,
+        "password":password
+    }
+    message=JSON.stringify(message)
+    socket.emit("check_login",message)
+}
+function displayInvalid() {
+    let Error="<br/><p style=\"color:red\" class=\"center\" >Invalid Username or Password!</p>"
+    document.getElementById("HelpInfo").innerHTML=Error
 }

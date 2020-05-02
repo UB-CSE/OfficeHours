@@ -4,6 +4,7 @@ import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
+import scala.io.Source
 
 
 class OfficeHoursServer() {
@@ -24,6 +25,8 @@ class OfficeHoursServer() {
   var taCount:Int=0
   val random = new scala.util.Random
 
+  val cred=Source.fromFile("credentials.json").mkString
+
 
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
@@ -39,6 +42,7 @@ class OfficeHoursServer() {
   server.addEventListener("alert_page", classOf[String], new alertListener(this))
   server.addEventListener("done_helping", classOf[String], new doneHelpingListener(this))
   server.addEventListener("first_count", classOf[Nothing], new countListener(this))
+  server.addEventListener("check_login", classOf[String], new loginListener(this))
 
 
   server.start()
@@ -62,6 +66,18 @@ class OfficeHoursServer() {
   }
   def broadcastQueue(server: OfficeHoursServer,messageType:String,value:String): Unit ={
     server.loggedInClients.foreach(_.sendEvent(messageType,value))
+  }
+  def validateLogin(file:String,username:String,password:String): Boolean ={
+    var check:Boolean=false
+    val pasred=Json.parse(file)
+    val ListofTA:Array[Map[String,String]]=(pasred\"TA_Credentials").as[Array[Map[String,String]]]
+
+    for(elem<-ListofTA){
+      if( elem("ubit")==username && elem("password")== password){
+        check=true
+      }
+    }
+    check
   }
 
 }
@@ -90,7 +106,7 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
       }
     }
     else{
-      server.taCount-=1
+//      server.taCount-=1
     }
     server.server.getBroadcastOperations.sendEvent("count", server.countJSON())
 //    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
@@ -183,6 +199,23 @@ class doneHelpingListener(server: OfficeHoursServer) extends DataListener[String
 class countListener(server:OfficeHoursServer) extends DataListener[Nothing]{
   override def onData(socketIOClient: SocketIOClient, t: Nothing, ackRequest: AckRequest): Unit = {
     server.server.getBroadcastOperations.sendEvent("count", server.countJSON())
+  }
+}
+
+class loginListener(server: OfficeHoursServer) extends DataListener[String] {
+  override def onData(socket: SocketIOClient, message: String, ackRequest: AckRequest): Unit = {
+    println("Checking")
+    val loginInfo=Json.parse(message)
+    val username:String= (loginInfo\"username").as[String]
+    val password:String= (loginInfo\"password").as[String]
+
+    if(server.validateLogin(server.cred,username,password)){
+      socket.sendEvent("valid_Check")
+    }
+    else{
+      socket.sendEvent("invalid")
+    }
+
   }
 }
 
