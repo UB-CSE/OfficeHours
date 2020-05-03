@@ -9,6 +9,10 @@ trait DatabaseAPI {
   def getQueue: List[StudentInQueue]
   def addTA(username:String):Unit
   def addStudentHelped(usernameTA:String): Unit
+  def getTAHelpInfo():Map[String,Int]
+  def getTopicStat():Map[String,Int]
+  def getSubtopicStat():Map[String,Int]
+
 
 
 }

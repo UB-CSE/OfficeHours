@@ -47,6 +47,10 @@ class OfficeHoursServer() {
   server.addEventListener("done_helping", classOf[String], new doneHelpingListener(this))
   server.addEventListener("first_count", classOf[Nothing], new countListener(this))
   server.addEventListener("check_login", classOf[String], new loginListener(this))
+  server.addEventListener("get_TA_Stat", classOf[Nothing], new TAStatListener(this))
+  server.addEventListener("get_Student_Stat", classOf[String], new StudentStatListener(this))
+
+
 
 
   server.start()
@@ -264,6 +268,31 @@ class loginListener(server: OfficeHoursServer) extends DataListener[String] {
     else{
       socket.sendEvent("invalid")
     }
+  }
+}
+
+class TAStatListener(server:OfficeHoursServer) extends DataListener[Nothing]{
+  override def onData(socketIOClient: SocketIOClient, t: Nothing, ackRequest: AckRequest): Unit = {
+    val TAinfo:Map[String,Int]=server.database.getTAHelpInfo()
+    println(TAinfo)
+  }
+}
+
+class StudentStatListener(server: OfficeHoursServer) extends DataListener[String] {
+  override def onData(socket: SocketIOClient, option: String, ackRequest: AckRequest): Unit = {
+
+    if(option=="statTopic"){
+      val Studentinfo:Map[String,Int]=server.database.getTopicStat()
+      println(Studentinfo)
+      socket.sendEvent("showTopicPie",Json.stringify(Json.toJson(Studentinfo)))
+    }
+    else{
+      val Studentinfo:Map[String,Int]=server.database.getSubtopicStat()
+      println(Studentinfo)
+      socket.sendEvent("showSubtopicPie",Json.stringify(Json.toJson(Studentinfo)))
+
+    }
+
   }
 }
 

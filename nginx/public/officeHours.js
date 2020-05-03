@@ -1,4 +1,7 @@
 const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
+google.charts.load('current', {'packages':['corechart']});
+
+
 
 socket.on('queue', displayQueue);
 socket.on('message', displayMessageTA);
@@ -8,6 +11,12 @@ socket.on('done', studentDone);
 socket.on('count', counter);
 socket.on('valid_Check',displayTA);
 socket.on("invalid",displayInvalid);
+socket.on("showTopicPie",getTopicPieData);
+socket.on("showSubtopicPie",getSubtopicPieData);
+
+
+
+
 
 
 
@@ -21,6 +30,14 @@ let lecture=Array("Unit-Testing","Test-Factoring","Voting-Class","Reference-Refe
 let hw=Array("Physics-Engine","Rhyming-Dictionary","Calculator","Microwave","Genetic-Algorithm","Recommendations","Decision-Tree","Maze-Solver","Clicker")
 let appObj=Array("Program-Execution","Object-Oriented-Programming","Functional-Programming","Data-Structures-&-Algorithms","Event-Based-Architectures")
 let lab=Array("Program-Execution","Object-Oriented-Programming","Functional-Programming","Data-Structures-&-Algorithms","Event-Based-Architectures")
+let topics=Array( "Lecture","Hw","AppObj","Lab")
+let subtopics=Array("Unit-Testing","Test-Factoring","Voting-Class","Reference-Referee","Reference-Trader","Reference-Batteries",
+    "Inheritance-Batteries","Polymorphic-Electronics","JSON-Store","Player-States","TV-States","Car-States",
+    "Function-and-Type-Parameters","Recursive-Fibonacci","Recursive-Factoring","Average-in-Range","Immutable-Point",
+    "Linked-List-Reduce","Backlog","Expression-Trees","BST-toList","Graph-Connections","Graph-Distance",
+    "Actors","Banking-Actor","Traffic-Actors","Websocket","Echo-Server","DM-Server","Physics-Engine","Rhyming-Dictionary","Calculator",
+    "Microwave","Genetic-Algorithm","Recommendations","Decision-Tree","Maze-Solver","Clicker","Program-Execution","Object-Oriented-Programming",
+    "Functional-Programming","Data-Structures-&-Algorithms","Event-Based-Architectures")
 
 let topicMap={
     "Lecture":lecture,
@@ -29,6 +46,9 @@ let topicMap={
     "Lab":lab
 }
 let username=""
+
+var data=[]
+var data2=[]
 
 function displayMessageTA(newMessage) {
     username=newMessage
@@ -131,6 +151,9 @@ function enterQueue() {
 }
 
 function displayTA() {
+
+    document.getElementById("HelpInfo").innerHTML=""
+
     let TAname=document.getElementById("username").value
     document.getElementById("optionButtons").innerHTML="";
     document.getElementById("subtitle").innerText="You are viewing the student queue";
@@ -224,8 +247,75 @@ function getStatsOption() {
         "        <option value=\"statTopic\">Topic Stats</option>\n" +
         "        <option value=\"statSubtopic\">Subtopic Stats</option>\n" +
         "        </select><br/>" +
-        "        <button id=\"buttonNext\" class= \"addSpace\">Next</button>"
+        "        <button id=\"buttonNext\" class= \"addSpace\" onclick=\"getInfo();\">Next</button>"+
+        "        <div id=\"displayinfo\" class= \"addSpace\" align='center' ></div>"
 
     document.getElementById("statOption").innerHTML=selections;
+}
+function getInfo() {
+    let option=document.getElementById("statsValue").value;
+    if(option=="TaHelpCount"){
+        socket.emit("get_TA_Stat")
+    }
+    else{
+        socket.emit("get_Student_Stat",option)
+    }
+}
+
+
+
+function getTopicPieData(message) {
+    var pasred=JSON.parse(message)
+    var tempdata=[]
+    tempdata.push(['Subject',"# of times asked"])
+
+    for( let value of topics){
+        if(value in pasred){
+            var temp=[value,pasred[value]]
+            tempdata.push(temp)
+        }
+    }
+
+    data=tempdata;
+    callPie();
+}
+
+function getSubtopicPieData(message) {
+    var pasred=JSON.parse(message)
+    var tempdata=[]
+    tempdata.push(['Subject',"# of times asked"])
+
+    for( let value of subtopics){
+        if(value in pasred){
+            var temp=[value,pasred[value]]
+            tempdata.push(temp)
+        }
+    }
+
+    data2=tempdata;
+    socket.emit("ad",data2)
+    callPie2();
+}
+function callPie() {
+    google.charts.setOnLoadCallback(displayPie);
 
 }
+function callPie2() {
+    google.charts.setOnLoadCallback(displayPie2);
+
+}
+function displayPie() {
+    document.getElementById('displayinfo').innerHTML=""
+    var chartload = google.visualization.arrayToDataTable(data);
+    var options = {'title':'What Students needed help with', 'width':550, 'height':500};
+    var chart = new google.visualization.PieChart(document.getElementById('displayinfo'));
+    chart.draw(chartload, options);
+}
+function displayPie2() {
+    document.getElementById('displayinfo').innerHTML=""
+    var chartload = google.visualization.arrayToDataTable(data2);
+    var options = {'title':'What Students needed help with', 'width':550, 'height':500};
+    var chart = new google.visualization.PieChart(document.getElementById('displayinfo'));
+    chart.draw(chartload, options);
+}
+

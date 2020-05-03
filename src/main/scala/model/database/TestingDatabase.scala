@@ -28,4 +28,14 @@ class TestingDatabase extends DatabaseAPI {
 
   }
 
+  override def getTAHelpInfo():Map[String,Int]={
+    ???
+  }
+  override def getTopicStat():Map[String,Int]={
+    ???
+  }
+  override def getSubtopicStat():Map[String,Int]={
+    ???
+  }
+
 }

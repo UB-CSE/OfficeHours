@@ -21,18 +21,33 @@ class Database extends DatabaseAPI{
 
   def setupTable(): Unit = {
     val statement = connection.createStatement()
+
+//    statement.execute("DROP TABLE queue")
+//    statement.execute("DROP TABLE TaStats")
+//    statement.execute("DROP TABLE questions")
+
+
     statement.execute("CREATE TABLE IF NOT EXISTS queue(username TEXT, timestamp BIGINT, topic TEXT, subtopic TEXT)")
     statement.execute("CREATE TABLE IF NOT EXISTS TaStats(username TEXT, numOfStudentsHelped INT)")
+    statement.execute("CREATE TABLE IF NOT EXISTS questions(topic TEXT, subtopic TEXT)")
+
   }
 
 
   override def addStudentToQueue(student: StudentInQueue): Unit = {
-    val statement = connection.prepareStatement("INSERT INTO queue VALUES (?,?,?,?)")
+
+    var statement = connection.prepareStatement("INSERT INTO queue VALUES (?,?,?,?)")
 
     statement.setString(1, student.username)
     statement.setLong(2, student.timestamp)
     statement.setString(3, student.topic)
     statement.setString(4, student.subtopic)
+    statement.execute()
+
+    statement = connection.prepareStatement("INSERT INTO questions VALUES (?,?)")
+    statement.setString(1, student.topic)
+    statement.setString(2, student.subtopic)
+
 
     statement.execute()
   }
@@ -106,4 +121,56 @@ class Database extends DatabaseAPI{
      statement.execute()
    }
 
+  override def getTAHelpInfo():Map[String,Int]={
+    var TAtoCount:Map[String,Int]=Map()
+
+    val statement = connection.prepareStatement("SELECT * FROM TaStats")
+    val result: ResultSet = statement.executeQuery()
+
+    while(result.next()){
+      val username = result.getString("username")
+      val count = result.getInt("numOfStudentsHelped")
+      TAtoCount=TAtoCount+(username->count)
+    }
+    TAtoCount
+  }
+  override def getTopicStat():Map[String,Int]={
+    var TopictoCount:Map[String,Int]=Map()
+
+    val statement = connection.prepareStatement("SELECT * FROM questions")
+    val result: ResultSet = statement.executeQuery()
+
+    while(result.next()){
+      val topic = result.getString("topic")
+
+      if(TopictoCount.contains(topic)){
+        val count=TopictoCount(topic)
+        TopictoCount=TopictoCount+(topic->(count+1))
+      }
+      else{
+        TopictoCount=TopictoCount+(topic->1)
+      }
+    }
+    TopictoCount
+
+  }
+  override def getSubtopicStat():Map[String,Int]={
+    var SubtopictoCount:Map[String,Int]=Map()
+
+    val statement = connection.prepareStatement("SELECT * FROM questions")
+    val result: ResultSet = statement.executeQuery()
+
+    while(result.next()){
+      val subtopic = result.getString("subtopic")
+
+      if(SubtopictoCount.contains(subtopic)){
+        val count=SubtopictoCount(subtopic)
+        SubtopictoCount=SubtopictoCount+(subtopic->(count+1))
+      }
+      else{
+        SubtopictoCount=SubtopictoCount+(subtopic->1)
+      }
+    }
+    SubtopictoCount
+  }
 }
