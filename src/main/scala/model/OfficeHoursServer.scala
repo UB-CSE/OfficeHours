@@ -54,8 +54,14 @@ class Login(server: OfficeHoursServer) extends DataListener[String] {
     val username = (json \ "username").as[String]
     val password = (json \ "password").as[String]
     //checks if password is correct and sends back if the password is invalid or other error messages
-    val login: String = server.database.authenticate(username, password)
-    if (login == "logged in") {
+    var login: String = ""
+    if (password != "") {
+      login = server.database.authenticate(username, password)
+    }
+    if(password == ""){
+      client.sendEvent("error")
+    }
+    else if (login == "logged in") {
       // sends back event if login was successful
       client.sendEvent("successful login")
       //add actor creation here if you would like for concurrency
@@ -65,7 +71,7 @@ class Login(server: OfficeHoursServer) extends DataListener[String] {
       client.sendEvent("bad pass")
     }
     else if ("DNE" == login) {
-      //send back event DNE if acount does not exist
+      //send back event DNE if account does not exist
       client.sendEvent("DNE")
     }
     else {
@@ -77,16 +83,23 @@ class Login(server: OfficeHoursServer) extends DataListener[String] {
 
 class Register(server: OfficeHoursServer) extends DataListener[String]{
   override def onData(client: SocketIOClient, data: String, ackSender: AckRequest): Unit = {
+    println("here")
     val json = Json.parse(data)
     //parses expected json
+    println(json)
     val password = (json \ "password").as[String]
     val username = (json \ "username").as[String]
+    println(List(password,username))
     //creates salt for password
+    println(password)
+    println(username)
     val salt = generateSalt
     // hashes password using salt
     val hashpass = password.bcrypt(salt)
     //checks if that user can be added to data base or if it already exists
-    if(server.database.addUserToAuthenticate(username, hashpass, salt)) {
+    val check = server.database.addUserToAuthenticate(username, hashpass, salt)
+    println(check)
+    if(check) {
       //if it was created successfully event is sent back to like
       client.sendEvent("successCreate")
     }

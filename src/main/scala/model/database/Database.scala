@@ -7,9 +7,9 @@ import com.github.t3hnar.bcrypt._
 
 class Database extends DatabaseAPI{
 
-  val url = "jdbc:mysql://mysql/officehours?autoReconnect=true"
-  val username: String = sys.env("DB_USERNAME")
-  val password: String = sys.env("DB_PASSWORD")
+  val url = "jdbc:mysql://localhost/mysql?serverTimezone=UTC"
+  val username: String = "root"//sys.env("DB_USERNAME")
+  val password: String = "Dragonfriend00!"//sys.env("DB_PASSWORD")
 
   var connection: Connection = DriverManager.getConnection(url, username, password)
   setupTable()
@@ -27,7 +27,6 @@ class Database extends DatabaseAPI{
    val result = connection.prepareStatement("SELECT * FROM authentication WHERE username=?")
    result.setString(1, username)
    val result2 = result.executeQuery()
-
    //checks to make sure user does not exist
    if(!result2.next()) {
      //adds user to database
@@ -37,7 +36,7 @@ class Database extends DatabaseAPI{
      statement.setString(2, hashpass)
      statement.setString(3, salt)
 
-     statement.execute
+     statement.execute()
      true
    }
    else
@@ -50,7 +49,11 @@ class Database extends DatabaseAPI{
     val result = connection.prepareStatement("SELECT * FROM authentication WHERE username=?")
     result.setString(1, username)
     val result2 = result.executeQuery()
-
+    val result3 = connection.prepareStatement("SELECT * FROM authentication")
+    val result4 = result3.executeQuery()
+    while(result4.next()) {
+      println(result4.getString("username"))
+    }
     // checks if student exits
     if(result2.next()) {
       //hashes password and checks if it is correct based on the salt

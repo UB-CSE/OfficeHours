@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <script src="officeHours.js"></script>
+</head>
+<body>
+<script>
+    sessionStorage.setItem("loggedIn", false)
+</script>
+<label for="username">Username</label>
+<input type="text" id="username"/> <br>
+<label for="password">Password</label>
+<input type="password" id="password"/> <br>
+<button onclick="login();">Login</button>
+<button onclick="createPage();">Create Account</button>
+</body>
+</html>

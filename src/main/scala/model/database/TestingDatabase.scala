@@ -21,4 +21,7 @@ class TestingDatabase extends DatabaseAPI {
     data.reverse
   }
 
+  override def addUserToAuthenticate(username: String, hashpass: String, salt: String): Boolean = true
+
+  override def authenticate(username: String, hashpass: String): String = ""
 }
