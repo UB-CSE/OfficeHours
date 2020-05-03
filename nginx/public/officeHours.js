@@ -13,7 +13,7 @@ function displayQueue(queueJSON) {
     let formattedQueue = "";
     let count = 1
     for (const student of queue) {
-        formattedQueue += count + ")  " + student['username'] + " has been waiting for  " + (student['timestamp']/60000000000.0).toFixed(3) + "  minutes "+ "  ETA:  " + count*10 + "  minutes" + "<br/><br/>"
+        formattedQueue += count + ")  " + student['username'] + "  has been waiting for  " + (student['timestamp']/60000000000.0).toFixed(3) + "  minutes "+ "  ETA:  " + count*10 + "  minutes" + "<br/><br/>"
         count+=1
     }
     document.getElementById("queue").innerHTML = formattedQueue;
