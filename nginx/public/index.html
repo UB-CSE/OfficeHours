@@ -9,21 +9,105 @@
 
 <br/>
 
-<h3 id="message">Welcome!</h3>
+<h1 id="message">Welcome!</h1>
 
-<p>Name</p>
-<input type="text" id="name"/>
-<button onclick="enterQueue();">Enter Queue</button>
+<h2 id="position"></h2>
+
+<h3>Name</h3>
+<form><input type="text" id="name"/></form>
+
+<style>
+    h1{
+        text-align: center;
+        font-size: 450%;
+        color:darkorange;
+        text-shadow: 2px 2px 5px black;
+    }
+    h2{
+        text-align: center;
+        font-size: 250%;
+        color:darkorange;
+        text-shadow: 2px 2px 5px black;
+    }
+    h3{
+        text-align: center;
+        font-size: 200%;
+        color:darkorange;
+        text-shadow: 2px 2px 3px black;
+    }
+    body {
+        background-image: url("https://i.pinimg.com/originals/a2/ba/4c/a2ba4c730534ab1025ff9c8680546378.jpg");
+    }
+    .button {
+        display: inline-block;
+        background-color: gold;
+        border: none;
+        border-radius: 8px;
+        color: darkorange;
+        text-align: center;
+        text-shadow: 1px 1px 2.5px black;
+        font-size: 25px;
+        padding: 25px;
+        width: 100%;
+        transition: all 0.5s;
+        cursor: pointer;
+        margin: 5px 0;
+    }
+
+    .button span {
+        cursor: pointer;
+        display: inline-block;
+        position: relative;
+        transition: 0.5s;
+    }
+
+    .button span:after {
+        content: '\00bb';
+        position: absolute;
+        opacity: 0;
+        top: 0;
+        right: -10px;
+        transition: 0.5s;
+    }
+
+    .button:hover span {
+        padding-right: 25px;
+    }
+
+    .button:hover span:after {
+        opacity: 1;
+        right: 0;
+    }
+    input[type=text] {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: 3px solid gold;
+        -webkit-transition: 0.5s;
+        transition: 0.5s;
+        outline: none;
+    }
+
+    input[type=text]:focus {
+        border: 3px solid goldenrod;
+    }
+</style>
+
+<button class = "button" style = "vertical-align: middle" onclick="enterQueue();"><span>Enter Queue</span></button>
 <br/><br/>
 
-<button onclick="readyToHelp();">TA Ready to Help</button>
+<button class = "button" style = "vertical-align: middle"onclick="readyToHelp();"><span>TA Ready to Help</span></button>
+
+</body>
 
 <br/>
 
-<div id="queue"></div>
+<h3 id="queue"></h3>
 
 <script src="officeHours.js"></script>
 
-
 </body>
+
+
 </html>

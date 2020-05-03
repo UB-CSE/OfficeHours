@@ -55,4 +55,19 @@ class Database extends DatabaseAPI{
     queue.reverse
   }
 
+  override def queuePosition(username:String): Int = {
+    val statement = connection.prepareStatement("SELECT * FROM queue WHERE username=?")
+    statement.setString(1, username)
+    val result: ResultSet = statement.executeQuery()
+    result.next()
+
+  0
+  }
+  override def queuePositionUpdate(): Int = {
+    val statement = connection.prepareStatement("SELECT * FROM queue WHERE username=?")
+    statement.setString(1, username)
+    val result: ResultSet = statement.executeQuery()
+    result.next()
+0
+  }
 }

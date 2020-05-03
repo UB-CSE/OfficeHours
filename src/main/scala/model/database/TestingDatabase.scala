@@ -14,6 +14,8 @@ class TestingDatabase extends DatabaseAPI {
 
   override def removeStudentFromQueue(username: String): Unit = {
     data = data.filter(_.username != username)
+    println(data)
+
   }
 
 
@@ -21,4 +23,27 @@ class TestingDatabase extends DatabaseAPI {
     data.reverse
   }
 
+  override def queuePosition(username: String): Int = {
+    var position: Int = 0
+    println(data)
+    val reversed = data.reverse
+    for (student <- reversed) {
+      if (student.username == username) {
+        student.position = reversed.indexOf(student) + 1
+        position = student.position
+      }
+    }
+    position
+  }
+
+  override def queuePositionUpdate: Int = {
+    //println(data)
+    var position: Int = 0
+    for (student <- data) {
+      student.position = student.position - 1
+      position = student.position
+    }
+    println(position)
+    position
+  }
 }

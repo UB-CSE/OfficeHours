@@ -25,6 +25,8 @@ object StudentInQueue {
 
 class StudentInQueue(val username: String, val timestamp: Long) {
 
+  var position:Int = 0
+
   def asJsValue(): JsValue ={
     val messageMap: Map[String, JsValue] = Map(
       "username" -> Json.toJson(username),
