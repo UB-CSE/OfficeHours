@@ -272,9 +272,9 @@ class loginListener(server: OfficeHoursServer) extends DataListener[String] {
 }
 
 class TAStatListener(server:OfficeHoursServer) extends DataListener[Nothing]{
-  override def onData(socketIOClient: SocketIOClient, t: Nothing, ackRequest: AckRequest): Unit = {
+  override def onData(socket: SocketIOClient, t: Nothing, ackRequest: AckRequest): Unit = {
     val TAinfo:Map[String,Int]=server.database.getTAHelpInfo()
-    println(TAinfo)
+    socket.sendEvent("showTable",Json.stringify(Json.toJson(TAinfo)))
   }
 }
 

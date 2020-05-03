@@ -1,7 +1,6 @@
 const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
 google.charts.load('current', {'packages':['corechart']});
-
-
+google.charts.load('current', {'packages':['table']});
 
 socket.on('queue', displayQueue);
 socket.on('message', displayMessageTA);
@@ -11,15 +10,9 @@ socket.on('done', studentDone);
 socket.on('count', counter);
 socket.on('valid_Check',displayTA);
 socket.on("invalid",displayInvalid);
+socket.on("showTable",getTableData)
 socket.on("showTopicPie",getTopicPieData);
 socket.on("showSubtopicPie",getSubtopicPieData);
-
-
-
-
-
-
-
 
 let lecture=Array("Unit-Testing","Test-Factoring","Voting-Class","Reference-Referee","Reference-Trader","Reference-Batteries",
     "Inheritance-Batteries","Polymorphic-Electronics","JSON-Store","Player-States","TV-States","Car-States",
@@ -39,6 +32,9 @@ let subtopics=Array("Unit-Testing","Test-Factoring","Voting-Class","Reference-Re
     "Microwave","Genetic-Algorithm","Recommendations","Decision-Tree","Maze-Solver","Clicker","Program-Execution","Object-Oriented-Programming",
     "Functional-Programming","Data-Structures-&-Algorithms","Event-Based-Architectures")
 
+var TaNames=Array("Ryan","Juan","Dylan","Sarah","Ariana")
+
+
 let topicMap={
     "Lecture":lecture,
     "Hw":hw,
@@ -49,6 +45,8 @@ let username=""
 
 var data=[]
 var data2=[]
+var table=[]
+var statdisplay=false
 
 function displayMessageTA(newMessage) {
     username=newMessage
@@ -185,11 +183,6 @@ function readyToHelp() {
 }
 function doneHelping() {
     if(document.getElementById("currentStudent").innerHTML.length>0) {
-
-        let text=document.getElementById("currentStudentName").innerText;
-        let words=text.split(" ")
-        let name= words[4]
-
         document.getElementById("currentStudent").innerHTML = "";
         socket.emit("done_helping",username)
     }
@@ -240,40 +233,49 @@ function displayInvalid() {
 }
 
 function getStatsOption() {
-    document.getElementById("statMain").innerText="Done"
+    if(statdisplay){
+        document.getElementById("statMain").innerText="Statistics"
+        document.getElementById("statOption").innerHTML=""
+        statdisplay=false
+    }
+    else {
+        document.getElementById("statMain").innerText="Done"
 
-    let selections="<label>What Statistics would you like:</label><br/>"+
-        "        <select id=\"statsValue\">\n" +
-        "        <option value=\"TaHelpCount\">TA Help Count</option>\n" +
-        "        <option value=\"statTopic\">Topic Stats</option>\n" +
-        "        <option value=\"statSubtopic\">Subtopic Stats</option>\n" +
-        "        </select><br/>" +
-        "        <button id=\"buttonNext\" class= \"addSpace\" onclick=\"getInfo();\">Show</button>"+
-        "        <div id=\"displayinfo\" align='center' ></div>"
+        let selections="<label>What Statistics would you like:</label><br/>"+
+            "        <select id=\"statsValue\">\n" +
+            "        <option value=\"TaHelpCount\">TA Help Count</option>\n" +
+            "        <option value=\"statTopic\">Topic Stats</option>\n" +
+            "        <option value=\"statSubtopic\">Subtopic Stats</option>\n" +
+            "        </select><br/>" +
+            "        <button id=\"buttonNext\" class= \"addSpace\" onclick=\"getInfo();\">Show</button>"+
+            "        <div id=\"displayinfo\" align='center' class= \"addSpace\" ></div>"
 
-    document.getElementById("statOption").innerHTML=selections;
+        document.getElementById("statOption").innerHTML=selections;
+        statdisplay=true
+    }
+
 }
 function getInfo() {
     let option=document.getElementById("statsValue").value;
     if(option=="TaHelpCount"){
-        socket.emit("get_TA_Stat")
+        socket.emit("get_TA_Stat");
     }
     else{
-        socket.emit("get_Student_Stat",option)
+        socket.emit("get_Student_Stat",option);
     }
 }
 
 
 
 function getTopicPieData(message) {
-    var pasred=JSON.parse(message)
-    var tempdata=[]
-    tempdata.push(['Subject',"# of times asked"])
+    var pasred=JSON.parse(message);
+    var tempdata=[];
+    tempdata.push(['Subject',"# of times asked"]);
 
     for( let value of topics){
         if(value in pasred){
-            var temp=[value,pasred[value]]
-            tempdata.push(temp)
+            var temp=[value,pasred[value]];
+            tempdata.push(temp);
         }
     }
 
@@ -282,20 +284,32 @@ function getTopicPieData(message) {
 }
 
 function getSubtopicPieData(message) {
-    var pasred=JSON.parse(message)
-    var tempdata=[]
-    tempdata.push(['Subject',"# of times asked"])
+    var pasred=JSON.parse(message);
+    var tempdata=[];
+    tempdata.push(['Subject',"# of times asked"]);
 
     for( let value of subtopics){
         if(value in pasred){
-            var temp=[value,pasred[value]]
-            tempdata.push(temp)
+            var temp=[value,pasred[value]];
+            tempdata.push(temp);
         }
     }
 
     data2=tempdata;
-    socket.emit("ad",data2)
     callPie2();
+}
+function getTableData(message) {
+    var pasred=JSON.parse(message);
+    var tempdata=[];
+
+    for( let value of TaNames){
+        if(value in pasred){
+            var temp=[value,pasred[value]];
+            tempdata.push(temp);
+        }
+    }
+    table=tempdata;
+    callTable();
 }
 function callPie() {
     google.charts.setOnLoadCallback(displayPie);
@@ -303,6 +317,10 @@ function callPie() {
 }
 function callPie2() {
     google.charts.setOnLoadCallback(displayPie2);
+
+}
+function callTable() {
+    google.charts.setOnLoadCallback(displayTable);
 
 }
 function displayPie() {
@@ -318,5 +336,15 @@ function displayPie2() {
     var options = {'title':'What Students needed help with:', 'width':550, 'height':500,'backgroundColor': '#cccccc'};
     var chart = new google.visualization.PieChart(document.getElementById('displayinfo'));
     chart.draw(chartload, options);
+}
+function displayTable() {
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Name');
+    data.addColumn('number', '# of Students Helped');
+    data.addRows(table)
+    var table2 = new google.visualization.Table(document.getElementById('displayinfo'));
+
+    table2.draw(data, {'showRowNumber': 'true', 'width': '50%', 'height': '100%'});
+
 }
 
