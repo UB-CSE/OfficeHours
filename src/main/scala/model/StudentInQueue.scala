@@ -28,7 +28,7 @@ class StudentInQueue(val username: String, val timestamp: Long) {
   def asJsValue(): JsValue ={
     val messageMap: Map[String, JsValue] = Map(
       "username" -> Json.toJson(username),
-      "timestamp" -> Json.toJson(timestamp)
+      "timestamp" -> Json.toJson(System.nanoTime() - timestamp)
     )
     Json.toJson(messageMap)
   }

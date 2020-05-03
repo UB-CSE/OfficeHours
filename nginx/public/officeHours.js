@@ -1,3 +1,4 @@
+
 const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
 
 socket.on('queue', displayQueue);
@@ -10,8 +11,10 @@ function displayMessage(newMessage) {
 function displayQueue(queueJSON) {
     const queue = JSON.parse(queueJSON);
     let formattedQueue = "";
+    let count = 1
     for (const student of queue) {
-        formattedQueue += student['username'] + " has been waiting since " + student['timestamp'] + "<br/>"
+        formattedQueue += count + ")  " + student['username'] + " has been waiting for  " + (student['timestamp']/60000000000.0).toFixed(3) + "  minutes "+ "  ETA:  " + count*10 + "  minutes" + "<br/><br/>"
+        count+=1
     }
     document.getElementById("queue").innerHTML = formattedQueue;
 }
