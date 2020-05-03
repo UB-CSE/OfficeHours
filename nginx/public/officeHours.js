@@ -167,7 +167,7 @@ function displayTA() {
     let queueFormat="<div id=\"queue\" class=\"queue\"></div>";
     document.getElementById("queueSection").innerHTML=queueFormat;
 
-    let statInfo="<div class=\"optionButton2\" onclick=\"getStatsOption();\"> Statistics </div>\n"+
+    let statInfo="<div id=\'statMain\' class=\"optionButton2\" onclick=\"getStatsOption();\"> Statistics </div>\n"+
         "<div id=\"statOption\"></div>"
 
     document.getElementById("statistics").innerHTML=statInfo;
@@ -240,6 +240,7 @@ function displayInvalid() {
 }
 
 function getStatsOption() {
+    document.getElementById("statMain").innerText="Done"
 
     let selections="<label>What Statistics would you like:</label><br/>"+
         "        <select id=\"statsValue\">\n" +
@@ -247,8 +248,8 @@ function getStatsOption() {
         "        <option value=\"statTopic\">Topic Stats</option>\n" +
         "        <option value=\"statSubtopic\">Subtopic Stats</option>\n" +
         "        </select><br/>" +
-        "        <button id=\"buttonNext\" class= \"addSpace\" onclick=\"getInfo();\">Next</button>"+
-        "        <div id=\"displayinfo\" class= \"addSpace\" align='center' ></div>"
+        "        <button id=\"buttonNext\" class= \"addSpace\" onclick=\"getInfo();\">Show</button>"+
+        "        <div id=\"displayinfo\" align='center' ></div>"
 
     document.getElementById("statOption").innerHTML=selections;
 }
@@ -307,14 +308,14 @@ function callPie2() {
 function displayPie() {
     document.getElementById('displayinfo').innerHTML=""
     var chartload = google.visualization.arrayToDataTable(data);
-    var options = {'title':'What Students needed help with', 'width':550, 'height':500};
+    var options = {'title':'What Students needed help with:', 'width':550, 'height':500, 'backgroundColor': '#cccccc'};
     var chart = new google.visualization.PieChart(document.getElementById('displayinfo'));
     chart.draw(chartload, options);
 }
 function displayPie2() {
     document.getElementById('displayinfo').innerHTML=""
     var chartload = google.visualization.arrayToDataTable(data2);
-    var options = {'title':'What Students needed help with', 'width':550, 'height':500};
+    var options = {'title':'What Students needed help with:', 'width':550, 'height':500,'backgroundColor': '#cccccc'};
     var chart = new google.visualization.PieChart(document.getElementById('displayinfo'));
     chart.draw(chartload, options);
 }
