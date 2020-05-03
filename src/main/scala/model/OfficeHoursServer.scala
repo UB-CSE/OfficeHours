@@ -22,8 +22,10 @@ class OfficeHoursServer() {
   var SocketToTA: Map[SocketIOClient,String]=Map()
 
   var loggedInClients:List[SocketIOClient]=List()
+
   var studentCount:Int=0
   var taCount:Int=0
+
   val random = new scala.util.Random
 
   val cred=Source.fromFile("credentials.json").mkString
@@ -93,8 +95,6 @@ class OfficeHoursServer() {
         TaMap+=(name->status)
       }
       else{
-        println(name)
-        println(status)
         TaMap+=(name->bool)
       }
     }
@@ -108,7 +108,6 @@ class OfficeHoursServer() {
 
     for(elem<-ListofTA){
       val name=elem("ubit")
-      println(server.TAonline(name))
       if( elem("ubit")==username && elem("password")== password && !server.TAonline(name) ){
         check=true
         server.TAonline=server.updateTaOnline(file,name,true)
@@ -168,7 +167,6 @@ class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String]
   override def onData(socket: SocketIOClient, data: String, ackRequest: AckRequest): Unit = {
 
     val  num:Int=server.random.nextInt(1000)
-    println(num)
 
     server.loggedInClients = server.loggedInClients :+ socket
 
@@ -217,6 +215,8 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
 class displayTAListener(server:OfficeHoursServer) extends DataListener[String]{
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
 
+    server.database.addTA(username)
+
     server.loggedInClients = server.loggedInClients :+ socket
 
     server.SocketToTA += (socket -> username)
@@ -239,6 +239,8 @@ class alertListener(server: OfficeHoursServer) extends DataListener[String] {
 
 class doneHelpingListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
+    val TaUsername=server.SocketToTA(socket)
+    server.database.addStudentHelped(TaUsername)
     val socketToSend=server.usernameToSocket(username)
     socketToSend.sendEvent("done")
   }
@@ -252,7 +254,6 @@ class countListener(server:OfficeHoursServer) extends DataListener[Nothing]{
 
 class loginListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, message: String, ackRequest: AckRequest): Unit = {
-    println("Checking")
     val loginInfo=Json.parse(message)
     val username:String= (loginInfo\"username").as[String]
     val password:String= (loginInfo\"password").as[String]

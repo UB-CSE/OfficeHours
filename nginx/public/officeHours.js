@@ -144,6 +144,12 @@ function displayTA() {
     let queueFormat="<div id=\"queue\" class=\"queue\"></div>";
     document.getElementById("queueSection").innerHTML=queueFormat;
 
+    let statInfo="<div class=\"optionButton2\" onclick=\"getStatsOption();\"> Statistics </div>\n"+
+        "<div id=\"statOption\"></div>"
+
+    document.getElementById("statistics").innerHTML=statInfo;
+
+
     socket.emit("display_TA",TAname)
 }
 
@@ -208,4 +214,18 @@ function checkLogin() {
 function displayInvalid() {
     let Error="<br/><p style=\"color:red\" class=\"center\" >Invalid Username or Password!</p>"
     document.getElementById("HelpInfo").innerHTML=Error
+}
+
+function getStatsOption() {
+
+    let selections="<label>What Statistics would you like:</label><br/>"+
+        "        <select id=\"statsValue\">\n" +
+        "        <option value=\"TaHelpCount\">TA Help Count</option>\n" +
+        "        <option value=\"statTopic\">Topic Stats</option>\n" +
+        "        <option value=\"statSubtopic\">Subtopic Stats</option>\n" +
+        "        </select><br/>" +
+        "        <button id=\"buttonNext\" class= \"addSpace\">Next</button>"
+
+    document.getElementById("statOption").innerHTML=selections;
+
 }

@@ -21,4 +21,11 @@ class TestingDatabase extends DatabaseAPI {
     data.reverse
   }
 
+  override def addTA(username:String):Unit={
+
+  }
+  override def addStudentHelped(usernameTA:String): Unit={
+
+  }
+
 }

@@ -22,6 +22,7 @@ class Database extends DatabaseAPI{
   def setupTable(): Unit = {
     val statement = connection.createStatement()
     statement.execute("CREATE TABLE IF NOT EXISTS queue(username TEXT, timestamp BIGINT, topic TEXT, subtopic TEXT)")
+    statement.execute("CREATE TABLE IF NOT EXISTS TaStats(username TEXT, numOfStudentsHelped INT)")
   }
 
 
@@ -61,5 +62,48 @@ class Database extends DatabaseAPI{
     }
     queue.reverse
   }
+
+  override def addTA(username:String):Unit={
+    var statement = connection.prepareStatement("SELECT * FROM TaStats")
+    val result: ResultSet = statement.executeQuery()
+    var nameOfTA:List[String]=List()
+
+    while (result.next()) {
+      val username2 = result.getString("username")
+      println(username2)
+      nameOfTA=nameOfTA:+username2
+    }
+
+    if(!nameOfTA.contains(username)){
+      println("Adding")
+      statement = connection.prepareStatement("INSERT INTO TaStats VALUES (?,?)")
+      statement.setString(1, username)
+      statement.setInt(2, 0)
+
+      statement.execute()
+    }
+    else{
+      println("Already in the database")
+    }
+
+    statement.execute()
+  }
+
+   override def addStudentHelped(usernameTA:String): Unit ={
+     println(usernameTA)
+     var statement = connection.prepareStatement("SELECT*FROM TaStats WHERE username=?")
+     statement.setString(1, usernameTA)
+     val result: ResultSet = statement.executeQuery()
+     if(result.first()){
+       val num:Int=result.getInt(2)
+       val updatedNum=num+1
+       println(result)
+       println(updatedNum)
+
+       statement = connection.prepareStatement("UPDATE TaStats SET numOfStudentsHelped=numOfStudentsHelped+1 WHERE username = ?")
+       statement.setString(1, usernameTA)
+     }
+     statement.execute()
+   }
 
 }
