@@ -27,6 +27,7 @@ class OfficeHoursServer() {
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
+  server.addEventListener("jumbotron", classOf[Nothing], new JumbotronListener(this))
 
   server.start()
 
@@ -44,6 +45,9 @@ object OfficeHoursServer {
   }
 }
 
+class JumbotronListener(server: OfficeHoursServer) extends DataListener[Nothing] {
+  override def onData(client: SocketIOClient, data: Nothing, ackSender: AckRequest): Unit = ???
+}
 
 class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListener {
   override def onDisconnect(socket: SocketIOClient): Unit = {
