@@ -23,17 +23,6 @@ let lecture=Array("Unit-Testing","Test-Factoring","Voting-Class","Reference-Refe
 let hw=Array("Physics-Engine","Rhyming-Dictionary","Calculator","Microwave","Genetic-Algorithm","Recommendations","Decision-Tree","Maze-Solver","Clicker")
 let appObj=Array("Program-Execution","Object-Oriented-Programming","Functional-Programming","Data-Structures-&-Algorithms","Event-Based-Architectures")
 let lab=Array("Program-Execution","Object-Oriented-Programming","Functional-Programming","Data-Structures-&-Algorithms","Event-Based-Architectures")
-let topics=Array( "Lecture","Hw","AppObj","Lab")
-let subtopics=Array("Unit-Testing","Test-Factoring","Voting-Class","Reference-Referee","Reference-Trader","Reference-Batteries",
-    "Inheritance-Batteries","Polymorphic-Electronics","JSON-Store","Player-States","TV-States","Car-States",
-    "Function-and-Type-Parameters","Recursive-Fibonacci","Recursive-Factoring","Average-in-Range","Immutable-Point",
-    "Linked-List-Reduce","Backlog","Expression-Trees","BST-toList","Graph-Connections","Graph-Distance",
-    "Actors","Banking-Actor","Traffic-Actors","Websocket","Echo-Server","DM-Server","Physics-Engine","Rhyming-Dictionary","Calculator",
-    "Microwave","Genetic-Algorithm","Recommendations","Decision-Tree","Maze-Solver","Clicker","Program-Execution","Object-Oriented-Programming",
-    "Functional-Programming","Data-Structures-&-Algorithms","Event-Based-Architectures")
-
-var TaNames=Array("Ryan","Juan","Dylan","Sarah","Ariana")
-
 
 let topicMap={
     "Lecture":lecture,
@@ -270,13 +259,20 @@ function getInfo() {
 function getTopicPieData(message) {
     var pasred=JSON.parse(message);
     var tempdata=[];
+    var topics= pasred['topics']
+    var count= pasred['count']
+
     tempdata.push(['Subject',"# of times asked"]);
 
     for( let value of topics){
-        if(value in pasred){
-            var temp=[value,pasred[value]];
-            tempdata.push(temp);
-        }
+        // if(value in pasred){
+        //     var temp=[value,pasred[value]];
+        //     tempdata.push(temp);
+        // }
+        var index=topics.indexOf(value);
+        var pairedVal=count[index];
+        var temp=[value,pairedVal];
+        tempdata.push(temp);
     }
 
     data=tempdata;
@@ -286,13 +282,19 @@ function getTopicPieData(message) {
 function getSubtopicPieData(message) {
     var pasred=JSON.parse(message);
     var tempdata=[];
+    var subtopics= pasred['subtopics'];
+    var count= pasred['count'];
     tempdata.push(['Subject',"# of times asked"]);
 
     for( let value of subtopics){
-        if(value in pasred){
-            var temp=[value,pasred[value]];
-            tempdata.push(temp);
-        }
+        // if(value in pasred){
+        //     var temp=[value,pasred[value]];
+        //     tempdata.push(temp);
+        // }
+        var index=subtopics.indexOf(value);
+        var pairedVal=count[index];
+        var temp=[value,pairedVal];
+        tempdata.push(temp);
     }
 
     data2=tempdata;
@@ -301,12 +303,18 @@ function getSubtopicPieData(message) {
 function getTableData(message) {
     var pasred=JSON.parse(message);
     var tempdata=[];
+    var names= pasred['names'];
+    var count= pasred['count'];
 
-    for( let value of TaNames){
-        if(value in pasred){
-            var temp=[value,pasred[value]];
-            tempdata.push(temp);
-        }
+    for( let value of names){
+        // if(value in pasred){
+        //     var temp=[value,pasred[value]];
+        //     tempdata.push(temp);
+        // }
+        var index=names.indexOf(value);
+        var pairedVal=count[index];
+        var temp=[value,pairedVal];
+        tempdata.push(temp);
     }
     table=tempdata;
     callTable();

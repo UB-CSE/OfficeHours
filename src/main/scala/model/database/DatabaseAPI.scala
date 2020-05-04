@@ -1,6 +1,7 @@
 package model.database
 
 import model.StudentInQueue
+import play.api.libs.json.JsValue
 
 trait DatabaseAPI {
 
@@ -9,9 +10,9 @@ trait DatabaseAPI {
   def getQueue: List[StudentInQueue]
   def addTA(username:String):Unit
   def addStudentHelped(usernameTA:String): Unit
-  def getTAHelpInfo():Map[String,Int]
-  def getTopicStat():Map[String,Int]
-  def getSubtopicStat():Map[String,Int]
+  def getTAHelpInfo():Map[String,JsValue]
+  def getTopicStat():Map[String,JsValue]
+  def getSubtopicStat():Map[String,JsValue]
 
 
 

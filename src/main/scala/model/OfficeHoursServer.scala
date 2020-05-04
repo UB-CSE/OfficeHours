@@ -273,7 +273,8 @@ class loginListener(server: OfficeHoursServer) extends DataListener[String] {
 
 class TAStatListener(server:OfficeHoursServer) extends DataListener[Nothing]{
   override def onData(socket: SocketIOClient, t: Nothing, ackRequest: AckRequest): Unit = {
-    val TAinfo:Map[String,Int]=server.database.getTAHelpInfo()
+    val TAinfo:Map[String,JsValue]=server.database.getTAHelpInfo()
+    println(TAinfo)
     socket.sendEvent("showTable",Json.stringify(Json.toJson(TAinfo)))
   }
 }
@@ -282,12 +283,12 @@ class StudentStatListener(server: OfficeHoursServer) extends DataListener[String
   override def onData(socket: SocketIOClient, option: String, ackRequest: AckRequest): Unit = {
 
     if(option=="statTopic"){
-      val Studentinfo:Map[String,Int]=server.database.getTopicStat()
+      val Studentinfo:Map[String,JsValue]=server.database.getTopicStat()
       println(Studentinfo)
       socket.sendEvent("showTopicPie",Json.stringify(Json.toJson(Studentinfo)))
     }
     else{
-      val Studentinfo:Map[String,Int]=server.database.getSubtopicStat()
+      val Studentinfo:Map[String,JsValue]=server.database.getSubtopicStat()
       println(Studentinfo)
       socket.sendEvent("showSubtopicPie",Json.stringify(Json.toJson(Studentinfo)))
 

@@ -3,6 +3,7 @@ package model.database
 import java.sql.{Connection, DriverManager, ResultSet}
 
 import model.StudentInQueue
+import play.api.libs.json.{JsValue, Json}
 
 
 class Database extends DatabaseAPI{
@@ -88,6 +89,7 @@ class Database extends DatabaseAPI{
       println(username2)
       nameOfTA=nameOfTA:+username2
     }
+    println(nameOfTA)
 
     if(!nameOfTA.contains(username)){
       println("Adding")
@@ -95,7 +97,6 @@ class Database extends DatabaseAPI{
       statement.setString(1, username)
       statement.setInt(2, 0)
 
-      statement.execute()
     }
     else{
       println("Already in the database")
@@ -121,56 +122,71 @@ class Database extends DatabaseAPI{
      statement.execute()
    }
 
-  override def getTAHelpInfo():Map[String,Int]={
-    var TAtoCount:Map[String,Int]=Map()
+  override def getTAHelpInfo():Map[String,JsValue]={
+    var TAtoCount:Map[String,JsValue]=Map()
+    var TaName:List[String]=List()
+    var countList:List[Int]=List()
 
     val statement = connection.prepareStatement("SELECT * FROM TaStats")
     val result: ResultSet = statement.executeQuery()
 
     while(result.next()){
+      println("check once")
       val username = result.getString("username")
       val count = result.getInt("numOfStudentsHelped")
-      TAtoCount=TAtoCount+(username->count)
+      TaName=TaName:+username
+      countList=countList:+count
     }
+    TAtoCount=TAtoCount+("names"->Json.toJson(TaName))
+    TAtoCount=TAtoCount+("count"->Json.toJson(countList))
     TAtoCount
   }
-  override def getTopicStat():Map[String,Int]={
-    var TopictoCount:Map[String,Int]=Map()
+  override def getTopicStat():Map[String,JsValue]={
+
+    var TopictoCount:Map[String,JsValue]=Map()
+    var topicNames:Array[String]=Array()
+    var count:Array[Int]=Array()
 
     val statement = connection.prepareStatement("SELECT * FROM questions")
     val result: ResultSet = statement.executeQuery()
 
     while(result.next()){
       val topic = result.getString("topic")
-
-      if(TopictoCount.contains(topic)){
-        val count=TopictoCount(topic)
-        TopictoCount=TopictoCount+(topic->(count+1))
+      if(topicNames.contains(topic)){
+        val index:Int=topicNames.indexOf(topic)
+        count(index)=count(index)+1
       }
       else{
-        TopictoCount=TopictoCount+(topic->1)
+        topicNames=topicNames:+topic
+        count=count:+1
       }
     }
+    TopictoCount=TopictoCount+("topics"->Json.toJson(topicNames))
+    TopictoCount=TopictoCount+("count"->Json.toJson(count))
     TopictoCount
 
   }
-  override def getSubtopicStat():Map[String,Int]={
-    var SubtopictoCount:Map[String,Int]=Map()
+  override def getSubtopicStat():Map[String,JsValue]={
+    var SubtopictoCount:Map[String,JsValue]=Map()
+    var subtopicNames:List[String]=List()
+    var count:Array[Int]=Array()
 
     val statement = connection.prepareStatement("SELECT * FROM questions")
     val result: ResultSet = statement.executeQuery()
 
     while(result.next()){
       val subtopic = result.getString("subtopic")
-
-      if(SubtopictoCount.contains(subtopic)){
-        val count=SubtopictoCount(subtopic)
-        SubtopictoCount=SubtopictoCount+(subtopic->(count+1))
+      if(subtopicNames.contains(subtopic)){
+        val index:Int=subtopicNames.indexOf(subtopic)
+        count(index)=count(index)+1
       }
       else{
-        SubtopictoCount=SubtopictoCount+(subtopic->1)
+        subtopicNames=subtopicNames:+subtopic
+        count=count:+1
       }
     }
+    SubtopictoCount=SubtopictoCount+("subtopics"->Json.toJson(subtopicNames))
+    SubtopictoCount=SubtopictoCount+("count"->Json.toJson(count))
     SubtopictoCount
   }
 }
