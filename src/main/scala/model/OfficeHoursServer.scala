@@ -47,7 +47,7 @@ object OfficeHoursServer {
 
 class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListener {
   override def onDisconnect(socket: SocketIOClient): Unit = {
-    if (!server.socketToUsername.contains(socket)) {
+    if (server.socketToUsername.contains(socket)) {
       val username = server.socketToUsername(socket)
         server.socketToUsername -= socket
       if (server.usernameToSocket.contains(username)) {
