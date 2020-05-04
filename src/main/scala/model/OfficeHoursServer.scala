@@ -74,6 +74,9 @@ class Login(server: OfficeHoursServer) extends DataListener[String] {
       //send back event DNE if account does not exist
       client.sendEvent("DNE")
     }
+    else if (login == "bad user"){
+      client.sendEvent("bad user")
+    }
     else {
       //all other errors fall in this category and send back an error message to the client
       client.sendEvent("error")

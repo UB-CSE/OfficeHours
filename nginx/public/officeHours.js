@@ -9,6 +9,9 @@ socket.on("successful login", function(data){
     sessionStorage.setItem("loggedin", true)
     changePage()
 })
+socket.on("bad user", function() {
+  alert("please enter a valid username")
+})
 socket.on("bad pass", function(){
     alert("error wrong password")
 })

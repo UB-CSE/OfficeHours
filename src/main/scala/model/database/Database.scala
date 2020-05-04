@@ -20,15 +20,27 @@ class Database extends DatabaseAPI{
     statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT)")
     //creates table for storing username and passwords or registered people and storing the salt for there password
     statement.execute("CREATE TABLE IF NOT EXISTS authentication (username TEXT, password TEXT, salt TEXT)")
+    //makes username "" invalid for registration
+    val statement2 = connection.prepareStatement("SELECT * FROM authentication WHERE username = ?")
+    statement2.setString(1, "")
+    val result = statement2.executeQuery()
+    if(!result.next()) {
+      val statement3 = connection.prepareStatement("INSERT INTO authentication VALUES (?,?,?)")
+      statement3.setString(1, "")
+      statement3.setString(2, "")
+      statement3.setString(3, "")
+      statement3.execute()
+    }
   }
 
   override def addUserToAuthenticate(username: String, hashpass: String, salt: String): Boolean = {
-   //gets user if they exist in database
-   val result = connection.prepareStatement("SELECT * FROM authentication WHERE username=?")
-   result.setString(1, username)
-   val result2 = result.executeQuery()
-   //checks to make sure user does not exist
-   if(!result2.next()) {
+    //gets user if they exist in database
+    val result = connection.prepareStatement("SELECT * FROM authentication WHERE username=?")
+    result.setString(1, username)
+    val result2 = result.executeQuery()
+    //checks to make sure user does not exist
+
+    if(!result2.next()) {
      //adds user to database
      val statement = connection.prepareStatement("INSERT INTO authentication VALUE (?, ?, ?)")
 
@@ -49,13 +61,11 @@ class Database extends DatabaseAPI{
     val result = connection.prepareStatement("SELECT * FROM authentication WHERE username=?")
     result.setString(1, username)
     val result2 = result.executeQuery()
-    val result3 = connection.prepareStatement("SELECT * FROM authentication")
-    val result4 = result3.executeQuery()
-    while(result4.next()) {
-      println(result4.getString("username"))
-    }
     // checks if student exits
-    if(result2.next()) {
+    if(username == "") {
+      "bad user"
+    }
+    else if(result2.next()) {
       //hashes password and checks if it is correct based on the salt
       val hashpass = result2.getString("password")
       val salt = result2.getString("salt")

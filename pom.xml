@@ -11,8 +11,15 @@
     </properties>
 
 
-
     <dependencies>
+
+        <!-- https://mvnrepository.com/artifact/org.scalatest/scalatest -->
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_2.12</artifactId>
+            <version>3.0.5</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/com.github.t3hnar/scala-bcrypt -->
         <dependency>
             <groupId>com.github.t3hnar</groupId>
