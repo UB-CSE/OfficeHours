@@ -57,13 +57,25 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
   }
 }
 
-
+// my contribution made here:
+// Prevent students from entering if they are already in the queue
+// gets the current queue and checks if our username is in there.
+// if username is inside the queue, do not let them re enter queue.
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
-    server.socketToUsername += (socket -> username)
-    server.usernameToSocket += (username -> socket)
-    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    var studentIsInQueue = false
+    val queue: List[StudentInQueue] = server.database.getQueue
+    for (studentInQueue <- queue){
+      if (studentInQueue.username == username){
+        studentIsInQueue = true
+      }
+    }
+    if (!studentIsInQueue){
+      server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+      server.socketToUsername += (socket -> username)
+      server.usernameToSocket += (username -> socket)
+      server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    }
   }
 }
 
@@ -76,7 +88,7 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
       server.database.removeStudentFromQueue(studentToHelp.username)
       socket.sendEvent("message", "You are now helping " + studentToHelp.username)
       if(server.usernameToSocket.contains(studentToHelp.username)){
-        server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")
+        server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you!")
       }
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     }
