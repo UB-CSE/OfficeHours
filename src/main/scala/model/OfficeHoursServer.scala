@@ -1,6 +1,6 @@
 package model
 
-import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
+import com.corundumstudio.socketio.listener.{ConnectListener, DataListener, DisconnectListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
@@ -24,6 +24,7 @@ class OfficeHoursServer() {
 
   val server: SocketIOServer = new SocketIOServer(config)
 
+
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
@@ -31,6 +32,11 @@ class OfficeHoursServer() {
   server.addEventListener("register", classOf[String], new Register(this))
   //listens for event login and attempts to login in student // expects json in format {username : "username", password: "password"}
   server.addEventListener("login", classOf[String], new Login(this))
+  //challenge to determine if the user is already logged in or not
+  server.addEventListener("challenge", classOf[String], new Challenge(this))
+  //reconnect user after reloading page
+  server.addEventListener("reconnect", classOf[String], new Challenge(this))
+
   server.start()
 
   def queueJSON(): String = {
@@ -44,6 +50,33 @@ class OfficeHoursServer() {
 object OfficeHoursServer {
   def main(args: Array[String]): Unit = {
     new OfficeHoursServer()
+  }
+}
+
+class Challenge(server: OfficeHoursServer) extends DataListener[String] {
+  override def onData(client: SocketIOClient, data: String, ackSender: AckRequest): Unit = {
+    val json = Json.parse(data)
+    val username = (json \ "username").as[String]
+
+    if(username == "null") {
+      client.sendEvent("invalid")
+      println(username)
+    } else if(server.socketToUsername.contains(client)) {
+      println("here")
+      val username1 = server.socketToUsername(client)
+      println(username)
+      println(username1)
+      if(username1 == username) {
+        client.sendEvent("valid")
+      } else {
+        client.sendEvent("invalid")
+      }
+    } else {
+      println(server.socketToUsername.contains(client))
+      println(server.socketToUsername)
+      println(client)
+      client.sendEvent("invalid")
+    }
   }
 }
 
@@ -61,10 +94,18 @@ class Login(server: OfficeHoursServer) extends DataListener[String] {
     if(password == ""){
       client.sendEvent("error")
     }
+    else if(username == "null"){
+      client.sendEvent("bad user")
+    }
     else if (login == "logged in") {
       // sends back event if login was successful
-      client.sendEvent("successful login")
+      client.sendEvent("successful login", username)
       //add actor creation here if you would like for concurrency
+      //adds username and socket to maps
+      server.usernameToSocket += (username -> client)
+      server.socketToUsername += (client -> username)
+      println(server.usernameToSocket)
+      println(server.socketToUsername)
     }
     else if ("bad pass" == login) {
       //if password is invalid/wrong this is sent back to client
@@ -86,22 +127,22 @@ class Login(server: OfficeHoursServer) extends DataListener[String] {
 
 class Register(server: OfficeHoursServer) extends DataListener[String]{
   override def onData(client: SocketIOClient, data: String, ackSender: AckRequest): Unit = {
-    println("here")
     val json = Json.parse(data)
     //parses expected json
-    println(json)
     val password = (json \ "password").as[String]
     val username = (json \ "username").as[String]
-    println(List(password,username))
     //creates salt for password
-    println(password)
-    println(username)
     val salt = generateSalt
     // hashes password using salt
     val hashpass = password.bcrypt(salt)
     //checks if that user can be added to data base or if it already exists
-    val check = server.database.addUserToAuthenticate(username, hashpass, salt)
-    println(check)
+    var check: Boolean = false
+    if(username != "null") {
+      check = server.database.addUserToAuthenticate(username, hashpass, salt)
+    }
+    if(username == "null"){
+      client.sendEvent("error")
+    }
     if(check) {
       //if it was created successfully event is sent back to like
       client.sendEvent("successCreate")
@@ -128,10 +169,12 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
-    server.socketToUsername += (socket -> username)
-    server.usernameToSocket += (username -> socket)
-    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    if(server.usernameToSocket.contains(username) && server.socketToUsername.contains(socket)) {
+      if(server.usernameToSocket(username) == socket && server.socketToUsername(socket) == username) {
+        server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+        server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+      }
+    }
   }
 }
 
