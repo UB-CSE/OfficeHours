@@ -4,6 +4,7 @@ import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
+import scala.collection.mutable.ListBuffer
 
 
 class OfficeHoursServer() {
@@ -13,6 +14,9 @@ class OfficeHoursServer() {
   }else{
     new Database
   }
+
+  var listOfStudents:ListBuffer[SocketIOClient]=ListBuffer()
+  var listOfUsernames:ListBuffer[String]=ListBuffer()
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
@@ -60,10 +64,20 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
-    server.socketToUsername += (socket -> username)
-    server.usernameToSocket += (username -> socket)
-    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    if(!server.listOfStudents.contains(socket)) {
+      if(server.listOfUsernames.contains(username)){
+        println("Already in queue")
+        socket.sendEvent("alreadyInQueue")
+      }
+      if (!server.listOfUsernames.contains(username)) {
+        server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+        server.socketToUsername += (socket -> username)
+        server.usernameToSocket += (username -> socket)
+        server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+        server.listOfUsernames = username +: server.listOfUsernames
+        server.listOfStudents = socket +: server.listOfStudents
+      }
+    }
   }
 }
 
@@ -73,11 +87,14 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
     val queue = server.database.getQueue.sortBy(_.timestamp)
     if(queue.nonEmpty){
       val studentToHelp = queue.head
+      val indexOfSocket=server.listOfStudents.indexOf(server.usernameToSocket(studentToHelp.username))
+      server.listOfStudents.remove(indexOfSocket)
+      val indexOfUsername=server.listOfUsernames.indexOf(studentToHelp.username)
+      server.listOfUsernames.remove(indexOfUsername)
       server.database.removeStudentFromQueue(studentToHelp.username)
       socket.sendEvent("message", "You are now helping " + studentToHelp.username)
       if(server.usernameToSocket.contains(studentToHelp.username)){
         server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")
-        println("test commit")
       }
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     }
