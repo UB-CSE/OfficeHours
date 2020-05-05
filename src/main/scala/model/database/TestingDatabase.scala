@@ -5,6 +5,7 @@ import model.StudentInQueue
 class TestingDatabase extends DatabaseAPI {
 
   var data: List[StudentInQueue] = List()
+  var cheppu:List[String] = List()
 
 
   override def addStudentToQueue(student: StudentInQueue): Unit = {
@@ -20,5 +21,4 @@ class TestingDatabase extends DatabaseAPI {
   override def getQueue: List[StudentInQueue] = {
     data.reverse
   }
-
 }
