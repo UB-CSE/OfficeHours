@@ -2,6 +2,7 @@ const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
 
 socket.on('queue', displayQueue);
 socket.on('message', displayMessage);
+socket.on('update', displayTime);
 
 function displayMessage(newMessage) {
     document.getElementById("message").innerHTML = newMessage;
@@ -14,6 +15,9 @@ function displayQueue(queueJSON) {
         formattedQueue += student['username'] + " has been waiting since " + student['timestamp'] + "<br/>"
     }
     document.getElementById("queue").innerHTML = formattedQueue;
+}
+function displayTime(updatedTime) {
+    document.getElementById("wait").innerHTML = updatedTime;
 }
 
 

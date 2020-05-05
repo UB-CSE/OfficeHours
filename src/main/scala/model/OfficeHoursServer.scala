@@ -71,14 +71,30 @@ class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String]
 class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[Nothing] {
   override def onData(socket: SocketIOClient, dirtyMessage: Nothing, ackRequest: AckRequest): Unit = {
     val queue = server.database.getQueue.sortBy(_.timestamp)
+
     if(queue.nonEmpty){
       val studentToHelp = queue.head
+      //find amount of time it took for help in seconds
+      val timeForHelp = (System.nanoTime() - studentToHelp.timestamp) / 1000000000
+
       server.database.removeStudentFromQueue(studentToHelp.username)
       socket.sendEvent("message", "You are now helping " + studentToHelp.username)
       if(server.usernameToSocket.contains(studentToHelp.username)){
         server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")
       }
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+      if (timeForHelp == 1) {
+        //change seconds to second if its 1
+        server.server.getBroadcastOperations.sendEvent("update", "It took the previous student " + timeForHelp.toString + " second to wait for a TA")
+        //if its the user being helped change message
+        server.usernameToSocket(studentToHelp.username).sendEvent("update", "It took you " + timeForHelp.toString + " second to get help")
+      }
+      else {
+        server.server.getBroadcastOperations.sendEvent("update", "It took the previous student " + timeForHelp.toString + " seconds to wait for a TA")
+        server.usernameToSocket(studentToHelp.username).sendEvent("update", "It took you " + timeForHelp.toString + " seconds to get help")
+      }
+
+
     }
   }
 }
