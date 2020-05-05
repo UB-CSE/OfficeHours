@@ -16,6 +16,7 @@ class OfficeHoursServer() {
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
+  var dmConnection: Map[SocketIOClient, SocketIOClient] = Map()
 
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
@@ -27,6 +28,7 @@ class OfficeHoursServer() {
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
+  server.addEventListener("direct_message", classOf[String], new DMListener(this))
 
   server.start()
 
@@ -53,6 +55,12 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
       if (server.usernameToSocket.contains(username)) {
         server.usernameToSocket -= username
       }
+      if (server.dmConnection.contains(socket)) {
+        val otherUser = server.dmConnection(socket)
+        server.dmConnection -= socket
+        server.dmConnection -= otherUser
+        otherUser.sendEvent("dm_dc")
+      }
     }
   }
 }
@@ -77,10 +85,26 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
       socket.sendEvent("message", "You are now helping " + studentToHelp.username)
       if(server.usernameToSocket.contains(studentToHelp.username)){
         server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")
+        server.dmConnection += (socket -> server.usernameToSocket(studentToHelp.username),
+                                server.usernameToSocket(studentToHelp.username) -> socket)
       }
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     }
   }
 }
 
-
+class DMListener(server: OfficeHoursServer) extends DataListener[String] {
+  override def onData(sender: SocketIOClient, jsText: String, ackRequest: AckRequest): Unit = {
+    val message = Json.parse(jsText)
+    if (server.dmConnection.contains(sender)) {
+      val receiver = server.dmConnection(sender)
+      var senderName: String = "TA"
+      if (server.socketToUsername.contains(sender)) {
+        senderName = server.socketToUsername(sender)
+      }
+      val toSend: Map[String, String] = Map("sender" -> senderName, "text" -> (message \ "message").as[String])
+      receiver.sendEvent("direct_message", Json.stringify(Json.toJson(toSend)))
+      sender.sendEvent("direct_message", Json.stringify(Json.toJson(toSend)))
+    }
+  }
+}
