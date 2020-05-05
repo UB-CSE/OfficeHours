@@ -17,15 +17,17 @@ class Database extends DatabaseAPI{
 
   def setupTable(): Unit = {
     val statement = connection.createStatement()
-    statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT)")
+    statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT, issue TEXT)")
   }
 
 
   override def addStudentToQueue(student: StudentInQueue): Unit = {
-    val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?)")
+    val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?, ?)")
+
 
     statement.setString(1, student.username)
     statement.setLong(2, student.timestamp)
+    statement.setString(3, student.issue)
 
     statement.execute()
   }
@@ -47,9 +49,13 @@ class Database extends DatabaseAPI{
     var queue: List[StudentInQueue] = List()
 
     while (result.next()) {
+
       val username = result.getString("username")
       val timestamp = result.getLong("timestamp")
-      queue = new StudentInQueue(username, timestamp) :: queue
+      val issue = result.getString("issue")
+
+
+      queue = new StudentInQueue(username, timestamp, issue) :: queue
     }
 
     queue.reverse
