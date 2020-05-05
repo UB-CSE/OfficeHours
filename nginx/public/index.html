@@ -7,18 +7,23 @@
 </head>
 <body>
 
-zzz<br/>
-
-<h3 id="message">Welcome!</h3>
-
-<p>Name</p>
-<input type="text" id="name"/>
-<button onclick="enterQueue();">Enter Queue</button>
-<br/><br/>
-
-<button onclick="readyToHelp();">TA Ready to Help</button>
-
 <br/>
+
+<h3 id="message">Welcome to CSE 116 Office Hours!</h3>
+
+<p id="header">Enter your name:</p>
+<input type="text" id="name"/>
+<!--<br/><br/>-->
+<p id="header2">Are you a:</p>
+<!--<button onclick="enterQueue();" id="enter_queue_button">Enter Queue</button>-->
+<button onclick="registerStudent();" id="student_register">Student</button>
+<button onclick="registerTA();" id="ta_register">TA</button>
+<button onclick="checkPassword();" id="password_submit" hidden>Submit</button>
+<!--<br/><br/>-->
+<br/><br/>
+<button onclick="readyToHelp();" id="ready_to_help_button" hidden>TA Ready to Help</button>
+
+<br/><br/>
 
 <div id="queue"></div>
 
