@@ -1,6 +1,6 @@
 package model
 
-import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
+import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener, ConnectListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
@@ -24,6 +24,13 @@ class OfficeHoursServer() {
 
   val server: SocketIOServer = new SocketIOServer(config)
 
+  //Adding functionality to distinguish between TA and Student!
+  //Adding a Connect Listener which will prompt the User to select if they are a TA or a Student.
+  //If they are a student, they can only see THEIR request to be helped.
+  //If they are a TA, enter a password (for now will just check a string), and then they can see the whole queue.
+
+  server.addConnectListener(new ConnectionListener(this))
+
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
@@ -44,6 +51,11 @@ object OfficeHoursServer {
   }
 }
 
+class ConnectionListener(server: OfficeHoursServer) extends ConnectListener {
+  override def onConnect(socketIOClient: SocketIOClient): Unit = {
+
+  }
+}
 
 class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListener {
   override def onDisconnect(socket: SocketIOClient): Unit = {

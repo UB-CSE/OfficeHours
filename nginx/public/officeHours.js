@@ -21,6 +21,7 @@ function enterQueue() {
     let name = document.getElementById("name").value;
     socket.emit("enter_queue", name);
     document.getElementById("name").value = "";
+    //document.getElementById("queue").hidden = true
 }
 
 function readyToHelp() {
