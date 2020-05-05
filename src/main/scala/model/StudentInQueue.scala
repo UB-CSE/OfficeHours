@@ -4,7 +4,7 @@ import play.api.libs.json.{JsValue, Json}
 
 
 object StudentInQueue {
-
+//NOTICEME rED
   def cleanString(input: String): String = {
     var output = input
       .replace("&", "&amp;")
