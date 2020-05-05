@@ -9,11 +9,18 @@ function displayMessage(newMessage) {
 
 function displayQueue(queueJSON) {
     const queue = JSON.parse(queueJSON);
-    let formattedQueue = "";
+    document.getElementById("studentHelpedTable").innerHTML = "<tr>\n" +
+        "        <th>Name</th>\n" +
+        "        <th>Time In</th>\n" +
+        "    </tr>";
     for (const student of queue) {
-        formattedQueue += student['username'] + " has been waiting since " + student['timestamp'] + "<br/>"
+        let queueTable = document.getElementById("studentHelpedTable");
+        let row = queueTable.insertRow(1);
+        let firstCell = row.insertCell(0);
+        let secondCell = row.insertCell(1);
+        firstCell.innerHTML = student['username'];
+        secondCell.innerHTML = student['timestamp'];
     }
-    document.getElementById("queue").innerHTML = formattedQueue;
 }
 
 
