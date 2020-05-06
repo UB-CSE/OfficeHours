@@ -7,6 +7,7 @@ import model.database._
 
 
 class OfficeHoursServer() {
+  //added in a way for students to see their position in the queue, and an issue system.
   val database: DatabaseAPI = if(Configuration.DEV_MODE){
     new TestingDatabase
   }else{
