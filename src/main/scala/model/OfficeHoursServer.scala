@@ -5,6 +5,8 @@ import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, S
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
 
+import scala.collection.mutable.ListBuffer
+
 
 class OfficeHoursServer() {
 
@@ -16,6 +18,7 @@ class OfficeHoursServer() {
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
+  var currentQueue: ListBuffer[String] = ListBuffer()
 
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
@@ -60,10 +63,27 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
-    server.socketToUsername += (socket -> username)
-    server.usernameToSocket += (username -> socket)
-    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    if(!server.currentQueue.contains(username)){
+      server.currentQueue += username
+      server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+      server.socketToUsername += (socket -> username)
+      server.usernameToSocket += (username -> socket)
+      val position = server.currentQueue.indexOf(username) + 1
+      if(position==1){
+        socket.sendEvent("message","You have entered the queue, you're the first student!")
+      }else{
+        socket.sendEvent("message", "You have entered the queue at position: " + position + ". Please be patient, we're on the way!")
+      }
+      //server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    }else{
+      val position = server.currentQueue.indexOf(username) + 1
+      if(position==1){
+        socket.sendEvent("message","You're next in line, slow down!")
+      }else{
+        socket.sendEvent("message","You are already in the queue, in position: " + position + ". Please be patient.")
+      }
+
+    }
   }
 }
 
@@ -74,13 +94,15 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
     if(queue.nonEmpty){
       val studentToHelp = queue.head
       server.database.removeStudentFromQueue(studentToHelp.username)
+      server.currentQueue -= studentToHelp.username
       socket.sendEvent("message", "You are now helping " + studentToHelp.username)
       if(server.usernameToSocket.contains(studentToHelp.username)){
         server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")
       }
-      server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+      //server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     }
   }
 }
+
 
 
