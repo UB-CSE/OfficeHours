@@ -45,6 +45,7 @@ function registerTA() {
     let name = document.getElementById("name").value;
     socket.emit("ta", name);
     document.getElementById("name").value = "";
+    document.getElementById("name").type = "password";
     document.getElementById("header").innerHTML = "Enter the password:";
     // Remember the difference between .value and .innerHTML !
 
