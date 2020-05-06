@@ -1,5 +1,7 @@
 package model
 
+import java.util.Calendar
+
 import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
@@ -59,8 +61,11 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
-  override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+  override def onData(socket: SocketIOClient, jsonMappie: String, ackRequest: AckRequest): Unit = {
+    val mappie = Json.parse(jsonMappie)
+    val assignment = (mappie\ "assignment").as[String]
+    val username = (mappie\ "name").as[String]
+    server.database.addStudentToQueue(StudentInQueue(username, Calendar.getInstance().getTime.toString, assignment))
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
@@ -74,7 +79,7 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
     if(queue.nonEmpty){
       val studentToHelp = queue.head
       server.database.removeStudentFromQueue(studentToHelp.username)
-      socket.sendEvent("message", "You are now helping " + studentToHelp.username)
+      socket.sendEvent("message", "You are now helping " + studentToHelp.username + "with" + studentToHelp.assignment)
       if(server.usernameToSocket.contains(studentToHelp.username)){
         server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")
       }
