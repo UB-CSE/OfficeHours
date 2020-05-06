@@ -6,9 +6,10 @@ import model.StudentInQueue
 
 class Database extends DatabaseAPI {
 
-  val url = "jdbc:mysql://mysql/officehours"
+  val url = sys.env("DB_URL")
   val username: String = sys.env("DB_USERNAME")
   val password: String = sys.env("DB_PASSWORD")
+
 
   var connection: Connection = DriverManager.getConnection(url, username, password)
   setupTable()

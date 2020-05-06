@@ -56,6 +56,13 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
       }
       //if the student disconnects, remove them from the queue
       server.database.removeStudentFromQueue(username)
+      val queue = server.database.getQueue()
+      for(student <- queue){
+        if(server.usernameToSocket.contains(student.username)){
+          server.usernameToSocket(student.username).sendEvent("queuePos", "There is/are " + student.positionInQueue + " student(s) ahead of you, and the queue size is: " + queue.length + " student(s) long")
+        }
+      }
+      server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     }
   }
 }
