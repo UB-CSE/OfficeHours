@@ -58,7 +58,6 @@ function displayQueue(queueJSON) {
         let formattedQueue = "<ol>";
         for (const student of queue) {
             var studentValues=student['username'].split("#")
-            // formattedQueue +="<li>"+ student['username'] + " has been waiting since " + student['timestamp'] +"</li>"+ "<br/>"
             formattedQueue += "<li>" + studentValues[0] + " ~ " + student['topic'] + " / " + student['subtopic'] + "</li>" + "<br/>"
         }
 
@@ -181,7 +180,7 @@ function alertWindow() {
 }
 
 function studentDone() {
-    document.getElementById('currentStudent').innerHTML="<h2 style=\"color:green\">Thanks for attending Office Hours! See you next TIME </h2>\n";
+    document.getElementById('currentStudent').innerHTML="<h2 style=\"color:green\">Thanks for attending Office Hours! See you next time :) </h2>\n";
 }
 function counter(count) {
     let values=JSON.parse(count)
@@ -265,10 +264,6 @@ function getTopicPieData(message) {
     tempdata.push(['Subject',"# of times asked"]);
 
     for( let value of topics){
-        // if(value in pasred){
-        //     var temp=[value,pasred[value]];
-        //     tempdata.push(temp);
-        // }
         var index=topics.indexOf(value);
         var pairedVal=count[index];
         var temp=[value,pairedVal];
@@ -287,10 +282,6 @@ function getSubtopicPieData(message) {
     tempdata.push(['Subject',"# of times asked"]);
 
     for( let value of subtopics){
-        // if(value in pasred){
-        //     var temp=[value,pasred[value]];
-        //     tempdata.push(temp);
-        // }
         var index=subtopics.indexOf(value);
         var pairedVal=count[index];
         var temp=[value,pairedVal];
@@ -307,10 +298,6 @@ function getTableData(message) {
     var count= pasred['count'];
 
     for( let value of names){
-        // if(value in pasred){
-        //     var temp=[value,pasred[value]];
-        //     tempdata.push(temp);
-        // }
         var index=names.indexOf(value);
         var pairedVal=count[index];
         var temp=[value,pairedVal];
@@ -353,6 +340,5 @@ function displayTable() {
     var table2 = new google.visualization.Table(document.getElementById('displayinfo'));
 
     table2.draw(data, {'showRowNumber': 'true', 'width': '50%', 'height': '100%'});
-
 }
 
