@@ -21,8 +21,18 @@ function enterQueue() {
     let name = document.getElementById("name").value;
     socket.emit("enter_queue", name);
     document.getElementById("name").value = "";
+
+    let details = document.getElementById("details").value;
+    socket.emit("enter_queue", details);
+    document.getElementById("details").value = "";
 }
 
 function readyToHelp() {
     socket.emit("ready_for_student");
 }
+
+
+function notreadyToHelp() {
+    socket.emit("not_ready_for_student");
+}
+

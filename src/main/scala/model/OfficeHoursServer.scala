@@ -27,6 +27,8 @@ class OfficeHoursServer() {
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
+  server.addEventListener("not_ready_for_student", classOf[Nothing], new NotReadyForStudentListener(this))
+
 
   server.start()
 
@@ -76,11 +78,29 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
       server.database.removeStudentFromQueue(studentToHelp.username)
       socket.sendEvent("message", "You are now helping " + studentToHelp.username)
       if(server.usernameToSocket.contains(studentToHelp.username)){
-        server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")
+        server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you :)")
       }
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     }
   }
 }
+
+
+
+class NotReadyForStudentListener(server: OfficeHoursServer) extends DataListener[Nothing] {
+  override def onData(socket: SocketIOClient, dirtyMessage: Nothing, ackRequest: AckRequest): Unit = {
+    val queue = server.database.getQueue.sortBy(_.timestamp)
+    if(queue.nonEmpty){
+      val studentToHelp = queue.head
+      server.database.removeStudentFromQueue(studentToHelp.username)
+      socket.sendEvent("message", "You are not helping " + studentToHelp.username)
+      if(server.usernameToSocket.contains(studentToHelp.username)){
+        server.usernameToSocket(studentToHelp.username).sendEvent("message", "Sorry! Can't help. Need a better question :( ")
+      }
+      server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    }
+  }
+}
+
 
 
