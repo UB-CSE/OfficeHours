@@ -26,3 +26,20 @@ function enterQueue() {
 function readyToHelp() {
     socket.emit("ready_for_student");
 }
+
+function openOH(){
+    let password=document.getElementById("password").value;
+    socket.emit("oh_starting",password);
+    document.getElementById("password").value="";
+}
+function closeOH(){
+    let password=document.getElementById("password").value;
+    socket.emit("oh_ending",password);
+    document.getElementById("password").value="";
+}
+
+function clearQueue(){
+    let password=document.getElementById("password").value;
+    socket.emit("clear_queue",password);
+    document.getElementById("password").value="";
+}
