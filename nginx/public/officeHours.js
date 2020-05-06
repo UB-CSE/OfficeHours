@@ -19,11 +19,9 @@ function displayQueue(queueJSON) {
 
 function enterQueue() {
     let name = document.getElementById("name").value;
-    socket.emit("enter_queue", name);
-    document.getElementById("name").value = "";
-
     let details = document.getElementById("details").value;
-    socket.emit("enter_queue", details);
+    socket.emit("enter_queue", name + ":" + details);
+    document.getElementById("name").value = "";
     document.getElementById("details").value = "";
 }
 
