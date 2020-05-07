@@ -76,7 +76,7 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
       server.database.removeStudentFromQueue(studentToHelp.username)
       socket.sendEvent("message", "You are now helping " + studentToHelp.username)
       if(server.usernameToSocket.contains(studentToHelp.username)){
-        server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")
+        server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you!")
       }
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     }
