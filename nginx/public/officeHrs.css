@@ -43,7 +43,7 @@ body{
     width: 40%;
     height: 280px;
     border-radius: 200px;
-    border: 1px solid #ddd;
+    border: 3px solid #666666;
 }
 
 .clickMe {
@@ -56,7 +56,6 @@ body{
     outline: none;
     color: black;
     background-color: lightsteelblue;
-    border: none;
     border-radius: 15px;
     box-shadow: 0 9px #999;
 }
@@ -66,7 +65,7 @@ body{
 .clickMe:active {
     background-color: #07193b;
     color: white;
-    box-shadow: 0 5px #666;
+    box-shadow: 0 2px #666666;
     transform: translateY(4px);
 }
 
