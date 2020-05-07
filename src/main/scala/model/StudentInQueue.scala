@@ -1,8 +1,7 @@
 package model
 
 import play.api.libs.json.{JsValue, Json}
-
-
+import model.database.TimeStrings
 object StudentInQueue {
 
   def cleanString(input: String): String = {
@@ -25,10 +24,13 @@ object StudentInQueue {
 
 class StudentInQueue(val username: String, val timestamp: Long) {
 
+
+
   def asJsValue(): JsValue ={
+    var time = TimeStrings.getDateTime()
     val messageMap: Map[String, JsValue] = Map(
       "username" -> Json.toJson(username),
-      "timestamp" -> Json.toJson(timestamp)
+      "timestamp" -> Json.toJson(time),
     )
     Json.toJson(messageMap)
   }
