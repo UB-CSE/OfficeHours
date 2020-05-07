@@ -60,21 +60,14 @@ class Challenge(server: OfficeHoursServer) extends DataListener[String] {
 
     if(username == "null") {
       client.sendEvent("invalid")
-      println(username)
     } else if(server.socketToUsername.contains(client)) {
-      println("here")
       val username1 = server.socketToUsername(client)
-      println(username)
-      println(username1)
       if(username1 == username) {
         client.sendEvent("valid")
       } else {
         client.sendEvent("invalid")
       }
     } else {
-      println(server.socketToUsername.contains(client))
-      println(server.socketToUsername)
-      println(client)
       client.sendEvent("invalid")
     }
   }
@@ -104,8 +97,6 @@ class Login(server: OfficeHoursServer) extends DataListener[String] {
       //adds username and socket to maps
       server.usernameToSocket += (username -> client)
       server.socketToUsername += (client -> username)
-      println(server.usernameToSocket)
-      println(server.socketToUsername)
     }
     else if ("bad pass" == login) {
       //if password is invalid/wrong this is sent back to client
