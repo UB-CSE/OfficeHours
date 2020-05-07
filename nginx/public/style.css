@@ -1,0 +1,107 @@
+body{
+    background-color: #cccccc;
+}
+h1 {
+    text-align: center;
+}
+
+h2 {
+    text-align: center;
+}
+
+select {
+    display: block;
+    margin: 0 auto;
+}
+label {
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+}
+input {
+    display: block;
+    margin: 0 auto;
+}
+button {
+    display: block;
+    margin: 0 auto;
+}
+
+.optionButton {
+    font-family:'Open Sans Condensed', sans-serif;
+    text-align: center;
+    border: 2px solid #b3b3b3;
+    margin: auto;
+    text-transform: uppercase;
+    font-weight: bold;
+    background-color: #005bbb  ;
+    width: 30%;
+    font-size: 17px;
+    line-height: 1.33333em;
+    padding: 7px 18px;
+    margin-top: 0.8em;
+    border-radius: 18px;
+}
+
+.optionButton:hover {
+    background-color: #b3b3b3;
+    border: 2px solid #005bbb;
+}
+
+
+.optionButton2 {
+    font-family:'Open Sans Condensed', sans-serif;
+    text-align: center;
+    border: 2px solid #b3b3b3;
+    margin: auto;
+    text-transform: uppercase;
+    font-weight: bold;
+    background-color: #005bbb  ;
+    width: 20%;
+    font-size: 17px;
+    line-height: 1.33333em;
+    padding: 7px 18px;
+    margin-top: 0.8em;
+    border-radius: 18px;
+    margin-bottom: 20px;
+}
+
+.optionButton2:hover {
+    background-color: #b3b3b3;
+    border: 2px solid #005bbb;
+}
+
+.queue {
+    background-color: #b3b3b3 ;
+    width: 500px;
+    height: 400px;
+    overflow: auto;
+    margin: 0 auto;
+    /*opacity: 0.75;*/
+}
+.center {
+    margin: 0 auto;
+    text-align: center;
+}
+.bar {
+    text-align: center;
+    height: 25px;
+    margin-left: 25%;
+    margin-right: auto;
+    overflow: auto;
+    background-color: #005bbb;
+    border: 2px solid #b3b3b3;
+    position: fixed;
+    bottom: 2px;
+    width: 50%;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-top: 40px;
+}
+.bar:hover {
+    background-color: #b3b3b3;
+    border: 2px solid #005bbb;
+}
+.addSpace {
+    margin-bottom: 40px;
+}

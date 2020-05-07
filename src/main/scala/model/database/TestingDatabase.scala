@@ -1,6 +1,7 @@
 package model.database
 
 import model.StudentInQueue
+import play.api.libs.json.JsValue
 
 class TestingDatabase extends DatabaseAPI {
 
@@ -19,6 +20,23 @@ class TestingDatabase extends DatabaseAPI {
 
   override def getQueue: List[StudentInQueue] = {
     data.reverse
+  }
+
+  override def addTA(username:String):Unit={
+
+  }
+  override def addStudentHelped(usernameTA:String): Unit={
+
+  }
+
+  override def getTAHelpInfo():Map[String,JsValue]={
+    ???
+  }
+  override def getTopicStat():Map[String,JsValue]={
+    ???
+  }
+  override def getSubtopicStat():Map[String,JsValue]={
+    ???
   }
 
 }

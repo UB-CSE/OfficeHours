@@ -3,27 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <title>Office Hours</title>
+    <!--stylesheets Css-->
+    <link rel="stylesheet" type="text/css" href="style.css">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
 </head>
-<body>
+<body onload="firstcounter()">
 
 <br/>
 
-<h3 id="message">Welcome!</h3>
+<h1 id="message">Welcome to Office Hours!</h1>
 
-<p>Name</p>
-<input type="text" id="name"/>
-<button onclick="enterQueue();">Enter Queue</button>
-<br/><br/>
+<h2 id="subtitle">Pick which one you are</h2>
 
-<button onclick="readyToHelp();">TA Ready to Help</button>
+<div id="optionButtons">
+    <div class="optionButton" onclick="displayLogin();">Teacher Assistant </div>
+    <div class="optionButton" onclick="displayNameTopic();">Student</div>
+</div>
 
-<br/>
+<div id="currentStudent"></div>
 
-<div id="queue"></div>
+<div id="queueSection"></div>
+
+<div id="HelpInfo" ></div>
+<div id="statistics"></div>
+
+<div id="Counter" class="bar"></div>
 
 <script src="officeHours.js"></script>
-
 
 </body>
 </html>
