@@ -5,9 +5,10 @@ import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, S
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
 
+import scala.collection.mutable._
 
 class OfficeHoursServer() {
-
+  val enteredQueue:Queue[SocketIOClient] = new Queue()
   val database: DatabaseAPI = if(Configuration.DEV_MODE){
     new TestingDatabase
   }else{
@@ -60,25 +61,30 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+    var queueMessage:String = ""
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
-    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    if (!server.enteredQueue.exists(x => {x == socket})){
+      server.enteredQueue.enqueue(socket)
+      queueMessage = "You (" + username + ") have entered the queue. Your position is " + (server.enteredQueue.indexOf(socket).toInt + 1)  + " in the queue."
+    }
+    else{
+      queueMessage = "You are already in the queue, your position is " + (server.enteredQueue.indexOf(socket).toInt + 1) + "."
+    }
+    socket.sendEvent("queue",queueMessage)
   }
 }
 
 
 class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[Nothing] {
   override def onData(socket: SocketIOClient, dirtyMessage: Nothing, ackRequest: AckRequest): Unit = {
-    val queue = server.database.getQueue.sortBy(_.timestamp)
-    if(queue.nonEmpty){
-      val studentToHelp = queue.head
-      server.database.removeStudentFromQueue(studentToHelp.username)
-      socket.sendEvent("message", "You are now helping " + studentToHelp.username)
-      if(server.usernameToSocket.contains(studentToHelp.username)){
-        server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")
-      }
-      server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    if(server.enteredQueue.nonEmpty){
+      var studentHelped:SocketIOClient = server.enteredQueue.dequeue()
+      socket.sendEvent("message", "You are now helping " + server.socketToUsername(studentHelped))
+      studentHelped.sendEvent("message","A TA is ready to help you")
+    }
+    else{
+      socket.sendEvent("message","There is no one in the queue at the moment.")
     }
   }
 }
