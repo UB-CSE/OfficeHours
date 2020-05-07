@@ -22,6 +22,8 @@ class Database extends DatabaseAPI{
 
 
   override def addStudentToQueue(student: StudentInQueue): Unit = {
+
+
     val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?)")
 
     statement.setString(1, student.username)

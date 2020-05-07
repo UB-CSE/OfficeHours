@@ -1,0 +1,78 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+body{
+    background-color: cadetblue;
+}
+
+#joinOrPerish{
+    /*padding: 5px 10px 20px 10px;*/
+
+}
+
+#message{
+    text-align: center;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 40px;
+
+}
+
+#poorSoul{
+    text-align: left;
+    margin-left: 30px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 25px;
+}
+
+
+#name{
+    text-align: center;
+    font-size: 20px;
+    font-family: 'VT323', monospace;
+    padding: 10px 20px 0px 10px;
+    margin: 0px 30px 0px 50px;
+    width: 250px;
+
+}
+
+
+#giveYourSoul{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%;
+    height: 280px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.clickMe {
+    display: inline-block;
+    padding: 15px 15px;
+    font-size: 15px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: black;
+    background-color: lightsteelblue;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px #999;
+}
+
+.clickMe:hover {background-color: slategray}
+
+.clickMe:active {
+    background-color: #07193b;
+    color: white;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}
+
+#queue{
+    padding-top: 50px;
+    margin-left: 30px;
+    font-size: 23px;
+    font-family: 'VT323', monospace;
+}
