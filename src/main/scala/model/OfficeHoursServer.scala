@@ -18,7 +18,8 @@ class OfficeHoursServer() {
   var socketToUsername: Map[SocketIOClient, String] = Map()
 
   val config: Configuration = new Configuration {
-    setHostname("0.0.0.0")
+    //"0.0.0.0"
+    setHostname("localhost")
     setPort(8080)
   }
 
