@@ -66,7 +66,8 @@ class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String]
     val joinedMinute = joined.get(Calendar.MINUTE)
     if (joinedHour < 12) {
       server.database.addStudentToQueue(StudentInQueue(username, joinedHour.toString + ":" + joinedMinute.toString + " " + "AM"))
-    }else {
+    }
+    else {
       server.database.addStudentToQueue(StudentInQueue(username, (joinedHour - 12).toString + ":" + joinedMinute.toString + " " + "PM"))
     }
     server.socketToUsername += (socket -> username)
