@@ -7,12 +7,12 @@ import model.StudentInQueue
 
 class Database extends DatabaseAPI{
 
-//  val url = "jdbc:mysql://mysql/officehours?autoReconnect=true"
-//  val username: String = sys.env("DB_USERNAME")
-//  val password: String = sys.env("DB_PASSWORD")
-  val url = "jdbc:mysql://localhost/mysql"
-  val username: String = "root"
-  val password: String = "4q$@QAE4M6QNaxm#iVtKH"
+  val url = "jdbc:mysql://mysql/officehours?autoReconnect=true"
+  val username: String = sys.env("DB_USERNAME")
+  val password: String = sys.env("DB_PASSWORD")
+//  val url = "jdbc:mysql://localhost/mysql"
+//  val username: String = "root"
+//  val password: String = ""
 
 
   var connection: Connection = DriverManager.getConnection(url, username, password)
