@@ -16,6 +16,18 @@ class TestingDatabase extends DatabaseAPI {
     data = data.filter(_.username != username)
   }
 
+  override def getStudentUser(username: String): String = {
+    for (student <- data){
+      if(student.username.equalsIgnoreCase(username)){
+        return username
+      }
+    }
+    ""
+  }
+
+  override def getTraffic: List[StudentInQueue] = {
+    data.reverse
+  }
 
   override def getQueue: List[StudentInQueue] = {
     data.reverse

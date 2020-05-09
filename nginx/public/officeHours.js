@@ -11,7 +11,8 @@ function displayQueue(queueJSON) {
     const queue = JSON.parse(queueJSON);
     let formattedQueue = "";
     for (const student of queue) {
-        formattedQueue += student['username'] + " has been waiting since " + student['timestamp'] + "<br/>"
+        formattedQueue += student['username'] + " needs help with ".bold() + student['description']
+            + " and has been waiting since ".bold() + student['timestamp'] + '</br>';
     }
     document.getElementById("queue").innerHTML = formattedQueue;
 }
@@ -19,8 +20,11 @@ function displayQueue(queueJSON) {
 
 function enterQueue() {
     let name = document.getElementById("name").value;
-    socket.emit("enter_queue", name);
+    let problem = document.getElementById("description").value;
+    let arr = [name, problem];
+    socket.emit("enter_queue", arr);
     document.getElementById("name").value = "";
+    document.getElementById("description").value = "";
 }
 
 function readyToHelp() {
