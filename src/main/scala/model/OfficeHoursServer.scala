@@ -15,7 +15,7 @@ class OfficeHoursServer() {
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
-  var taList: List[String] = List("Alex", "Lee") //If registered TA, it will show a different pathway.
+  var taList: List[String] = List() //If registered TA, it will show a different pathway.
   var inFrontOfU: Map[String, Int] = Map() //Tells how many student is in front of you
 
   val config: Configuration = new Configuration {
