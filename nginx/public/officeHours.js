@@ -2,9 +2,13 @@ const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
 
 socket.on('queue', displayQueue);
 socket.on('message', displayMessage);
+socket.on('falseUser', falseUser);
 
 function displayMessage(newMessage) {
     document.getElementById("message").innerHTML = newMessage;
+}
+function falseUser() {
+    alert("User already in the queue");
 }
 
 function displayQueue(queueJSON) {
@@ -14,6 +18,8 @@ function displayQueue(queueJSON) {
         formattedQueue += student['username'] + " has been waiting since " + student['timestamp'] + "<br/>"
     }
     document.getElementById("queue").innerHTML = formattedQueue;
+    document.getElementById("Queue-Text").classList.remove("hidden");
+    document.getElementById("Queue-Text").classList.add("show3");
 }
 
 
