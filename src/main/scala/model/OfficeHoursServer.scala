@@ -1,12 +1,17 @@
 package model
 
+import java.io.{BufferedWriter, File, FileWriter}
+
 import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
 
+import scala.io.Source
+
 
 class OfficeHoursServer() {
+
 
   val database: DatabaseAPI = if(Configuration.DEV_MODE){
     new TestingDatabase
@@ -74,6 +79,25 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
     if(queue.nonEmpty){
       val studentToHelp = queue.head
       server.database.removeStudentFromQueue(studentToHelp.username)
+      if (new java.io.File("StudentsWhoHaveBeenOfficeHours.json").exists){
+        val json = Source.fromFile("StudentsWhoHaveBeenOfficeHours.json").mkString
+        val parsed: JsValue = Json.parse(json)
+        val data:Map[String,Long]= parsed.as[Map[String, Long]]
+        val dataTwo:Map[String,Long] = data + (studentToHelp.username -> studentToHelp.timestamp)
+        val filename:String = "StudentsWhoHaveBeenOfficeHours.json"
+        val file = new File(filename)
+        val bw = new BufferedWriter(new FileWriter(file))
+        bw.write(Json.stringify(Json.toJson(dataTwo)))
+        bw.close()
+      }
+      else{
+        val filename:String = "StudentsWhoHaveBeenOfficeHours.json"
+        val file = new File(filename)
+        val bw = new BufferedWriter(new FileWriter(file))
+        val dataTwo:Map[String,Long] = Map(studentToHelp.username -> studentToHelp.timestamp)
+        bw.write(Json.stringify(Json.toJson(dataTwo)))
+        bw.close()
+      }
       socket.sendEvent("message", "You are now helping " + studentToHelp.username)
       if(server.usernameToSocket.contains(studentToHelp.username)){
         server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you!")
