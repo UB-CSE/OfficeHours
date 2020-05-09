@@ -4,9 +4,11 @@ import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
+import java.util.Calendar
 
 
 class OfficeHoursServer() {
+
 
   val database: DatabaseAPI = if(Configuration.DEV_MODE){
     new TestingDatabase
@@ -59,8 +61,18 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
+  val time: Calendar = Calendar.getInstance()
+  val minutes: Int = time.get(Calendar.MINUTE)
+  var hours: Int = time.get(Calendar.HOUR_OF_DAY)
+  var currentHour: Int = _
+  var stamp: String = "AM"
+  if (hours > 12){
+    currentHour = hours % 12
+    stamp = "PM"
+  }
+  val retString: String = currentHour.toString + ":" + minutes.toString + " " + stamp
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+    server.database.addStudentToQueue(StudentInQueue(username, retString))
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
