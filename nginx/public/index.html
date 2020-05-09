@@ -3,25 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <title>Office Hours</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 </head>
 <body>
 
-<br/>
 
-<h3 id="message">Welcome!</h3>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <h1 class="text-center">Office Hours</h1>
+<h2 id="message" class="text-center">Welcome!</h2>
+<input type="text" id="name" class="form-control" placeholder="Name"/>
+<button class="btn btn-success" onclick="enterQueue();">Enter Queue</button>
 
-<p>Name</p>
-<input type="text" id="name"/>
-<button onclick="enterQueue();">Enter Queue</button>
-<br/><br/>
+<button class="btn btn-default" onclick="readyToHelp();">TA Ready to Help</button>
 
-<button onclick="readyToHelp();">TA Ready to Help</button>
-
-<br/>
-
-<div id="queue"></div>
-
+        </div>
+        <div class="col-md-4">
+            <h2 id="Queue-Text" class="hidden">Queue</h2>
+            <ul id="quUL"></ul>
+            <div id="queue">
+</div>
+    </div>
+    </div>
+</div>
 <script src="officeHours.js"></script>
 
 
