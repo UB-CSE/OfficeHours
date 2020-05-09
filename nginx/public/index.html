@@ -4,25 +4,25 @@
     <meta charset="UTF-8">
     <title>Office Hours</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <script src="officeHours.js"></script>
 </head>
 <body>
 
-<br/>
+<div id="queueSet">
+    <script>
+        sessionStorage.setItem("username", "null")
+    </script>
+    <label for="username">Username</label>
+    <input type="text" id="username"/> <br>
+    <label for="password">Password</label>
+    <input type="password" id="password"/> <br>
+    <button onclick="login();">Login</button>
+    <button onclick="createPage();">Create Account</button>
+</div>
 
-<h3 id="message">Welcome!</h3>
 
-<p>Name</p>
-<input type="text" id="name"/>
-<button onclick="enterQueue();">Enter Queue</button>
-<br/><br/>
 
-<button onclick="readyToHelp();">TA Ready to Help</button>
 
-<br/>
-
-<div id="queue"></div>
-
-<script src="officeHours.js"></script>
 
 
 </body>
