@@ -4,6 +4,7 @@ import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
+import java.util.Calendar
 
 
 class OfficeHoursServer() {
@@ -49,7 +50,7 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
   override def onDisconnect(socket: SocketIOClient): Unit = {
     if (server.socketToUsername.contains(socket)) {
       val username = server.socketToUsername(socket)
-        server.socketToUsername -= socket
+      server.socketToUsername -= socket
       if (server.usernameToSocket.contains(username)) {
         server.usernameToSocket -= username
       }
@@ -60,7 +61,14 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+    val joined = Calendar.getInstance()
+    val joinedHour = joined.get(Calendar.HOUR_OF_DAY)
+    val joinedMinute = joined.get(Calendar.MINUTE)
+    if (joinedHour < 12) {
+      server.database.addStudentToQueue(StudentInQueue(username, joinedHour.toString + ":" + joinedMinute.toString + " " + "AM"))
+    }else {
+      server.database.addStudentToQueue(StudentInQueue(username, (joinedHour - 12).toString + ":" + joinedMinute.toString + " " + "PM"))
+    }
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
