@@ -11,16 +11,19 @@ function displayQueue(queueJSON) {
     const queue = JSON.parse(queueJSON);
     let formattedQueue = "";
     for (const student of queue) {
-        formattedQueue += student['username'] + " has been waiting since " + student['timestamp'] + "<br/>"
+        formattedQueue += student['username'] + " has been waiting to discuss \"" + student['description'] + "\" since " + student['timestamp'] + "<br/>"
     }
     document.getElementById("queue").innerHTML = formattedQueue;
 }
 
 
 function enterQueue() {
-    let name = document.getElementById("name").value;
-    socket.emit("enter_queue", name);
+    let payload = document.getElementById("name").value;
+    payload = payload + "᳄";
+    payload = payload + document.getElementById("description").value;
+    socket.emit("enter_queue", payload);
     document.getElementById("name").value = "";
+    document.getElementById("description").value = "";
 }
 
 function readyToHelp() {
