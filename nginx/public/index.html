@@ -13,7 +13,9 @@
 
 <p>Name</p>
 <input type="text" id="name"/>
-<button onclick="enterQueue();">Enter Queue</button>
+<br/><br/>
+<input type="text" id="reason"/>
+<button onclick="enterQueue();reasonSaid()">Enter Queue</button>
 <br/><br/>
 
 <button onclick="readyToHelp();">TA Ready to Help</button>
@@ -21,6 +23,9 @@
 <br/>
 
 <div id="queue"></div>
+
+<h4>Your History</h4>
+<div id="previousVs"></div>
 
 <script src="officeHours.js"></script>
 

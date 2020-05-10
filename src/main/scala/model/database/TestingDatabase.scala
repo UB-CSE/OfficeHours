@@ -21,4 +21,15 @@ class TestingDatabase extends DatabaseAPI {
     data.reverse
   }
 
+  override def reasonHolder(student: String,dateS: String, reason: String): Unit = {
+
+  }
+
+  override def getReasons(username: String): List[String] = {
+    List()
+  }
+
+  override def isIThere(username:String): Int = {
+    0
+  }
 }
