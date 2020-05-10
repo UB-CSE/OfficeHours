@@ -60,10 +60,14 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
-    server.socketToUsername += (socket -> username)
-    server.usernameToSocket += (username -> socket)
-    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    for (students <- server.database.getQueue){
+      if (username != students.username) {
+        server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+        server.socketToUsername += (socket -> username)
+        server.usernameToSocket += (username -> socket)
+        server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+      }
+    }
   }
 }
 
