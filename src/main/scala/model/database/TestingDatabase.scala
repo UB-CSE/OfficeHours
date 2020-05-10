@@ -32,4 +32,12 @@ class TestingDatabase extends DatabaseAPI {
   override def isIThere(username:String): Int = {
     0
   }
+
+  override def checkLogin(username: String, password: String): Boolean = {
+    false
+  }
+
+  override def storeLogin(username: String, password: String): Unit = {
+
+  }
 }

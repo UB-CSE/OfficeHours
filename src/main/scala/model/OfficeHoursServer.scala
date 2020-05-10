@@ -36,6 +36,7 @@ class OfficeHoursServer() {
   val server: SocketIOServer = new SocketIOServer(config)
 
   server.addDisconnectListener(new DisconnectionListener(this))
+  server.addEventListener("register",classOf[String],new AttemptR(this))
   server.addEventListener("reasonGiven",classOf[String], new ReasonListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
@@ -60,6 +61,22 @@ object OfficeHoursServer {
     new OfficeHoursServer()
   }
 }
+
+
+class AttemptR(server: OfficeHoursServer) extends DataListener[String]{
+  override def onData(socketIOClient: SocketIOClient, t: String, ackRequest: AckRequest): Unit = {
+    val parsed: JsValue = Json.parse(t)
+    val username = (parsed \ "username").as[String]
+    val password = (parsed \ "password").as[String]
+    //method to check if this thing is correct in the database
+    if(server.database.checkLogin(username,password)){
+      socketIOClient.sendEvent("valid")
+    }else{
+      socketIOClient.sendEvent("try_again")
+    }
+  }
+}
+
 
 class ReasonListener(server: OfficeHoursServer) extends DataListener[String]{
   override def onData(socket: SocketIOClient, t: String, ackRequest: AckRequest): Unit = {

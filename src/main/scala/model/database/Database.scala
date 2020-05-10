@@ -21,8 +21,31 @@ class Database extends DatabaseAPI{
   def setupTable(): Unit = {
     val statement = connection.createStatement()
     statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT)")
-    statement.execute("CREATE TABLE IF NOT EXISTS totalVisits(username TEXT, amount TEXT)")
+    statement.execute("CREATE TABLE IF NOT EXISTS allLogs(username TEXT, password TEXT)")
     statement.execute("CREATE TABLE IF NOT EXISTS reason(username TEXT, dateS TEXT, reason TEXT)")
+  }
+
+
+   def storeLogin(username: String, password: String): Unit = {
+    val statement = connection.prepareStatement("INSERT INTO allLogs VALUE (?,?)")
+     statement.setString(1,username.toLowerCase)
+     statement.setString(2,password)
+  }
+
+   def checkLogin(username: String, password: String): Boolean = {
+     var truth = false
+     val statement = connection.prepareStatement("SELECT * FROM allLogs")
+     val result: ResultSet = statement.executeQuery()
+     var resultMap: Map[String,String]= Map()
+     while(result.next()){
+       resultMap += (result.getString("username") -> result.getString("password"))
+     }
+     for((k,v)<-resultMap){
+       if(k == username.toLowerCase && v == password){
+         truth = true
+       }
+     }
+     truth
   }
 
   def isIThere(username:String): Int = {
