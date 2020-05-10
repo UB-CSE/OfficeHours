@@ -5,22 +5,38 @@
     <title>Office Hours</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 </head>
-<body>
+<body style="background-color: AntiqueWhite">
+<h3 align="center">
+    <font face="Cambria" size="6">CSE116</font>
+</h3>
+<h3 align="center">
+    <font face="Cambria" size="3">Office Hours</font>
+</h3>
 
 <br/>
 
-<h3 id="message">Welcome!</h3>
+<h3 align="center" id="message">Welcome!</h3>
 
-<p>Name</p>
-<input type="text" id="name"/>
-<button onclick="enterQueue();">Enter Queue</button>
+<p align="center">Name</p>
+<div style="text-align:center;">
+    <input type="text" id="name"/>
+    <button onclick="enterQueue();">Enter Queue</button>
+</div>
+
 <br/><br/>
 
+<div style="text-align:center;">
 <button onclick="readyToHelp();">TA Ready to Help</button>
+</div>
 
-<br/>
+<br/><br/>
 
-<div id="queue"></div>
+<h3 align="center">
+    <a href="https://fury.cse.buffalo.edu/cse116" target="_blank">Syllabus</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://autograder.cse.buffalo.edu/auth/users/sign_in" target="_blank">AutoLab</a>
+</h3>
+
+<div style="text-align:center;" id="queue"></div>
 
 <script src="officeHours.js"></script>
 
