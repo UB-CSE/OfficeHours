@@ -18,6 +18,8 @@ class OfficeHoursServer() {
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
+  var staffToSocket: Map[String, SocketIOClient] = Map()
+  var socketToStaff: Map[SocketIOClient,String] = Map()
 
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
@@ -29,6 +31,8 @@ class OfficeHoursServer() {
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
+  server.addEventListener("authenticate_TA", classOf[String], new AuthenticationListener(this))
+  server.addEventListener("register_TA", classOf[String], new RegisterStaffListener(this))
 
   server.start()
 
@@ -46,6 +50,30 @@ object OfficeHoursServer {
   }
 }
 
+class AuthenticationListener(server: OfficeHoursServer) extends DataListener[String] {
+  override def onData(socket: SocketIOClient, data: String, ackRequest: AckRequest): Unit = {
+    val staffStore: List[Staff] = server.database.getStaff
+    val ubit: String = data.split(":")(0)
+    //println("Ubit:" + ubit)
+    val password: String = data.split(":")(1)
+    //println("password:" + password)
+    for (staff <- staffStore){
+      //println("ubit:" + staff.ubit +"||password:" + staff.password)
+      if (staff.ubit == ubit && staff.password == password){
+        socket.sendEvent("authenticateStaff", ubit)
+      }
+    }
+    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+  }
+}
+
+class RegisterStaffListener(server: OfficeHoursServer) extends  DataListener[String] {
+  override def onData(socket: SocketIOClient, data: String, ackRequest: AckRequest): Unit = {
+    val ubit: String = data.split(":")(0)
+    val password: String = data.split(":")(1)
+    server.database.addStaff(new Staff(ubit,password))
+  }
+}
 
 class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListener {
   override def onDisconnect(socket: SocketIOClient): Unit = {
@@ -54,6 +82,13 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
         server.socketToUsername -= socket
       if (server.usernameToSocket.contains(username)) {
         server.usernameToSocket -= username
+      }
+    }
+    if (server.socketToStaff.contains(socket)){
+      val ubit = server.socketToStaff(socket)
+        server.socketToStaff -= socket
+      if(server.staffToSocket.contains(ubit)){
+        server.staffToSocket -= ubit
       }
     }
   }
