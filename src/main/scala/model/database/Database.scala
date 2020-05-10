@@ -24,10 +24,17 @@ class Database extends DatabaseAPI{
   override def addStudentToQueue(student: StudentInQueue): Unit = {
     val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?)")
 
-    statement.setString(1, student.username)
-    statement.setLong(2, student.timestamp)
+//    val queue: List[StudentInQueue] = getQueue         ///
+//    var names: List[String] = List()                   ///
+//    for (i <- queue){                                  ///
+//      names = names :+ i.username                      ///
+//    }                                                  ///
+//    if (names.contains(student.username)) {            ///
+      statement.setString(1, student.username)
+      statement.setLong(2, student.timestamp)
 
-    statement.execute()
+      statement.execute()
+//    }                                                  ///
   }
 
 
