@@ -3,6 +3,7 @@ const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
 socket.on('queue', displayQueue);
 socket.on('message', displayMessage);
 
+
 function displayMessage(newMessage) {
     document.getElementById("message").innerHTML = newMessage;
 }
@@ -22,6 +23,7 @@ function enterQueue() {
     socket.emit("enter_queue", name);
     document.getElementById("name").value = "";
 }
+
 
 function readyToHelp() {
     socket.emit("ready_for_student");
