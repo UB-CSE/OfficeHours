@@ -17,6 +17,11 @@ class OfficeHoursServer() {
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
 
+  var taToSocket: Map[String, SocketIOClient] = Map()
+  var socketToTA: Map[SocketIOClient, String] = Map()
+
+  val taToPassword: List[String] = List("Logan116", "Megan116", "John D.116", "Jon116", "Joseph116", "Kevin B.116", "Taisia116", "Snigdha116", "Jesse116", "Shamroy116", "Mike116", "Rin116", "Lana116", "Jon R.116", "Stephen116")
+
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
     setPort(8080)
@@ -27,6 +32,7 @@ class OfficeHoursServer() {
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
+  server.addEventListener("enter_available", classOf[String], new EnterAvailableListener(this))
 
   server.start()
 
@@ -54,9 +60,16 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
         server.usernameToSocket -= username
       }
     }
+    // Conditional check for TA disconnects
+    if (server.socketToTA.contains(socket)) {
+      val taName = server.socketToTA(socket)
+        server.socketToTA -= socket
+      if (server.taToSocket.contains(taName)) {
+        server.taToSocket -= taName
+      }
+    }
   }
 }
-
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
@@ -64,6 +77,21 @@ class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String]
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+  }
+}
+
+
+// Listener class to add TAs to a database of available TAs
+class EnterAvailableListener(server: OfficeHoursServer) extends DataListener[String] {
+  override def onData(socket: SocketIOClient, taName: String, ackSender: AckRequest): Unit = {
+    for (name <- server.taToPassword) {
+      if (taName == name) {
+        server.database.addTAToAvailable(taName)
+        server.socketToTA += (socket -> taName)
+        server.taToSocket += (taName -> socket)
+        server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+      }
+    }
   }
 }
 

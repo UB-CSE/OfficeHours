@@ -20,6 +20,29 @@ class Database extends DatabaseAPI{
     statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT)")
   }
 
+  def setupTATable(): Unit = {
+    val statement = connection.createStatement()
+    statement.execute("CREATE TABLE IF NOT EXISTS available (taName TEXT)")
+  }
+
+// adds TA to Available Table
+  override def addTAToAvailable(taName: String): Unit = {
+    val statement = connection.prepareStatement("INSERT INTO available VALUE ?")
+
+    statement.setString(1, taName)
+
+    statement.execute()
+  }
+
+// removes TA from Available Table
+  override def removeTAFromAvailable(taName: String): Unit = {
+    val statement = connection.prepareStatement("DELETE FROM available WHERE taName=?")
+
+    statement.setString(1, username)
+
+    statement.execute()
+  }
+
 
   override def addStudentToQueue(student: StudentInQueue): Unit = {
     val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?)")
