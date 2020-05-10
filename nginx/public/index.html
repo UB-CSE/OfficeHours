@@ -8,22 +8,21 @@
 <body>
 
 <br/>
-
+<h1>
 <h3 id="message">Welcome!</h3>
-
-<p>Name</p>
+    <p style="font-size:25px">Name.</p>
 <input type="text" id="name"/>
-<button onclick="enterQueue();">Enter Queue</button>
+<button onclick="enterQueue();setBg();">Enter Queue</button>
 <br/><br/>
 
-<button onclick="readyToHelp();">TA Ready to Help</button>
-
+<button onclick="readyToHelp();setBg(); ">TA Ready to Help</button>
+    <button id="genNew">Generate Another Color</button>
 <br/>
 
 <div id="queue"></div>
 
 <script src="officeHours.js"></script>
 
-
+</h1>
 </body>
 </html>

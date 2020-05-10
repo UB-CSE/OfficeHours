@@ -33,4 +33,5 @@ class StudentInQueue(val username: String, val timestamp: Long) {
     Json.toJson(messageMap)
   }
 
+
 }

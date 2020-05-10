@@ -1,3 +1,4 @@
+
 package model.database
 
 import model.StudentInQueue
