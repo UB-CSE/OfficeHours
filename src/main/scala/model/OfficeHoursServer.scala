@@ -63,6 +63,7 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
         }
       }
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+      server.server.getBroadcastOperations.sendEvent("queuePos", "The queue size is: " + queue.length + " student(s) long")
     }
   }
 }
@@ -79,6 +80,7 @@ class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String]
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    server.server.getBroadcastOperations.sendEvent("queuePos", "The queue size is: " + queue.length + " student(s) long")
     //loop through every student and update their position in the queue as well as queue length
     for(student <- queue){
       if(server.usernameToSocket.contains(student.username)){
@@ -100,7 +102,6 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
       //sends the conformation message to the TA and the student
       socket.sendEvent("message", "You are now helping " + studentToHelp.username)
       socket.sendEvent("issue", studentToHelp.username + "'s " + "issue is: " + studentToHelp.issue)
-      socket.sendEvent("queuePos", "The queue size is: " + queue.length + " student(s) long")
       if(server.usernameToSocket.contains(studentToHelp.username)){
         server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you, " + studentToHelp.username)
         server.usernameToSocket(studentToHelp.username).sendEvent("issue", "Your Issue is: " + studentToHelp.issue)
@@ -109,6 +110,7 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
         server.usernameToSocket -= studentToHelp.username
       }
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+      server.server.getBroadcastOperations.sendEvent("queuePos", "The queue size is: " + queue.length + " student(s) long")
       //update position of students now that the first student has been removed
       for(student <- queue){
         if(server.usernameToSocket.contains(student.username)){
