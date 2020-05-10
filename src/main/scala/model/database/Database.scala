@@ -1,3 +1,4 @@
+
 package model.database
 
 import java.sql.{Connection, DriverManager, ResultSet}
