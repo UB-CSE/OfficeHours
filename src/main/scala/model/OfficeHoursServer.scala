@@ -60,6 +60,11 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
+    for (i <- server.database.getQueue){
+      if (i.username == username) {
+        server.database.removeStudentFromQueue(username)
+      }
+    }
     server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
