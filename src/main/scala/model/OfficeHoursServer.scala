@@ -5,6 +5,9 @@ import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, S
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
 
+import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
+
 
 class OfficeHoursServer() {
 
@@ -16,7 +19,7 @@ class OfficeHoursServer() {
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
-
+  var duplicates2 : mutable.Queue[String] = mutable.Queue()
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
     setPort(8080)
@@ -63,12 +66,13 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
     val d: JsValue = Json.parse(username)
     val message: String = (d \ "name").as[String]
     val question: String = (d \ "question").as[String]
-    println(message)
-    println(question)
-    server.database.addStudentToQueue(StudentInQueue(message, System.nanoTime(),question))
-    server.socketToUsername += (socket -> username)
-    server.usernameToSocket += (username -> socket)
-    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    if (!server.duplicates2.contains(message)) {
+      server.duplicates2 += message
+      server.database.addStudentToQueue(StudentInQueue(message, System.nanoTime(), question))
+      server.socketToUsername += (socket -> username)
+      server.usernameToSocket += (username -> socket)
+      server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    }
   }
 }
 
@@ -77,6 +81,7 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
   override def onData(socket: SocketIOClient, dirtyMessage: Nothing, ackRequest: AckRequest): Unit = {
     val queue = server.database.getQueue.sortBy(_.timestamp)
     if(queue.nonEmpty){
+      server.duplicates2.dequeue()
       val studentToHelp = queue.head
       server.database.removeStudentFromQueue(studentToHelp.username)
       socket.sendEvent("message", "You are now helping " + studentToHelp.username)

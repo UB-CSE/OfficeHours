@@ -14,7 +14,7 @@ function displayQueue(queueJSON) {
     let formattedQueue = "";
     for (const student of queue) {
         formattedQueue += student['username'] + " has been waiting since " + student['timestamp'] +
-         "needs help with"  + " "  + student["question"]
+         " and needs help with"  + " "  + student["question"]
          + "<br/>"
         user = student['username'] + "<br/>"
     }
