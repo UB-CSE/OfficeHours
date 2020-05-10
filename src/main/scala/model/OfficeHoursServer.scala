@@ -27,6 +27,7 @@ class OfficeHoursServer() {
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
+  server.addEventListener("feedbackSubmitted", classOf[String], new FeedbackListener(this))
 
   server.start()
 
@@ -71,16 +72,28 @@ class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String]
 class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[Nothing] {
   override def onData(socket: SocketIOClient, dirtyMessage: Nothing, ackRequest: AckRequest): Unit = {
     val queue = server.database.getQueue.sortBy(_.timestamp)
-    if(queue.nonEmpty){
+    if (queue.nonEmpty) {
       val studentToHelp = queue.head
       server.database.removeStudentFromQueue(studentToHelp.username)
       socket.sendEvent("message", "You are now helping " + studentToHelp.username)
-      if(server.usernameToSocket.contains(studentToHelp.username)){
+      if (server.usernameToSocket.contains(studentToHelp.username)) {
         server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")
+        Thread.sleep(3000)
+        server.usernameToSocket(studentToHelp.username).sendEvent("feedback")
       }
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     }
   }
 }
+
+  class FeedbackListener(server: OfficeHoursServer) extends DataListener[String] {
+    override def onData(socket: SocketIOClient, json: String, ackRequest: AckRequest): Unit = {
+      val data:String = Json.parse(json).as[String]
+      server.database.addFeedback(server.socketToUsername(socket), data)
+      Thread.sleep(2000)
+      server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+      print(server.database.getAllFeedback)
+    }
+  }
 
 
