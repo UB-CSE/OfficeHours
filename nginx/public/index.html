@@ -2,28 +2,56 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Office Hours</title>
+    <title>CSE 116 Office Hours</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+
+    <style>
+        .block {
+            display: block;
+            width: 100%;
+            border: none;
+            background-color: black;
+            color: white;
+            padding: 14px 28px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .block:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        #name
+        {
+            height:20px;
+            font-size:15pt;
+        }
+    </style>
 </head>
-<body>
+
+<body onload="startTime()" style = "background-color:lightblue">
+<div id="txt"></div>
 
 <br/>
 
-<h3 id="message">Welcome!</h3>
+<h1><center><marquee>Welcome to CSE 116 Office Hours!</marquee></center></h1>
 
-<p>Name</p>
-<input type="text" id="name"/>
-<button onclick="enterQueue();">Enter Queue</button>
+<font size="+2"><p><center>Hello, what's your name?</center></p></font>
+<center><input type="text" id="name"/></center>
+
+</script>
+</head>
+
+<center><button class = "block" onclick="enterQueue();">Enter The Queue </button><center>
 <br/><br/>
 
-<button onclick="readyToHelp();">TA Ready to Help</button>
+<button class = "block" onclick="readyToHelp();">TA Ready to Help</button>
 
 <br/>
 
-<div id="queue"></div>
+<center><div id="queue"></div></center>
 
 <script src="officeHours.js"></script>
-
 
 </body>
 </html>
