@@ -21,4 +21,8 @@ class TestingDatabase extends DatabaseAPI {
     data.reverse
   }
 
+  override def addFeedback(username: String, feedback: String): Unit = {}
+
+  override def getAllFeedback: Map[String, String] = Map()
+
 }

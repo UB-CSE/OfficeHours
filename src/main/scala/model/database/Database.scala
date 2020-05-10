@@ -13,13 +13,40 @@ class Database extends DatabaseAPI{
 
   var connection: Connection = DriverManager.getConnection(url, username, password)
   setupTable()
+  setupFeedbackTable()
 
+  def setupFeedbackTable(): Unit = {
+    val statement = connection.createStatement()
+    statement.execute("CREATE TABLE IF NOT EXISTS feedback (username TEXT, feedback TEXT)")
+  }
+
+  override def addFeedback(username: String, feedback: String): Unit = {
+    val statement = connection.prepareStatement("INSERT INTO feedback VALUE (?, ?)")
+
+    statement.setString(1, username)
+    statement.setString(2, feedback)
+
+    statement.execute()
+  }
+
+  override def getAllFeedback(): Map[String,String] = {
+    val statement = connection.prepareStatement("SELECT * FROM feedback")
+    val result: ResultSet = statement.executeQuery()
+
+    var allfeedback: Map[String, String] = Map()
+
+    while (result.next()) {
+      val username = result.getString("username")
+      val feedback = result.getString("feedback")
+      allfeedback += (username -> feedback)
+    }
+    allfeedback
+  }
 
   def setupTable(): Unit = {
     val statement = connection.createStatement()
     statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT)")
   }
-
 
   override def addStudentToQueue(student: StudentInQueue): Unit = {
     val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?)")
