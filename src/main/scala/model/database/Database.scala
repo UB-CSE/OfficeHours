@@ -1,6 +1,7 @@
 package model.database
 
 import java.sql.{Connection, DriverManager, ResultSet}
+import java.time.LocalDateTime
 
 import model.StudentInQueue
 
@@ -20,6 +21,28 @@ class Database extends DatabaseAPI{
     statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT)")
   }
 
+  def setupStatsTable(): Unit = {
+    val statement = connection.createStatement()
+    statement.execute("CREATE TABLE IF NOT EXISTS stats (username TEXT, dateTime String)")
+  }
+
+  def numberTimes(username: String): Int = {
+    var count: Int = 0
+    val statement = connection.prepareStatement("SELECT * FROM stats WHERE username = ?")
+
+    statement.setString(1, username)
+
+    val result: ResultSet = statement.executeQuery()
+
+    while(result.next()){
+      count += 1
+    }
+
+    count
+
+
+  }
+
 
   override def addStudentToQueue(student: StudentInQueue): Unit = {
     val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?)")
@@ -28,6 +51,13 @@ class Database extends DatabaseAPI{
     statement.setLong(2, student.timestamp)
 
     statement.execute()
+
+    val statement2 = connection.prepareStatement("INSERT INTO stats VALUE (?, ?)")
+
+    statement2.setString(1, student.username)
+    statement2.setString(2, java.time.LocalDateTime.now().toString())
+
+    statement2.execute()
   }
 
 
