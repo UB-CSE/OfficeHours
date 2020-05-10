@@ -5,7 +5,8 @@ import java.sql.{Connection, DriverManager, ResultSet}
 import model.StudentInQueue
 
 
-class Database extends DatabaseAPI{
+class Database extends DatabaseAPI
+{
 
   val url = "jdbc:mysql://mysql/officehours?autoReconnect=true"
   val username: String = sys.env("DB_USERNAME")
@@ -15,23 +16,28 @@ class Database extends DatabaseAPI{
   setupTable()
 
 
-  def setupTable(): Unit = {
+  def setupTable(): Unit =
+  {
     val statement = connection.createStatement()
-    statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT)")
+    statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT, description TEXT)")
   }
 
 
-  override def addStudentToQueue(student: StudentInQueue): Unit = {
-    val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?)")
+  override def addStudentToQueue(student: StudentInQueue): Unit =
+  {
+    val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?, ?)")
 
     statement.setString(1, student.username)
     statement.setLong(2, student.timestamp)
+    statement.setString(3, student.description)
+
 
     statement.execute()
   }
 
 
-  override def removeStudentFromQueue(username: String): Unit = {
+  override def removeStudentFromQueue(username: String): Unit =
+  {
     val statement = connection.prepareStatement("DELETE FROM queue WHERE username=?")
 
     statement.setString(1, username)
@@ -40,16 +46,19 @@ class Database extends DatabaseAPI{
   }
 
 
-  override def getQueue: List[StudentInQueue] = {
+  override def getQueue: List[StudentInQueue] =
+  {
     val statement = connection.prepareStatement("SELECT * FROM queue")
     val result: ResultSet = statement.executeQuery()
 
     var queue: List[StudentInQueue] = List()
 
-    while (result.next()) {
+    while (result.next())
+    {
       val username = result.getString("username")
       val timestamp = result.getLong("timestamp")
-      queue = new StudentInQueue(username, timestamp) :: queue
+      val description = result.getString("description")
+      queue = new StudentInQueue(username, timestamp, description) :: queue
     }
 
     queue.reverse
