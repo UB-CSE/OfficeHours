@@ -23,6 +23,15 @@ function enterQueue() {
     document.getElementById("name").value = "";
 }
 
+// Rudimentary Authentication System - Gets the Name and Password and adds them together to create a unique identifier that would be within a whitelist for TAs
+function enterAvailable() {
+    let name = document.getElementById("name").value;
+    let password = document.getElementById("password").value;
+    socket.emit("enter_available", (name + password));
+    document.getElementById("name").value = "";
+    document.getElementById("password").value = "";
+}
+
 function readyToHelp() {
     socket.emit("ready_for_student");
 }
