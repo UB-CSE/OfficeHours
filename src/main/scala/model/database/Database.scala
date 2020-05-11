@@ -17,12 +17,32 @@ class Database extends DatabaseAPI{
 
   def setupTable(): Unit = {
     val statement = connection.createStatement()
-    statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT)")
+    statement.execute("CREATE TABLE IF NOT EXISTS queryQueue (username TEXT, timestamp BIGINT)")
+    statement.execute("CREATE TABLE IF NOT EXISTS quickQueue (username TEXT, timestamp BIGINT)")
+    statement.execute("CREATE TABLE IF NOT EXISTS normalQueue (username TEXT, timestamp BIGINT)")
   }
 
 
-  override def addStudentToQueue(student: StudentInQueue): Unit = {
-    val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?)")
+  override def addStudentToQueryQueue(student: StudentInQueue): Unit = {
+    val statement = connection.prepareStatement("INSERT INTO queryQueue VALUE (?, ?, ?)")
+
+    statement.setString(1, student.username)
+    statement.setLong(2, student.timestamp)
+    statement.setString(3, student.message)
+
+    statement.execute()
+  }
+
+  override def removeStudentFromQueryQueue(username: String): Unit = {
+    val statement = connection.prepareStatement("DELETE FROM queryQueue WHERE username=?")
+
+    statement.setString(1, username)
+
+    statement.execute()
+  }
+
+  override def addStudentToQuickQueue(student: StudentInQueue): Unit = { //never used
+    val statement = connection.prepareStatement("INSERT INTO quickQueue VALUE (?, ?)")
 
     statement.setString(1, student.username)
     statement.setLong(2, student.timestamp)
@@ -30,9 +50,26 @@ class Database extends DatabaseAPI{
     statement.execute()
   }
 
+  override def addStudentToNormalQueue(student: StudentInQueue): Unit = { //never used
+    val statement = connection.prepareStatement("INSERT INTO normalQueue VALUE (?, ?)")
 
-  override def removeStudentFromQueue(username: String): Unit = {
-    val statement = connection.prepareStatement("DELETE FROM queue WHERE username=?")
+    statement.setString(1, student.username)
+    statement.setLong(2, student.timestamp)
+
+    statement.execute()
+  }
+
+  override def removeStudentFromQuickQueue(student: String): Unit = { //never used
+    val statement = connection.prepareStatement("DELETE FROM quickQueue where username=?")
+
+    statement.setString(1, student)
+
+    statement.execute()
+  }
+
+
+  override def removeStudentFromNormalQueue(username: String): Unit = {
+    val statement = connection.prepareStatement("DELETE FROM normalQueue WHERE username=?")
 
     statement.setString(1, username)
 
@@ -41,18 +78,19 @@ class Database extends DatabaseAPI{
 
 
   override def getQueue: List[StudentInQueue] = {
-    val statement = connection.prepareStatement("SELECT * FROM queue")
+    val statement = connection.prepareStatement("SELECT * FROM queryQueue")
     val result: ResultSet = statement.executeQuery()
 
-    var queue: List[StudentInQueue] = List()
+    var queryQueue: List[StudentInQueue] = List()
 
     while (result.next()) {
       val username = result.getString("username")
       val timestamp = result.getLong("timestamp")
-      queue = new StudentInQueue(username, timestamp) :: queue
+      var message = result.getString("message")
+      queryQueue = new StudentInQueue(username, timestamp, message) :: queryQueue
     }
 
-    queue.reverse
+    queryQueue.reverse
   }
 
 }

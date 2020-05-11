@@ -9,21 +9,58 @@
 
 <br/>
 
-<h3 id="message">Welcome!</h3>
+<h2 id="message">Welcome to Office Hours For CSE 116!</h2>
 
-<p>Name</p>
+<p>Name: </p>
 <input type="text" id="name"/>
-<button onclick="enterQueue();">Enter Queue</button>
+<br>
+<p>Question: </p>
+<textarea id = "question"></textarea>
+<br><br>
+<button onclick="enterQueryQueue(); ">Enter Query Queue</button>
+<!--<button onclick = "submitQuery();">Submit Query</button>-->
+
 <br/><br/>
+<h4>Query Queue: </h4>
+<div id="queryQueue"></div>
 
-<button onclick="readyToHelp();">TA Ready to Help</button>
+<div id = "main"><h4>Quick Queue:</h4><button onclick="readyToHelpQuick();">TA Ready to Help</button></div>
+<div id="quickQueue"></div>
 
-<br/>
+<div id = "main"><h4>Normal Queue:</h4><button onclick="readyToHelpNormal();">TA Ready to Help</button></div>
+<div id="normalQueue"></div>
 
-<div id="queue"></div>
 
 <script src="officeHours.js"></script>
 
+<style>
+    #main h1{
+        display:inline-block;
+    }
+    #main{
+        height:20px;
+        max-width:230px;
+    }
+    #main button{
+        float: right;
+        position: relative;
+        top:-39px;
+    }
+    #question{
+        width:250px;
+        height:70px;
+        resize: none;
+    }
+    #name{
+        border:1px solid #8b8b8b;
+    }
+    #question:focus{
+        outline:none;
+    }
+    #name:focus{
+        outline:none;
+    }
+</style>
 
 </body>
 </html>
