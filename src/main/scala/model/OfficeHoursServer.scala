@@ -4,6 +4,7 @@ import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
+import java.io._
 
 
 class OfficeHoursServer() {
@@ -27,6 +28,7 @@ class OfficeHoursServer() {
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
+  server.addEventListener("new_comment", classOf[String], new commentListener(this))
 
   server.start()
 
@@ -41,6 +43,20 @@ class OfficeHoursServer() {
 object OfficeHoursServer {
   def main(args: Array[String]): Unit = {
     new OfficeHoursServer()
+  }
+}
+
+class commentListener(server: OfficeHoursServer) extends DataListener[String]{
+  override def onData(client: SocketIOClient, data: String, ackSender: AckRequest): Unit = {
+
+    val comment: String = data
+    val writer = new FileWriter("comments.txt",true)
+    writer.write(comment+"\n"+"\n")
+    writer.close()
+
+
+
+
   }
 }
 
