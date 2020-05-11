@@ -7,20 +7,18 @@
 </head>
 <body>
 
-<br/>
-
-<h3 id="message">Welcome!</h3>
-
-<p>Name</p>
-<input type="text" id="name"/>
-<button onclick="enterQueue();">Enter Queue</button>
-<br/><br/>
-
-<button onclick="readyToHelp();">TA Ready to Help</button>
-
-<br/>
-
-<div id="queue"></div>
+<div id="register">
+    <br/>
+    <label for="username">Enter your Login Info </label>
+    <br/>
+    <label for="username">Username </label>
+    <input id="username" type="text">
+    <br/>
+    <label for="username">Password </label>
+    <input id="password" type="text">
+    <br/>
+    <button onclick="registerClicked();">Try Me</button>
+</div>
 
 <script src="officeHours.js"></script>
 

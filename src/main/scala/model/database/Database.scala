@@ -4,6 +4,9 @@ import java.sql.{Connection, DriverManager, ResultSet}
 
 import model.StudentInQueue
 
+import java.text.SimpleDateFormat
+import java.util.{Calendar, Date}
+
 
 class Database extends DatabaseAPI{
 
@@ -18,8 +21,61 @@ class Database extends DatabaseAPI{
   def setupTable(): Unit = {
     val statement = connection.createStatement()
     statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT)")
+    statement.execute("CREATE TABLE IF NOT EXISTS allLogs(username TEXT, password TEXT)")
+    statement.execute("CREATE TABLE IF NOT EXISTS reason(username TEXT, dateS TEXT, reason TEXT)")
   }
 
+
+   def storeLogin(username: String, password: String): Unit = {
+    val statement = connection.prepareStatement("INSERT INTO allLogs VALUE (?,?)")
+     statement.setString(1,username.toLowerCase)
+     statement.setString(2,password)
+  }
+
+   def checkLogin(username: String, password: String): Boolean = {
+     var truth = false
+     val statement = connection.prepareStatement("SELECT * FROM allLogs")
+     val result: ResultSet = statement.executeQuery()
+     var resultMap: Map[String,String]= Map()
+     while(result.next()){
+       resultMap += (result.getString("username") -> result.getString("password"))
+     }
+     for((k,v)<-resultMap){
+       if(k == username.toLowerCase && v == password){
+         truth = true
+       }
+     }
+     truth
+  }
+
+  def isIThere(username:String): Int = {
+    val statement = connection.prepareStatement("SELECT EXISTS(SELECT * FROM reason WHERE username = (?))")
+    statement.setString(1,username)
+    val result: ResultSet = statement.executeQuery()
+    var tr: Int = 0
+    while (result.next()){
+      tr = result.getInt(1)
+    }
+    println(tr + " is the value of EXIST")
+    tr
+  }
+
+  def reasonHolder(student: String, date:String, reason:String): Unit = {
+    val statement = connection.prepareStatement("INSERT INTO reasons VALUE(?,?,?)")
+    statement.setString(1,student)
+    statement.setString(2,reason)
+    statement.setString(3,date)
+  }
+  def getReasons(username:String): List[String] = {
+    val statement = connection.prepareStatement("SELECT * FROM reasons WHERE username=(?)")
+    statement.setString(1,username)
+    val result: ResultSet = statement.executeQuery()
+    var listR: List[String] = List()
+    while(result.next()){
+      listR = listR :+ s"(${result.getString("reason") + " " + result.getString("dateS")})"
+    }
+    listR.reverse
+  }
 
   override def addStudentToQueue(student: StudentInQueue): Unit = {
     val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?)")
