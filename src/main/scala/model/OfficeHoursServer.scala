@@ -23,7 +23,7 @@ class OfficeHoursServer() {
   }
 
   val server: SocketIOServer = new SocketIOServer(config)
-
+  var ticket: Int = 0
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
@@ -60,7 +60,8 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+    server.ticket+=1
+    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime(),server.ticket))
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())

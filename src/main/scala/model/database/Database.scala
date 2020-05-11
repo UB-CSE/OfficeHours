@@ -49,7 +49,8 @@ class Database extends DatabaseAPI{
     while (result.next()) {
       val username = result.getString("username")
       val timestamp = result.getLong("timestamp")
-      queue = new StudentInQueue(username, timestamp) :: queue
+      val ticket = result.getInt("ticket")
+      queue = new StudentInQueue(username, timestamp, ticket) :: queue
     }
 
     queue.reverse
