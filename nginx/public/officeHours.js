@@ -2,6 +2,11 @@ const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
 
 socket.on('queue', displayQueue);
 socket.on('message', displayMessage);
+socket.on('position', displayPosition);
+
+function displayPosition(newPosition) {
+    document.getElementById("position").innerHTML = newPosition;
+}
 
 function displayMessage(newMessage) {
     document.getElementById("message").innerHTML = newMessage;
@@ -25,4 +30,9 @@ function enterQueue() {
 
 function readyToHelp() {
     socket.emit("ready_for_student");
+}
+
+function getPosition() {
+    socket.emit("get_position")
+    //document.getElementById("position").value = "";
 }
