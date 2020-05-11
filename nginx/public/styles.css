@@ -1,0 +1,21 @@
+body{
+  font-family: arial;
+}
+
+.container{
+  text-align: center;
+}
+
+.enterName{
+  margin: auto;
+}
+
+.input,
+.submit {
+    display: inline-block;
+    padding: 10px 15px;
+    font-size: 20px;
+    border: 2px solid gray;
+    border-radius: 0;
+    -webkit-appearance: none;
+}
