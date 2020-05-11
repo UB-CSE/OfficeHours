@@ -2,7 +2,7 @@ package model.database
 
 import java.sql.{Connection, DriverManager, ResultSet}
 
-import model.StudentInQueue
+import model.{StudentInQueue, StudentProblem}
 
 
 class Database extends DatabaseAPI{
@@ -17,15 +17,23 @@ class Database extends DatabaseAPI{
 
   def setupTable(): Unit = {
     val statement = connection.createStatement()
-    statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT)")
+    statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT, problem TEXT)")
   }
 
 
   override def addStudentToQueue(student: StudentInQueue): Unit = {
-    val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?)")
+    val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?, ?)")
 
     statement.setString(1, student.username)
     statement.setLong(2, student.timestamp)
+
+    statement.execute()
+  }
+
+  override def addProblemToQueue(problem: StudentProblem): Unit = {
+    val statement = connection.prepareStatement("INSERT INTO queue VALUE (?,?,?)")
+
+    statement.setString(3, problem.problem)
 
     statement.execute()
   }

@@ -16,8 +16,9 @@ class OfficeHoursServer() {
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
+  var usernameToProblem: Map[String, String] = Map()
 
-  val config: Configuration = new Configuration {
+  val config: Configuration = new Configuration() {
     setHostname("0.0.0.0")
     setPort(8080)
   }
@@ -26,6 +27,7 @@ class OfficeHoursServer() {
 
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
+  server.addEventListener("problem", classOf[String], new ProblemListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
 
   server.start()
@@ -80,6 +82,15 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
       }
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     }
+  }
+}
+
+class ProblemListener(server: OfficeHoursServer) extends DataListener[String] {
+  override def onData(socket: SocketIOClient, problem: String, ackSender: AckRequest): Unit = {
+    val username: String = server.socketToUsername(socket)
+    server.usernameToProblem += (username -> problem)
+    server.database.addProblemToQueue(StudentProblem(problem))
+    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
   }
 }
 

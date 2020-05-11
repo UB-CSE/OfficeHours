@@ -1,10 +1,11 @@
 package model.database
 
-import model.StudentInQueue
+import model.{StudentInQueue, StudentProblem}
 
 class TestingDatabase extends DatabaseAPI {
 
   var data: List[StudentInQueue] = List()
+  var data1: List[StudentProblem] = List()
 
 
   override def addStudentToQueue(student: StudentInQueue): Unit = {
@@ -20,5 +21,11 @@ class TestingDatabase extends DatabaseAPI {
   override def getQueue: List[StudentInQueue] = {
     data.reverse
   }
+
+  override def addProblemToQueue(problem: StudentProblem): Unit = {
+    data1 :: = problem
+  }
+
+
 
 }

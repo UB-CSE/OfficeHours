@@ -19,8 +19,11 @@ function displayQueue(queueJSON) {
 
 function enterQueue() {
     let name = document.getElementById("name").value;
+    let problem = document.getElementById("problem").value;
     socket.emit("enter_queue", name);
+    socket.emit("problem", problem)
     document.getElementById("name").value = "";
+    document.getElementById("problem").value = "";
 }
 
 function readyToHelp() {
