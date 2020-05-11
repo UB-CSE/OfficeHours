@@ -10,6 +10,7 @@ class Database extends DatabaseAPI{
   val url = "jdbc:mysql://mysql/officehours?autoReconnect=true"
   val username: String = sys.env("DB_USERNAME")
   val password: String = sys.env("DB_PASSWORD")
+  val question: String = sys.env("QUESTION")
 
   var connection: Connection = DriverManager.getConnection(url, username, password)
   setupTable()
@@ -17,15 +18,20 @@ class Database extends DatabaseAPI{
 
   def setupTable(): Unit = {
     val statement = connection.createStatement()
-    statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT)")
+    statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT,question TEXT)")
   }
 
 
+
+
   override def addStudentToQueue(student: StudentInQueue): Unit = {
-    val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?)")
+    val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?,?)")
+
+
 
     statement.setString(1, student.username)
     statement.setLong(2, student.timestamp)
+    statement.setString(3,student.question)
 
     statement.execute()
   }
@@ -33,6 +39,7 @@ class Database extends DatabaseAPI{
 
   override def removeStudentFromQueue(username: String): Unit = {
     val statement = connection.prepareStatement("DELETE FROM queue WHERE username=?")
+
 
     statement.setString(1, username)
 
@@ -49,7 +56,8 @@ class Database extends DatabaseAPI{
     while (result.next()) {
       val username = result.getString("username")
       val timestamp = result.getLong("timestamp")
-      queue = new StudentInQueue(username, timestamp) :: queue
+      val ques = result.getString("question")
+      queue = new StudentInQueue(username, timestamp,ques) :: queue
     }
 
     queue.reverse

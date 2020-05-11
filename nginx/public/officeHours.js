@@ -1,3 +1,4 @@
+
 const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
 
 socket.on('queue', displayQueue);
@@ -8,10 +9,14 @@ function displayMessage(newMessage) {
 }
 
 function displayQueue(queueJSON) {
+    let user = ""
     const queue = JSON.parse(queueJSON);
     let formattedQueue = "";
     for (const student of queue) {
-        formattedQueue += student['username'] + " has been waiting since " + student['timestamp'] + "<br/>"
+        formattedQueue += student['username'] + " has been waiting since " + student['timestamp'] +
+         " and needs help with"  + " "  + student["question"]
+         + "<br/>"
+        user = student['username'] + "<br/>"
     }
     document.getElementById("queue").innerHTML = formattedQueue;
 }
@@ -19,8 +24,13 @@ function displayQueue(queueJSON) {
 
 function enterQueue() {
     let name = document.getElementById("name").value;
-    socket.emit("enter_queue", name);
+    let question = document.getElementById("question").value;
+    console.log(question);
+    let value = JSON.stringify({"name":name,"question":question});
+    socket.emit("enter_queue", value);
     document.getElementById("name").value = "";
+    document.getElementById("question").value = "";
+
 }
 
 function readyToHelp() {
