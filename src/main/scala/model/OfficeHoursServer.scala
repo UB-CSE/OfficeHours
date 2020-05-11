@@ -27,7 +27,7 @@ class OfficeHoursServer() {
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
-
+  server.addEventListener("whole_summary",classOf[Summary],new SummaryListener())
   server.start()
 
   def queueJSON(): String = {
@@ -49,7 +49,7 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
   override def onDisconnect(socket: SocketIOClient): Unit = {
     if (server.socketToUsername.contains(socket)) {
       val username = server.socketToUsername(socket)
-        server.socketToUsername -= socket
+      server.socketToUsername -= socket
       if (server.usernameToSocket.contains(username)) {
         server.usernameToSocket -= username
       }
@@ -80,6 +80,11 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
       }
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     }
+  }
+}
+class SummaryListener()extends DataListener[Summary]{
+  override def onData(socketIOClient: SocketIOClient, t: Summary, ackRequest: AckRequest): Unit = {
+    socketIOClient.sendEvent("message","We received your problem and would help you in a bit")
   }
 }
 
