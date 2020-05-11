@@ -74,6 +74,17 @@ body {
     transform: translateY(-50%);
 }
 
+#continue-text {
+    font-family: Open Sans, sans-serif;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 14px;
+    color: #FFFFFF;
+    margin-top: 10px;
+    cursor: pointer;
+    display: inline-block;
+}
+
 .status {
     position: relative;
     font-family: Open Sans, sans-serif;
