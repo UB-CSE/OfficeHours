@@ -1,0 +1,205 @@
+body {
+    background: #1F1F1F;
+    display: flex;
+    margin: 0;
+    user-select: none;
+}
+
+#column-one {
+    width: 400px;
+    height: 85vh;
+    margin: 5vh 150px 10vh 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#column-two {
+    height: 85vh;
+    margin: 5vh 150px 10vh 150px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    font-family: Open Sans, sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 36px;
+    color: #FFFFFF;
+}
+
+.input {
+    width: 100%;
+    height: 60px;
+    position: relative;
+}
+
+.input input {
+    width: 82%;
+    height: 100%;
+    position: absolute;
+    padding: 0 5%;
+    background: none;
+    border: none;
+    outline: none;
+    font-family: Open Sans, sans-serif;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 24px;
+    color: #FFFFFF;
+}
+
+.input .border {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    border: #353535 solid 2px;
+    border-radius: 8px;
+    z-index: -1;
+}
+
+.input input:focus + .border {
+    border: #005BBB solid 2px;
+}
+
+.input .shortcut {
+    position: absolute;
+    float: right;
+    width: 30px;
+    height: 30px;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.status {
+    position: relative;
+    font-family: Open Sans, sans-serif;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 24px;
+    color: #FFFFFF;
+}
+
+.status .progress {
+    position: relative;
+    top: 5px;
+    width: 24px;
+    height: 24px;
+    padding-right: 10px;
+}
+
+.button {
+    position: relative;
+    width: 100%;
+    height: 60px;
+    background: #353535;
+    border-radius: 10px;
+    font-family: Open Sans, sans-serif;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 24px;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.button::after {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    border: #005BBB solid 2px;
+    border-radius: 12px;
+}
+
+.button:active::after {
+    transition: opacity 0ms;
+    opacity: 1;
+}
+
+.button #check {
+    width: 20px;
+    height: 20px;
+    margin: 0 20px;
+}
+
+.button .shortcut {
+    position: absolute;
+    right: 10px;
+    font-family: Open Sans, sans-serif;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.button #ctrl-key {
+    display: inline-block;
+    padding: 2px 5px;
+    margin-right: 4px;
+    color: #353535;
+    background-color: #FFFFFF;
+}
+
+.logo {
+    width: auto;
+    height: 75px;
+    margin-right: 30px;
+}
+
+#logo-parent {
+    margin-top: 40px;
+}
+
+#queue {
+    overflow-y: auto;
+    -ms-overflow-style: none;
+}
+
+#queue::-webkit-scrollbar {
+    display: none;
+}
+
+.user {
+    width: 100%;
+    height: 120px;
+    background: #353535;
+    border-radius: 5px;
+    font-family: Open Sans, sans-serif;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 24px;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.user .place {
+    width: 100px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 36px;
+    padding-bottom: 8px;
+}
+
+.user .info {
+    flex-grow: 1;
+    text-align: center;
+    padding-right: 50px;
+}
+
+.user .name, .time {
+    padding: 5px 10px;
+    background-color: #005BBB;
+    border-radius: 5px;
+}

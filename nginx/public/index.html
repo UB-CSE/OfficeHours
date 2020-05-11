@@ -4,26 +4,105 @@
     <meta charset="UTF-8">
     <title>Office Hours</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <link rel="stylesheet" href="main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;600&display=swap" rel="stylesheet">
 </head>
 <body>
+<div id="column-one">
 
-<br/>
-
-<h3 id="message">Welcome!</h3>
-
-<p>Name</p>
-<input type="text" id="name"/>
-<button onclick="enterQueue();">Enter Queue</button>
-<br/><br/>
-
-<button onclick="readyToHelp();">TA Ready to Help</button>
-
-<br/>
-
-<div id="queue"></div>
-
+    <div id="top">
+        <h1 class="header">Enter Queue</h1>
+        <div class="input" id="name">
+            <img class="shortcut" src="./assets/enter.svg" alt="Shortcut: Enter">
+            <input type="text"/>
+            <div class="border"></div>
+        </div>
+        <h1 class="header">Status</h1>
+        <div class="status">
+            <img class="progress" id="server-online" src="./assets/arrow.svg" alt="Server Online: Status Indicator">server
+            online
+        </div>
+        <div class="status">
+            <img class="progress" id="request-sent" src="./assets/arrow.svg" alt="Request Sent: Status Indicator">request
+            sent
+        </div>
+        <div class="status">
+            <img class="progress" id="in-queue" src="./assets/arrow.svg" alt="In Queue: Status Indicator">in queue
+        </div>
+        <div class="status">
+            <img class="progress" id="next-in-line" src="./assets/arrow.svg" alt="Next in Line: Status Indicator">next
+            in
+            line
+        </div>
+        <div class="status">
+            <img class="progress" id="complete" src="./assets/arrow.svg" alt="Complete: Status Indicator">complete
+        </div>
+    </div>
+    <div id="bottom">
+        <div class="button" id="ta-available">
+            <img id="check" src="./assets/check-white.svg" alt="White Check">
+            TA ready to help
+            <div class="shortcut">
+                <div id="ctrl-key">ctrl</div>
+                +
+                <img src="./assets/enter-white.svg" alt="Enter Key">
+            </div>
+        </div>
+        <div id="logo-parent">
+            <img class="logo" src="./assets/UBLogo.png" alt="University at Buffalo Logo">
+            <img class="logo" src="./assets/logo.svg" alt="Office Hours Logo">
+        </div>
+    </div>
+</div>
+<div id="column-two">
+    <h1 class="header">Queue</h1>
+    <div id="queue">
+        <div class="user">
+            <div class="place">1</div>
+            <div class="info"><span class="name">alex</span> has been waiting for <span class="time">10 min</span></div>
+        </div>
+        <div class="user">
+            <div class="place">1</div>
+            <div class="info"><span class="name">alex</span> has been waiting for <span class="time">10 min</span></div>
+        </div>
+        <div class="user">
+            <div class="place">1</div>
+            <div class="info"><span class="name">alex</span> has been waiting for <span class="time">10 min</span></div>
+        </div>
+        <div class="user">
+            <div class="place">1</div>
+            <div class="info"><span class="name">alex</span> has been waiting for <span class="time">10 min</span></div>
+        </div>
+        <div class="user">
+            <div class="place">1</div>
+            <div class="info"><span class="name">alex</span> has been waiting for <span class="time">10 min</span></div>
+        </div>
+        <div class="user">
+            <div class="place">1</div>
+            <div class="info"><span class="name">alex</span> has been waiting for <span class="time">10 min</span></div>
+        </div>
+        <div class="user">
+            <div class="place">1</div>
+            <div class="info"><span class="name">alex</span> has been waiting for <span class="time">10 min</span></div>
+        </div>
+        <div class="user">
+            <div class="place">1</div>
+            <div class="info"><span class="name">alex</span> has been waiting for <span class="time">10 min</span></div>
+        </div>
+        <div class="user">
+            <div class="place">1</div>
+            <div class="info"><span class="name">alex</span> has been waiting for <span class="time">10 min</span></div>
+        </div>
+        <div class="user">
+            <div class="place">1</div>
+            <div class="info"><span class="name">alex</span> has been waiting for <span class="time">10 min</span></div>
+        </div>
+        <div class="user">
+            <div class="place">1</div>
+            <div class="info"><span class="name">alex</span> has been waiting for <span class="time">10 min</span></div>
+        </div>
+    </div>
+</div>
 <script src="officeHours.js"></script>
-
-
 </body>
 </html>
