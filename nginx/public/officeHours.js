@@ -10,10 +10,14 @@ function displayMessage(newMessage) {
 function displayQueue(queueJSON) {
     const queue = JSON.parse(queueJSON);
     let formattedQueue = "";
+
     for (const student of queue) {
+        const newColor = "#"+Math.floor(Math.random()*16777215).toString(16);
         formattedQueue += student['username'] + " has been waiting since " + student['timestamp'] + "<br/>"
     }
+
     document.getElementById("queue").innerHTML = formattedQueue;
+
 }
 
 
@@ -25,4 +29,10 @@ function enterQueue() {
 
 function readyToHelp() {
     socket.emit("ready_for_student");
+}
+function getComment(){
+    let comment = document.getElementById("comment").value;
+    socket.emit("new_comment", comment)
+    document.getElementById("comment").value = ""
+
 }
