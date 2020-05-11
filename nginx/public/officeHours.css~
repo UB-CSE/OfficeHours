@@ -45,4 +45,7 @@ div.details
 }
 .submitBtn:active {
 	box-shadow:inset 0px 0px 0px 2px #3584E4;
+	position:relative;
+	left:1px;
+    outline: transparent;
 }
