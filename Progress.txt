@@ -1,0 +1,59 @@
+----------------------------------
+IDEA: Priority System for Students based on how much time it will take
+
+Scenario: Imagine you are a student and you have just a really quick
+question regarding something which can probably be solved in 10 seconds,
+why should you have to wait an entire while?
+
+Based on express lines in supermarkets.
+-----------------------------------
+
+TA VIEW:
+--------
+QUICK QUEUE
+[Andre, Alex, Megan, Charles]
+
+NORMAL QUEUE
+[James, Floabo, Afroic]
+
+QUESTIONS:
+
+---------------------------------------
+
+//////////\\\\\\\\\\//////////\\\\\\\\\\//////////\\\\\\\\\\
+SCHEDULE:
+--
+Monday, April 4 -
+PLAN: [???]
+DONE: Updated HTML, JS and started adding new SQL functions
+ACCOMPLISHED: 100/100%
+--
+
+Friday, April 8 -
+PLAN: [Work more on SQL and get students to go into different queues. (Normal / Quick)]
+DONE: Got students to go into Normal / Quick Queues on click of buttons
+ACCOMPLISHED 100/100%
+BUGS: Students Will NOT go into Normal Queue when clicked
+--
+
+Saturday, April 9 - [FINAL DAY!!!]
+PLAN: Fix bug relating to students being unable to move into normal queue, Find way to get students out of Query queue Frontend, move names from queues on button press.
+DONE:
+ACCOMPLISHED 0/100%
+BUGS:
+--
+--
+
+███╗░░██╗░█████╗░████████╗███████╗  ███████╗░█████╗░██████╗░  ████████╗░█████╗░██╗░██████╗██╗
+████╗░██║██╔══██╗╚══██╔══╝██╔════╝  ██╔════╝██╔══██╗██╔══██╗  ╚══██╔══╝██╔══██╗╚█║██╔════╝╚═╝
+██╔██╗██║██║░░██║░░░██║░░░█████╗░░  █████╗░░██║░░██║██████╔╝  ░░░██║░░░███████║░╚╝╚█████╗░░░░
+██║╚████║██║░░██║░░░██║░░░██╔══╝░░  ██╔══╝░░██║░░██║██╔══██╗  ░░░██║░░░██╔══██║░░░░╚═══██╗░░░
+██║░╚███║╚█████╔╝░░░██║░░░███████╗  ██║░░░░░╚█████╔╝██║░░██║  ░░░██║░░░██║░░██║░░░██████╔╝██╗
+╚═╝░░╚══╝░╚════╝░░░░╚═╝░░░╚══════╝  ╚═╝░░░░░░╚════╝░╚═╝░░╚═╝  ░░░╚═╝░░░╚═╝░░╚═╝░░░╚═════╝░╚═╝
+
+Got Stuck on following things:
+- trying to figure out to send messages to server from textarea and display in HTML string
+- removing name and timestamp from correct queue (Clicking TA button removes from main queue)
+- getting conversion correct between nanotime and normal time (Student has NOT been waiting 5 hours...)
+
+I spent a REALLY long time on this project, and I just couldnt make it as perfect as I wanted, but the concept is there. :)
