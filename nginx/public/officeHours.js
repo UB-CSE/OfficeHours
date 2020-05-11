@@ -10,10 +10,23 @@ function displayMessage(newMessage) {
 function displayQueue(queueJSON) {
     const queue = JSON.parse(queueJSON);
     let formattedQueue = "";
+    let numberInQueue = 1;
     for (const student of queue) {
-        formattedQueue += student['username'] + " has been waiting since " + student['timestamp'] + "<br/>"
+        if(numberInQueue == 1){
+            const aRandomColorForText = Math.floor(Math.random()*Math.pow(256,3)).toString(16);
+            formattedQueue += (student['username'] + " has been waiting since " + student['timestamp'] + " and will be the next student " + " helped today!" + "<br/>").fontcolor(aRandomColorForText);
+            numberInQueue += 1
+        }else{
+            const aRandomColorForText = Math.floor(Math.random()*Math.pow(256,3)).toString(16);
+            formattedQueue += (student['username'] + " has been waiting since " + student['timestamp'] + " and will be student number " + numberInQueue + " in the line." + "<br/>").fontcolor(aRandomColorForText);
+            numberInQueue += 1
+        }
     }
-    document.getElementById("queue").innerHTML = formattedQueue;
+    if(formattedQueue == ""){
+        document.getElementById("queue").innerHTML = "Everyone has been helped!";
+    }else{
+        document.getElementById("queue").innerHTML = formattedQueue;
+    }
 }
 
 
