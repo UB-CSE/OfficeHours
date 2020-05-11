@@ -1,13 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Office Hours</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <style>
+        h2{
+            position: absolute;
+            left: 700px;
+            top: 10px;
+        }
+
+    </style>
 </head>
-<body>
+<body style="background-color:deepskyblue"/>
 
 <br/>
+<marquee># Welcome To CSE 116 Office Hours! #</marquee>
 
 <h3 id="message">Welcome!</h3>
 
@@ -18,9 +26,38 @@
 
 <button onclick="readyToHelp();">TA Ready to Help</button>
 
-<br/>
+<p>CSE 116 TAs With Office Hour Zoom Links</p>
+<ul>
+    <li>Logan <a href ="https://buffalo.zoom.us/j/4513238420">Zoom</a></a> (password is "Jesse")</li>
+    <li>Megan <a href = "https://buffalo.zoom.us/j/907624510">Zoom</a></a></li>
+    <li>John D <a href = "https://buffalo.zoom.us/j/96688695990?pwd=ZHdMR3RPT29BT1h6NnFIWkNkekN2QT09">Zoom</a></li>
+    <li>Jon <a href = "https://buffalo.zoom.us/j/7622395094">Zoom</a> (password is "officehour")</li>
+    <li>Joseph <a href = "https://zoom.us/j/734360414">Zoom</a></li>
+    <li>Kevin B <a href = "https://zoom.us/j/2744602238">Zoom</a></li>
+    <li>Taisia <a href = "https://zoom.us/j/5605618596">Zoom</a></li>
+    <li>Snigdha <a href = "https://buffalo.zoom.us/my/motadaka">Zoom</a></li>
+    <li>Jesse <a href = "https://buffalo.zoom.us/j/104617217">Zoom</a></li>
+    <li>Shamroy <a href ="https://buffalo.zoom.us/j/771933517">Zoom</a></li>
+</ul>
 
-<div id="queue"></div>
+
+
+
+<h2><img src="https://images.squarespace-cdn.com/content/v1/5149ba5fe4b0a5ba64c7baae/1560785909183-7OBYCBHLM0GI8QL8VH1U/ke17ZwdGBToddI8pDm48kH23KVWagbNOYpajbj_MQLNZw-zPPgdn4jUwVcJE1ZvWQUxwkmyExglNqGp0IvTJZamWLI2zvYWH8K3-s_4yszcp2ryTI0HqTOaaUohrI8PI-4DGGLi3WdhIPQDa6khDzRWGU5SknjCO3Yd6rloU2Zw/UB+new+black+and+white.png?format=1000w"/></h2>
+
+<br/>
+<p><strong>Queue:</strong></p>
+
+<table>
+    <tr>
+        <th>Name : TimeStamp</th>
+    </tr>
+    <tr>
+        <th><div id="queue"></div></th>
+</tr>
+
+</table>
+
 
 <script src="officeHours.js"></script>
 
