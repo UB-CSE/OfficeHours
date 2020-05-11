@@ -9,7 +9,7 @@ function displayMessage(newMessage) {
 
 function displayQueue(queueJSON) {
     const queue = JSON.parse(queueJSON);
-    let formattedQueue = "<div class=\"details\"> <p>Good job! No students are currently in queue!</p> </div>"
+    let formattedQueue = "<div class=\"details\"> <p>Good job! No students are currently in queue!</p> </div>";
     for (const student of queue) {
         formattedQueue += student['username'] + " has been waiting since " + student['timestamp'] + "<br/>"
     }
