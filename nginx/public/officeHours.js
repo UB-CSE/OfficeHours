@@ -11,10 +11,14 @@ function displayQueue(queueJSON) {
     const queue = JSON.parse(queueJSON);
     let formattedQueue = "";
     for (const student of queue) {
-        formattedQueue += student['username'] + " has been waiting since " + student['timestamp'] + "<br/>"
+        formattedQueue += student['username'] + " : " + student['timestamp'] + "<br/>"
+
     }
+
     document.getElementById("queue").innerHTML = formattedQueue;
+
 }
+
 
 
 function enterQueue() {
