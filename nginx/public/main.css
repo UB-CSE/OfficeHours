@@ -205,12 +205,16 @@ body {
 
 .user .info {
     flex-grow: 1;
-    text-align: center;
     padding-right: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
 }
 
 .user .name, .time {
     padding: 5px 10px;
+    margin: 0 5px;
     background-color: #005BBB;
     border-radius: 5px;
 }
