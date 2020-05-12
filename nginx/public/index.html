@@ -11,41 +11,52 @@
 <div id="column-one">
     <div id="top">
         <h1 class="header">Enter Queue</h1>
-        <div class="input" id="name">
+        <form class="input" id="name">
             <img class="shortcut" src="./assets/enter.svg" alt="Shortcut: Enter">
             <input id="name-input" type="text"/>
+            <div class="fail-border" id="name-fail-border"></div>
             <div class="border"></div>
-        </div>
+        </form>
         <div id="continue-text">continue</div>
         <h1 class="header">Status</h1>
         <div class="status">
-            <img class="progress" id="server-online" src="./assets/arrow.svg" alt="Server Online: Status Indicator">server
-            online
+            <img class="icon" id="server-online" src="./assets/arrow.svg" alt="Server Online: Status Indicator"><span>server
+            online</span>
         </div>
         <div class="status">
-            <img class="progress" id="request-sent" src="./assets/arrow.svg" alt="Request Sent: Status Indicator">request
-            sent
+            <img class="icon" id="message-received" src="./assets/arrow.svg"
+                 alt="Message Received: Status Indicator"><span>message
+            received</span>
         </div>
-        <div class="status">
-            <img class="progress" id="in-queue" src="./assets/arrow.svg" alt="In Queue: Status Indicator">in queue
-        </div>
-        <div class="status">
-            <img class="progress" id="next-in-line" src="./assets/arrow.svg" alt="Next in Line: Status Indicator">next
-            in
-            line
-        </div>
-        <div class="status">
-            <img class="progress" id="complete" src="./assets/arrow.svg" alt="Complete: Status Indicator">complete
-        </div>
+        <div id="message"></div>
     </div>
     <div id="bottom">
-        <div class="button" id="ta-available">
-            <img id="check" src="./assets/check-white.svg" alt="White Check">
-            TA ready to help
-            <div class="shortcut">
-                <div id="ctrl-key">ctrl</div>
-                +
-                <img src="./assets/enter-white.svg" alt="Enter Key">
+        <div class="button-parent" id="ta-available">
+            <div id="confirm-modal">
+                <img id="confirm-modal-close" src="./assets/close-white.svg" alt="Modal Close Button">
+                <h1 class="header">Confirm?</h1>
+                <div class="description">This button is to allow TA's to accept a new student from the queue. Please do
+                    not continue if you are a student. <br/><br/>Click the button again to confirm. If you wish to skip
+                    this modal, use
+                    <div class="shortcut">
+                        <div class="keyboard-key">ctrl</div>
+                        +
+                        <div class="keyboard-key">shift</div>
+                        +
+                        <img src="./assets/enter-white.svg" alt="Enter Key">
+                    </div>
+                </div>
+            </div>
+            <div class="button" id="ta-accept">
+                <img id="check" src="./assets/check-white.svg" alt="White Check">
+                TA ready to help
+                <div class="shortcut">
+                    <div id="non-confirm-modal">
+                        <div class="keyboard-key">ctrl</div>
+                        +
+                    </div>
+                    <img src="./assets/enter-white.svg" alt="Enter Key">
+                </div>
             </div>
         </div>
         <div id="logo-parent">
@@ -55,7 +66,7 @@
     </div>
 </div>
 <div id="column-two">
-    <h1 class="header">Queue</h1>
+    <h1 class="header" id="queue-header">Queue<span id="queue-header-init">Not Initialized</span></h1>
     <div id="queue"></div>
 </div>
 <script src="officeHours.js"></script>
