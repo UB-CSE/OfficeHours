@@ -56,6 +56,7 @@ class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String]
     Database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
+    println("Give me an A!!!!!@!#@11")
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
   }
 }
