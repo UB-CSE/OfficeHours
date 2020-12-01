@@ -4,26 +4,31 @@
     <meta charset="UTF-8">
     <title>Office Hours</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.5/lib/darkmode-js.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet"> 
+    <link rel="stylesheet" type="text/css" href="officeHours.css">
+
 </head>
 <body>
 
 <br/>
+    <table id="tbl_wrap"><tbody><tr><td id="td_wrap">
 
-<h3 id="message">Welcome!</h3>
+        <h3 id="message">Welcome To Office Hours!</h3>
 
-<p>Name</p>
-<input type="text" id="name"/>
-<button onclick="enterQueue();">Enter Queue</button>
-<br/><br/>
+        <p>Add Yourself To The Queue</p>
+        <input type="text" placeholder="Student Name" id="name"/>
+        <button onclick="enterQueue();" class="submitBtn">Add to Queue</button>
+        <br/><br/>
+        
+        <button onclick="readyToHelp();" class="submitBtn">You are a TA and is ready to help</button>
+        <br/>
+        <br/>
+        <p> Queue Below: </p>
 
-<button onclick="readyToHelp();">TA Ready to Help</button>
-
-<br/>
-
-<div id="queue"></div>
-
-<script src="officeHours.js"></script>
-
-
+        <div id="queue"> <div class="details"> <p>Good job! No students are currently in queue!</p> </div> </div>
+    </td></tr></tbody></table>
+    <script src="officeHours.js"></script>
 </body>
 </html>

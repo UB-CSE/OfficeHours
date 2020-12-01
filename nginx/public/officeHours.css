@@ -1,0 +1,48 @@
+body
+{
+font-family: 'Noto Sans', sans-serif;
+}
+
+html, body, #tbl_wrap 
+{ 
+    height: 100%; 
+    width: 100%; 
+    padding: 10; 
+    margin: 0; 
+}
+
+#td_wrap { 
+    vertical-align: middle;
+    text-align: center; 
+}
+
+
+
+div.details 
+{
+	/*text-align: justify; */
+	font-family: 'Noto Sans', sans-serif;
+	font-size: 12px;
+	color:#4c4c4c;
+}
+
+.submitBtn {
+	border: 0;
+	background-color:#f7f7f7;
+	border-radius:6px;
+	display:inline-block;
+	cursor:pointer;
+	color:#666666;
+	font-family: 'Noto Sans', sans-serif;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 12px;
+	text-decoration:none;
+}
+.submitBtn:hover {
+	background-color:#7a7a7a;
+	color:#f0f0f0;
+}
+.submitBtn:active {
+	box-shadow:inset 0px 0px 0px 2px #3584E4;
+}
