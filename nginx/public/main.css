@@ -1,0 +1,288 @@
+body {
+    background: #1F1F1F;
+    display: flex;
+    margin: 0;
+    user-select: none;
+}
+
+#column-one {
+    width: 400px;
+    height: 85vh;
+    margin: 5vh 150px 10vh 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#column-two {
+    height: 85vh;
+    margin: 5vh 150px 10vh 150px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    font-family: Open Sans, sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 36px;
+    color: #FFFFFF;
+}
+
+.input {
+    width: 100%;
+    height: 60px;
+    position: relative;
+}
+
+
+.input input {
+    width: 80%;
+    height: 100%;
+    position: absolute;
+    padding: 0 15% 0 5%;
+    background: none;
+    border: none;
+    outline: none;
+    font-family: Open Sans, sans-serif;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 24px;
+    color: #FFFFFF;
+    z-index: 1;
+}
+
+.input .border {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    border: #353535 solid 2px;
+    border-radius: 8px;
+    z-index: -1;
+}
+
+.fail-border {
+    opacity: 0;
+    transition: opacity 300ms ease-in-out;
+    border: #E34A3D solid 2px;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    border-radius: 8px;
+}
+
+.input input:focus + .border {
+    border: #005BBB solid 2px;
+}
+
+.input .shortcut {
+    position: absolute;
+    float: right;
+    width: 30px;
+    height: 30px;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+#continue-text {
+    font-family: Open Sans, sans-serif;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 14px;
+    color: #FFFFFF;
+    margin-top: 10px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.status {
+    position: relative;
+    font-family: Open Sans, sans-serif;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 24px;
+    color: #FFFFFF;
+}
+
+.status span {
+    padding-left: 10px;
+}
+
+.status .icon {
+    position: relative;
+    top: 5px;
+    width: 24px;
+    height: 24px;
+    transform: rotate(180deg);
+}
+
+#message {
+    font-family: Open Sans, sans-serif;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 24px;
+    color: #FFFFFF;
+    background-color: #005BBB;
+    display: none;
+    border-radius: 10px;
+    margin-top: 10px;
+    padding: 10px;
+}
+
+.button-parent {
+    position: relative;
+    width: 100%;
+    height: 60px;
+    font-family: Open Sans, sans-serif;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 24px;
+    color: #FFFFFF;
+    display: flex;
+}
+
+.button {
+    width: 100%;
+    height: 100%;
+    z-index: 200;
+    background: #353535;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.button-parent::after {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    border: #005BBB solid 2px;
+    border-radius: 12px;
+}
+
+.button-parent:active::after {
+    transition: opacity 0ms;
+    opacity: 1;
+}
+
+.button-parent #check {
+    width: 20px;
+    height: 20px;
+    margin: 0 20px;
+}
+
+.button-parent .shortcut {
+    position: absolute;
+    right: 10px;
+    font-family: Open Sans, sans-serif;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.button-parent .keyboard-key {
+    display: inline-block;
+    padding: 2px 5px;
+    margin: 0 4px;
+    color: #353535;
+    background-color: #FFFFFF;
+}
+
+#confirm-modal {
+    display: none;
+    position: absolute;
+    left: -20px;
+    bottom: -20px;
+    padding: 0 20px 100px 20px;
+    background-color: #005BBB;
+    border-radius: 15px;
+    width: 100%;
+    z-index: 1;
+}
+
+#confirm-modal-close {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    cursor: pointer;
+}
+
+#confirm-modal .shortcut {
+    position: relative;
+    display: inline-flex;
+    margin-left: 15px;
+}
+
+.logo {
+    width: auto;
+    height: 75px;
+    margin-right: 30px;
+}
+
+#logo-parent {
+    margin-top: 40px;
+}
+
+#queue {
+    overflow-y: auto;
+    -ms-overflow-style: none;
+}
+
+#queue-header-init {
+    padding: 5px 10px;
+    margin: 0 10px;
+    background-color: #005BBB;
+    border-radius: 10px;
+}
+
+#queue::-webkit-scrollbar {
+    display: none;
+}
+
+.user {
+    width: 100%;
+    height: 120px;
+    background: #353535;
+    border-radius: 5px;
+    font-family: Open Sans, sans-serif;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 24px;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.user .place {
+    width: 100px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 36px;
+    padding-bottom: 8px;
+}
+
+.user .info {
+    flex-grow: 1;
+    padding-right: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.user .name, .time {
+    padding: 5px 10px;
+    margin: 0 5px;
+    background-color: #005BBB;
+    border-radius: 5px;
+}
