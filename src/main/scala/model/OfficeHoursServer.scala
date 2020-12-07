@@ -4,6 +4,7 @@ import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
+import java.util.Calendar
 
 
 class OfficeHoursServer() {
@@ -60,7 +61,25 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+    val time = Calendar.getInstance()
+    val minute = time.get(Calendar.MINUTE)
+    var hour = time.get(Calendar.HOUR)
+    //server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+    if(hour > 12){
+      hour %= 12
+      if(minute< 10) {
+        server.database.addStudentToQueue(StudentInQueue(username, hour.toString + ":0" + minute.toString + " PM"))
+      } else{
+        server.database.addStudentToQueue(StudentInQueue(username, hour.toString + ":" + minute.toString + " PM"))
+      }
+    } else {
+      if (minute< 10) {
+        server.database.addStudentToQueue(StudentInQueue(username, hour.toString + ":0" + minute.toString + " AM"))
+      } else {
+        server.database.addStudentToQueue(StudentInQueue(username, hour.toString + ":" + minute.toString + " AM"))
+
+      }
+    }
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
