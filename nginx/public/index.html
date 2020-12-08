@@ -5,18 +5,52 @@
     <title>Office Hours</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 </head>
+<div class="topnav">
+    <a class="active" href="#home">Office Hours Queue</a>
+    <style>
+        .topnav {
+            background-color: #333;
+            overflow: hidden;
+        }
+        .topnav a {
+            float: left;
+            color: #005BBB;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 17px;
+            font-family: Arial,sans-serif;
+            font-weight: bold;
+        }
+        .topnav a.active {
+            background-color: #005BBB;
+            color: white;
+        }</style>
+</div>
 <body>
 
 <br/>
 
-<h3 id="message">Welcome!</h3>
+<style>
+    body {
+    background-image: url("https://i.ibb.co/T8Z3TRC/logo.jpg");
+    background-repeat: no-repeat, repeat;
+    background-origin: padding-box;
+    background-size: cover;
+    background-color: #f6f6f6;
+    background-position: 150px 50px;
+}</style>
 
-<p>Name</p>
+<h3 style="font-family: Arial, sans-serif" id="message">Welcome to Office Hours!</h3>
+
+<p style="font-family: Arial, sans-serif">Please enter your name to be placed in the queue</p>
 <input type="text" id="name"/>
-<button onclick="enterQueue();">Enter Queue</button>
+<input onclick="enterQueue()" type="button" value="Enter Queue" id="queueButton"/>
+<input onclick="enterTA(this)" type="button" value="TA sign in" id="TA_Button"/>
 <br/><br/>
 
-<button onclick="readyToHelp();">TA Ready to Help</button>
+<input disabled onclick="readyToHelp()" type="button" value="Next" class="addMore" title="Only TAs can alter queue" id="nextButton"/>
+<input disabled onclick="signOut()" type="button" value="TA sign out" id="signoutButton"/>
 
 <br/>
 
