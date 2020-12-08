@@ -9,15 +9,29 @@
 
 <br/>
 
-<h3 id="message">Welcome!</h3>
+<h3 id="message">Welcome to the Office Hour System!</h3>
 
 <p>Name</p>
 <input type="text" id="name"/>
 <button onclick="enterQueue();">Enter Queue</button>
 <br/><br/>
 
-<button onclick="readyToHelp();">TA Ready to Help</button>
+<!--<button onclick="readyToHelp();">TA Ready to Help</button>-->
 
+<p>TA Sign-in</p>
+<p>
+    <label for="ubit">UBIT:</label>
+    <input type="text" id="ubit"/>
+</p>
+<p>
+<label for="password">Password:</label>
+<input type="text" id="password"/>
+</p>
+<div id="buttons">
+    <button onclick="authenticateTA();">Authenticate</button>
+</div>
+<h4 id="privilege">Privilege: Student</h4>
+<h5 id="authenticate"></h5>
 <br/>
 
 <div id="queue"></div>
