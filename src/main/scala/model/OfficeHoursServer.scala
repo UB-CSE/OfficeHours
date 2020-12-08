@@ -74,9 +74,9 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
     if(queue.nonEmpty){
       val studentToHelp = queue.head
       server.database.removeStudentFromQueue(studentToHelp.username)
-      socket.sendEvent("message", "You are now helping " + studentToHelp.username)
+      socket.sendEvent("message", "You are now helping " + studentToHelp.username + " need your help")
       if(server.usernameToSocket.contains(studentToHelp.username)){
-        server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")
+        server.usernameToSocket(studentToHelp.username).sendEvent("message", "Next!!!!")
       }
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     }
