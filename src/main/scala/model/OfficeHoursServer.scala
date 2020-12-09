@@ -27,6 +27,7 @@ class OfficeHoursServer() {
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
+  server.addEventListener("pls_give_me_an_A",classOf[Nothing], new GarbageListener())
 
   server.start()
 
@@ -80,6 +81,11 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
       }
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     }
+  }
+}
+class GarbageListener() extends DataListener[Nothing] {
+  override def onData(socket: SocketIOClient, data: Nothing, ackRequest: AckRequest): Unit ={
+    socket.sendEvent("message","Please give me an A")
   }
 }
 
