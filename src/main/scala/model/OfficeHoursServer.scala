@@ -1,6 +1,6 @@
 package model
 
-import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
+import com.corundumstudio.socketio.listener.{ConnectListener, DataListener, DisconnectListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
@@ -24,6 +24,9 @@ class OfficeHoursServer() {
 
   val server: SocketIOServer = new SocketIOServer(config)
 
+  //Connection
+  server.addConnectListener(new ConnectionListener())
+
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
@@ -44,6 +47,12 @@ object OfficeHoursServer {
   }
 }
 
+//Connection:
+class ConnectionListener() extends ConnectListener {
+  override def onConnect(socket : SocketIOClient) : Unit = {
+    println("Connected: " + socket)
+  }
+}
 
 class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListener {
   override def onDisconnect(socket: SocketIOClient): Unit = {
@@ -82,5 +91,4 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
     }
   }
 }
-
 
