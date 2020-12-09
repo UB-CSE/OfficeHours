@@ -1,0 +1,15 @@
+body {
+    background-color: #42454F;
+    color: white;
+    text-align: center;
+    font-family: Papyrus;
+}
+
+h3 {
+    font-family: Lucida Handwriting;
+}
+
+button {
+    font-family: Papyrus;
+    font-weight: bold;
+}
