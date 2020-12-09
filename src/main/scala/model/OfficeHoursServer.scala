@@ -1,3 +1,4 @@
+
 package model
 
 import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
@@ -49,7 +50,7 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
   override def onDisconnect(socket: SocketIOClient): Unit = {
     if (server.socketToUsername.contains(socket)) {
       val username = server.socketToUsername(socket)
-        server.socketToUsername -= socket
+      server.socketToUsername -= socket
       if (server.usernameToSocket.contains(username)) {
         server.usernameToSocket -= username
       }
@@ -64,9 +65,16 @@ class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String]
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    for (students <- server.database.getQueue) {
+      if (!server.usernameToSocket.contains(students.username)) {
+        server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+        server.socketToUsername += (socket -> username)
+        server.usernameToSocket += (username -> socket)
+        server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+      }
+    }
   }
 }
-
 
 class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[Nothing] {
   override def onData(socket: SocketIOClient, dirtyMessage: Nothing, ackRequest: AckRequest): Unit = {

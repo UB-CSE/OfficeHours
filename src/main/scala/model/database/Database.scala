@@ -50,6 +50,7 @@ class Database extends DatabaseAPI{
       val username = result.getString("username")
       val timestamp = result.getLong("timestamp")
       queue = new StudentInQueue(username, timestamp) :: queue
+
     }
 
     queue.reverse
