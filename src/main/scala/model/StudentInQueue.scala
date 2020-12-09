@@ -5,6 +5,8 @@ import play.api.libs.json.{JsValue, Json}
 
 object StudentInQueue {
 
+
+
   def cleanString(input: String): String = {
     var output = input
       .replace("&", "&amp;")
