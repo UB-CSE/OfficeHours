@@ -31,6 +31,10 @@ class OfficeHoursServer() {
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
 
+  //Get a login or register information as Json String
+  server.addEventListener("login", classOf[String], new Login(this))
+  server.addEventListener("register", classOf[String], new Register(this))
+
   server.start()
 
   def queueJSON(): String = {
@@ -89,6 +93,25 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
       }
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     }
+  }
+}
+
+/**
+ * Login and register classes to get a user data:
+ * Compare to the Database
+ * Get a data related to a user that logged in
+ * Check if user already exists by checking its FullName and Username and Email into the DB
+ *
+ * */
+class Login(server : OfficeHoursServer) extends DataListener[String]{
+  override def onData(client: SocketIOClient, data: String, ackSender: AckRequest): Unit = {
+
+  }
+}
+
+class Register(server: OfficeHoursServer) extends DataListener[String]{
+  override def onData(client: SocketIOClient, data: String, ackSender: AckRequest): Unit = {
+
   }
 }
 

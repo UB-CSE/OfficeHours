@@ -12,30 +12,41 @@
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
 
+    <link rel="stylesheet" href="style/style.css">
 </head>
-<body>
+<body id="body">
 
 <br/>
+<header>
+    <h3 id="message">Welcome!</h3>
+</header>
 
-<h3 id="message">Welcome!</h3>
 
 <!-- Login Page: -->
 <div class="content">
-    <div class="register">
-        <input type="text" id="full_name" placeholder="Full Name"/><br /><br />
-        <input type="text" id="username" placeholder="username"/><br /><br />
-        <input type="email" id="email" placeholder="example@university.edu"/><br /><br />
-        <input type="password" id="password" placeholder="**********"/>
-        <button onclick="register();">Register</button>
+    <div class="container" id="container">
+        <div class="register">
+            <input type="text" id="full_name" placeholder="Full Name"/>
+            <input type="text" id="username" placeholder="username"/>
+            <input type="email" id="email" placeholder="example@university.edu"/>
+            <input type="password" id="password" placeholder="**********"/>
+            <select id="typeOfAccount" class="form-control">
+                <option value="lectureProf">Lecture Professor</option>
+                <option value="ta">TA</option>
+                <option value="student">Student</option>
+            </select>
+            <button onclick="register();" class="btn btn-primary">Register</button>
+        </div>
+        <div class="login">
+            <input type="text" id="username_login" placeholder="username"/>
+            <input type="password" id="password_login" placeholder="**********"/><br/><br/>
+            <button onclick="login();" class="btn btn-info">Login</button>
+        </div>
     </div>
-    <div class="login">
-        <input type="text" id="username_login" placeholder="username"/><br /><br />
-        <input type="password" id="password_login" placeholder="**********"/>
-        <button onclick="login();">Login</button>
-    </div>
+
 </div>
 
-
+<div class="clear"></div>
 <p>Name</p>
 <input type="text" id="name"/>
 <button onclick="enterQueue();">Enter Queue</button>
