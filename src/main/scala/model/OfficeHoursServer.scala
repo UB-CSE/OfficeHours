@@ -80,6 +80,13 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
       }
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     }
+    else{
+      val studentToHelp = queue.head
+      server.usernameToSocket(studentToHelp.username).sendEvent("message", "The TA had to deal with an emergency, panic about your code for a while longer")
+
+
+
+    }
   }
 }
 
