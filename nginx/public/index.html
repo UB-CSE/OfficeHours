@@ -4,23 +4,77 @@
     <meta charset="UTF-8">
     <title>Office Hours</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+
+    <style>
+    body{background-color: powderblue}
+
+    .d {
+        padding: 15px 25px;
+        width: 45%;
+        height: 37%;
+        font-size: 44px;
+        text-align: center;
+        cursor: pointer;
+        outline: black;
+        color: #fff;
+        background-color: #4CAF50;
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 9px #999;
+    }
+    .d:hover {
+        box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+    }
+
+    .d:active {
+        background-color: #3e8e41;
+        box-shadow: 0 5px #666;
+        transform: translateY(4px);
+    }
+
+    </style>
 </head>
 <body>
 
 <br/>
 
+
 <h3 id="message">Welcome!</h3>
 
 <p>Name</p>
-<input type="text" id="name"/>
-<button onclick="enterQueue();">Enter Queue</button>
+<input type="text" id="name";/>
+<button onclick="enterQueue();",>Enter Queue</button>
 <br/><br/>
 
-<button onclick="readyToHelp();">TA Ready to Help</button>
+<button class="btn-8"
+        id="poo"
+        onclick="readyToHelp();">TA Ready to Help</button>
 
 <br/>
-
 <div id="queue"></div>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<a href="https://www.youtube.com/watch?v=erh2ngRZxs0" class="d">VIP Office Hours :)</a>
+
+<br/>
+<br/>
+<br/>
+
+<p>
+    I added following functionality: <br/>
+    -Username can't be added multiple times,  <br/>
+    -Queue counter <br/>
+    -Notify on empty queue  <br/>
+    -VIP OH button  <br/>
+</p>
+
 
 <script src="officeHours.js"></script>
 

@@ -20,7 +20,6 @@ class Database extends DatabaseAPI{
     statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT)")
   }
 
-
   override def addStudentToQueue(student: StudentInQueue): Unit = {
     val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?)")
 
@@ -53,6 +52,7 @@ class Database extends DatabaseAPI{
     }
 
     queue.reverse
+
   }
 
 }
