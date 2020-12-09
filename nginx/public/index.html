@@ -1,22 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <style>
+        h1 {text-align: center}
+        h2{text-align: center}
+        p{text-align: center}
+        div{text-align: center}
+        .center {
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
+
+    </style>
     <meta charset="UTF-8">
     <title>Office Hours</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 </head>
-<body>
+<body style="background-color: blanchedalmond">
 
 <br/>
 
-<h3 id="message">Welcome!</h3>
+<h1 id="message">Welcome!</h1>
+<h2 id="Welcome">Please take a moment to sign in below by entering your username!</h2>
 
-<p>Name</p>
-<input type="text" id="name"/>
-<button onclick="enterQueue();">Enter Queue</button>
-<br/><br/>
 
-<button onclick="readyToHelp();">TA Ready to Help</button>
+<h2>Enter your name:</h2>
+<div class="center">
+    <label for="name"></label><input type= "text" id="name"/>
+    <button onclick="enterQueue();">Enter Queue</button>
+    <br/><br/>
+    <p> Click the links below to do your desired actions:</p>
+    <button onclick="readyToHelp();">TA Ready to Help</button>
+    <button onclick="window.location.href='https://www.twitch.tv/hartloff';">Link to the official CSE 116 Twitch</button>
+</div>
+
+
 
 <br/>
 
