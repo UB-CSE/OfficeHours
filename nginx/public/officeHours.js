@@ -13,6 +13,8 @@ socket.on('message', displayMessage);
 
 loggedIn();
 
+successfulMessage();
+
 function displayMessage(newMessage) {
     document.getElementById("message").innerHTML = newMessage;
 }
@@ -73,20 +75,18 @@ function register(){
     }
 }
 function login(){
-    const username1 = document.getElementById("username_login").value;
+    const email1 = document.getElementById("emailLogin").value;
     const password1 = document.getElementById("password_login").value;
-    if(username1 !== "" && password1 !== ""){
-        if(checkInputEmailOrUsername(username1)){
-            email = username1;
-            dataJson["email"] = username;
+    if(email1 !== "" && password1 !== ""){
+        if(checkInputEmailOrUsername(email1)){
+            email = email1;
+            dataJson["email"] = email;
+            password = password1;
+            dataJson["password"] = password;
+            socket.emit("login", JSON.stringify(dataJson));
         }else{
-            username = username1;
-            dataJson["username"] = username;
+            alert("Invalid Email");
         }
-
-        password = password1;
-        dataJson["password"] = password;
-        socket.emit("login", JSON.stringify(dataJson));
     }
 
 }
@@ -94,10 +94,10 @@ function login(){
 
 function checkInputEmailOrUsername(data){
     var check = false
-    const dataCheck = document.getElementById("username_login").value;
+    //const dataCheck = document.getElementById("emailLogin").value;
     const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-    if(re.test(dataCheck)){
+    if(re.test(data)){
         check = true
     }
     return check
@@ -116,16 +116,18 @@ function loggedIn(){
             '                    <th scope="col">#</th>\n' +
             '                    <th scope="col">First</th>\n' +
             '                    <th scope="col">Last</th>\n' +
-            '                    <th scope="col">Handle</th>\n' +
+            '                    <th scope="col">Class</th>\n' +
+            '                    <th scope="col">Action</th>\n' +
             '                </tr>\n' +
             '                </thead>\n' +
             '\n' +
             '                <tbody>\n' +
             '                <tr>\n' +
             '                    <th scope="row">1</th>\n' +
-            '                    <td>Mark</td>\n' +
-            '                    <td>Otto</td>\n' +
-            '                    <td>@mdo</td>\n' +
+            '                    <td>Jesse</td>\n' +
+            '                    <td>Lecture</td>\n' +
+            '                    <td>CSE-116</td>\n' +
+            '                    <td><button id="schedule">Schedule</button></td>\n' +
             '                </tr>\n' +
             '                </tbody>\n' +
             '            </table>\n' +
@@ -134,5 +136,12 @@ function loggedIn(){
 
         document.getElementById("pageChange").innerHTML = pageHTML;
 
+    });
+}
+
+//Successfully User register:
+function successfulMessage(){
+    socket.on("registered_succefully", function (event) {
+        document.getElementById("successfully").innerText = "You have registered successfully, Login now!!" + event
     });
 }

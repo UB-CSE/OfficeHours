@@ -1,19 +1,19 @@
 package model.database
 
-import model.StudentInQueue
+import model.{RegisterUser, StudentInQueue}
 
 class TestingDatabase extends DatabaseAPI {
 
   var data: List[StudentInQueue] = List()
-
+  var userData : List[RegisterUser] = List()
 
   override def addStudentToQueue(student: StudentInQueue): Unit = {
     data ::= student
   }
 
 
-  override def removeStudentFromQueue(username: String): Unit = {
-    data = data.filter(_.username != username)
+  override def removeStudentFromQueue(email: String): Unit = {
+    data = data.filter(_.email != email)
   }
 
 
@@ -21,4 +21,15 @@ class TestingDatabase extends DatabaseAPI {
     data.reverse
   }
 
+  override def register(user: RegisterUser): Unit = {
+    userData ::= user
+  }
+
+  override def getUserFromDB: List[RegisterUser] = {
+    userData.reverse
+  }
+
+  override def login(email: String, password: String): Boolean = {
+    true
+  }
 }

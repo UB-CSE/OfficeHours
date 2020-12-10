@@ -1,5 +1,6 @@
 package model
 
+import model.StudentInQueue.cleanString
 import play.api.libs.json.{JsValue, Json}
 
 
@@ -16,26 +17,55 @@ object StudentInQueue {
     output
   }
 
-  def apply(username: String, timestamp: Long): StudentInQueue = {
-    new StudentInQueue("", cleanString(username), "", "", "",  timestamp)
+  def apply(email: String, kindOfUser : String, timestamp: Long): StudentInQueue = {
+    new StudentInQueue(cleanString(email), cleanString(kindOfUser), timestamp)
   }
-
-
 }
 
-class StudentInQueue(val fullName : String, val username: String, val email : String, val password : String, val kind : String, val timestamp: Long) {
+object RegisterUser{
+  def apply(fullName : String, username : String, email : String, password : String, kind : String) : RegisterUser ={
+    new RegisterUser(cleanString(fullName), cleanString(username), cleanString(email), cleanString(password), cleanString(kind), 0)
+  }
+}
+
+object LoginUser{
+  def apply(email : String, password : String) : LoginUser ={
+    new LoginUser(cleanString(email), cleanString(password))
+  }
+}
+
+class StudentInQueue(val email : String, val kind : String, val timestamp: Long) {
 
   def asJsValue(): JsValue ={
     val messageMap: Map[String, JsValue] = Map(
-      "username" -> Json.toJson(username),
+      "username" -> Json.toJson(email),
+      "kindOfUser" -> Json.toJson(email),
       "timestamp" -> Json.toJson(timestamp)
     )
     Json.toJson(messageMap)
   }
 
-  //Get a username from the json file
-  def getUsername(jsonString : String) : String = {
-    ""
-  }
+}
 
+class RegisterUser(val fullName : String, val username: String, val email : String, val password : String, val kind : String, val id : Int){
+  def asJsValue(): JsValue ={
+    val messageMap: Map[String, JsValue] = Map(
+      "fullName" -> Json.toJson(fullName),
+      "username" -> Json.toJson(username),
+      "email" -> Json.toJson(email),
+      "password" -> Json.toJson(password),
+      "kindOfUser" -> Json.toJson(kind)
+    )
+    Json.toJson(messageMap)
+  }
+}
+
+class LoginUser(val email : String, val password : String){
+  def asJsValue(): JsValue ={
+    val messageMap: Map[String, JsValue] = Map(
+      "email" -> Json.toJson(email),
+      "password" -> Json.toJson(password)
+    )
+    Json.toJson(messageMap)
+  }
 }
