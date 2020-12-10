@@ -1,0 +1,48 @@
+#body{
+    margin-top: -40px;
+    padding: 0px;
+    background-color: #eeeef0;
+}
+header{
+    background-color: #000;
+    margin-bottom: -10px;
+}
+header h3{
+    padding: 8px;
+    margin-left: 36px;
+    color: #cacaca;
+}
+input{
+    padding: 5px;
+    height: 30px;
+    border: 0.6px solid #4fa3ea;
+    border-radius: 7px;
+    margin-top: 10px;
+}
+.clear{
+    clear: both;
+}
+#content{
+    width: 100%;
+    height: 310px;
+    background-color: #383838;
+}
+#container{
+    padding: 20px;
+}
+
+.register{
+    float: left;
+    width: 33%;
+}
+.login{
+    float: right;
+    width: 23%;
+}
+
+#typeOfAccount{
+    width: 200px;
+    height:30px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
