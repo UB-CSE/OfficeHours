@@ -2,6 +2,9 @@ const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
 
 socket.on('queue', displayQueue);
 socket.on('message', displayMessage);
+socket.on('AlreadyInQueue',()=>{
+    alert("You are already in queue, please be patient as the TA is helping other students.")
+})
 
 function displayMessage(newMessage) {
     document.getElementById("message").innerHTML = newMessage;
