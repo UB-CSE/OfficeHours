@@ -105,13 +105,14 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
  * */
 class Login(server : OfficeHoursServer) extends DataListener[String]{
   override def onData(client: SocketIOClient, data: String, ackSender: AckRequest): Unit = {
-
+    println("Welcome: " + data)
+    server.server.getBroadcastOperations.sendEvent("loggedIn", data)
   }
 }
 
 class Register(server: OfficeHoursServer) extends DataListener[String]{
   override def onData(client: SocketIOClient, data: String, ackSender: AckRequest): Unit = {
-
+    println("Welcome: " + data)
   }
 }
 
