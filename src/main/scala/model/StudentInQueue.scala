@@ -17,13 +17,13 @@ object StudentInQueue {
   }
 
   def apply(username: String, timestamp: Long): StudentInQueue = {
-    new StudentInQueue(cleanString(username), timestamp)
+    new StudentInQueue("", cleanString(username), "", "", "",  timestamp)
   }
 
 
 }
 
-class StudentInQueue(val username: String, val timestamp: Long) {
+class StudentInQueue(val fullName : String, val username: String, val email : String, val password : String, val kind : String, val timestamp: Long) {
 
   def asJsValue(): JsValue ={
     val messageMap: Map[String, JsValue] = Map(
@@ -31,6 +31,11 @@ class StudentInQueue(val username: String, val timestamp: Long) {
       "timestamp" -> Json.toJson(timestamp)
     )
     Json.toJson(messageMap)
+  }
+
+  //Get a username from the json file
+  def getUsername(jsonString : String) : String = {
+    ""
   }
 
 }

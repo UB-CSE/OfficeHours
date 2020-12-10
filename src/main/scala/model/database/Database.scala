@@ -17,14 +17,18 @@ class Database extends DatabaseAPI{
 
   def setupTable(): Unit = {
     val statement = connection.createStatement()
-    statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT)")
+    statement.execute("CREATE TABLE IF NOT EXISTS queue (fullname TEXT, username TEXT, email TEXT, password TEXT, kind TEXT, timestamp BIGINT)")
   }
 
 
   override def addStudentToQueue(student: StudentInQueue): Unit = {
-    val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?)")
+    val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?, ?, ?, ?)")
 
+    statement.setString(1, student.fullName)
     statement.setString(1, student.username)
+    statement.setString(1, student.email)
+    statement.setString(1, student.password)
+    statement.setString(1, student.kind)
     statement.setLong(2, student.timestamp)
 
     statement.execute()
@@ -41,15 +45,19 @@ class Database extends DatabaseAPI{
 
 
   override def getQueue: List[StudentInQueue] = {
-    val statement = connection.prepareStatement("SELECT * FROM queue")
+    val statement = connection.prepareStatement("SELECT * FROM queue") //Get everything from DB
     val result: ResultSet = statement.executeQuery()
 
     var queue: List[StudentInQueue] = List()
 
     while (result.next()) {
+      val fullName = result.getString("fullName")
       val username = result.getString("username")
+      val email = result.getString("email")
+      val password = result.getString("password")
+      val kind = result.getString("kind")
       val timestamp = result.getLong("timestamp")
-      queue = new StudentInQueue(username, timestamp) :: queue
+      queue = new StudentInQueue(fullName, username, email, password, kind, timestamp) :: queue
     }
 
     queue.reverse

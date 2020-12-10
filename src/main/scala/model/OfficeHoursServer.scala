@@ -73,6 +73,7 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
+    //Save the user into the database
     server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
@@ -83,6 +84,7 @@ class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String]
 
 class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[Nothing] {
   override def onData(socket: SocketIOClient, dirtyMessage: Nothing, ackRequest: AckRequest): Unit = {
+    //This to sort a student by time
     val queue = server.database.getQueue.sortBy(_.timestamp)
     if(queue.nonEmpty){
       val studentToHelp = queue.head
@@ -106,13 +108,20 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
 class Login(server : OfficeHoursServer) extends DataListener[String]{
   override def onData(client: SocketIOClient, data: String, ackSender: AckRequest): Unit = {
     println("Welcome: " + data)
+    //Send to a specific user who clicked login
     server.server.getBroadcastOperations.sendEvent("loggedIn", data)
   }
 }
 
 class Register(server: OfficeHoursServer) extends DataListener[String]{
-  override def onData(client: SocketIOClient, data: String, ackSender: AckRequest): Unit = {
+  override def onData(socket: SocketIOClient, data: String, ackSender: AckRequest): Unit = {
+    //Add the user into the db || Data will become username
+    server.database.addStudentToQueue(StudentInQueue(data, System.nanoTime()))
+    server.socketToUsername += (socket -> data)
+    server.usernameToSocket += (data -> socket)
     println("Welcome: " + data)
+    //Send to a specific user who clicked register
+    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
   }
 }
 
