@@ -22,10 +22,11 @@ class Database extends DatabaseAPI{
 
 
   override def addStudentToQueue(student: StudentInQueue): Unit = {
-    val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?)")
+    val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?, ?)")
 
     statement.setString(1, student.username)
-    statement.setLong(2, student.timestamp)
+    statement.setString(2, student.description)
+    statement.setLong(3, student.timestamp)
 
     statement.execute()
   }
@@ -48,8 +49,9 @@ class Database extends DatabaseAPI{
 
     while (result.next()) {
       val username = result.getString("username")
+      val description = result.getString("description")
       val timestamp = result.getLong("timestamp")
-      queue = new StudentInQueue(username, timestamp) :: queue
+      queue = new StudentInQueue(username, description, timestamp) :: queue
     }
 
     queue.reverse
