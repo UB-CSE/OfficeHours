@@ -22,6 +22,7 @@ class testingOfficeHoursLimiter extends FunSuite {
 
     model.records.previousUsernames = List()
     model.records.usernameToLastTime = Map()
+    model.records.banned = List()
     //note that since the object records permanently saves, when going from one test to another. And we depend that the object is fresh new, then we need to clear. Or we can also sleep before transiting, or we can also use new usernames.
     //the records object behavior is not important and has undefined behavior, that we could use lead to. Normally, from the servers side currently, on a single run, the object gets filled with users and never gets cleared, and we may persist it occasionally. And when the server restarts, that'll be the only time it clears.
   }
@@ -37,7 +38,7 @@ class testingOfficeHoursLimiter extends FunSuite {
     assert(!model.newFunctionality.eligibility("Liam"))
     assert(!model.newFunctionality.eligibility("Sophia"))
 
-    Thread.sleep(11000)
+    Thread.sleep(12000)
 
     assert(model.newFunctionality.eligibility("Nofal"))
     assert(model.newFunctionality.eligibility("Liam"))
@@ -45,6 +46,8 @@ class testingOfficeHoursLimiter extends FunSuite {
 
     model.records.previousUsernames = List()
     model.records.usernameToLastTime = Map()
+    model.records.banned = List()
+
   }
 
 
@@ -76,6 +79,8 @@ class testingOfficeHoursLimiter extends FunSuite {
 
     model.records.previousUsernames = List()
     model.records.usernameToLastTime = Map()
+    model.records.banned = List()
+
   }
 
 
@@ -93,7 +98,7 @@ class testingOfficeHoursLimiter extends FunSuite {
     assert(!model.newFunctionality.eligibility("Liam")) //Liam was the one who entered queue, and not others.
     assert(model.newFunctionality.eligibility("Sophia"))
 
-    Thread.sleep(11000)
+    Thread.sleep(12000)
     assert(model.newFunctionality.eligibility("Nofal"))
     assert(model.newFunctionality.eligibility("Liam"))
     assert(model.newFunctionality.eligibility("Sophia"))
@@ -102,6 +107,35 @@ class testingOfficeHoursLimiter extends FunSuite {
 
     model.records.previousUsernames = List()
     model.records.usernameToLastTime = Map()
+    model.records.banned = List()
+
+  }
+
+
+
+
+  test("test banned list") {
+
+    assert(model.newFunctionality.eligibility("Nofal"))
+    assert(model.newFunctionality.eligibility("Liam"))
+
+    assert(model.records.banned.contains("Nofal"))
+    assert(model.records.banned.contains("Liam"))
+
+    Thread.sleep(12000)
+    assert(model.records.banned.contains("Nofal"))
+    assert(model.records.banned.contains("Liam"))
+
+    assert(model.newFunctionality.eligibility("Sophia"))
+
+    assert(model.records.banned.contains("Sophia"))
+    assert(!model.records.banned.contains("Nofal"))
+    assert(!model.records.banned.contains("Liam"))
+
+
+    model.records.previousUsernames = List()
+    model.records.usernameToLastTime = Map()
+    model.records.banned = List()
   }
 
 }
