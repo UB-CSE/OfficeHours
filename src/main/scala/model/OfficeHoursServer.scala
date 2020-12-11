@@ -36,6 +36,16 @@ class OfficeHoursServer() {
     Json.stringify(Json.toJson(queueJSON))
   }
 
+  def alreadyExistsJSON(username:String): String = {
+    val queue: List[StudentInQueue] = database.getQueue
+    val student: model.StudentInQueue = queue.find(_.username == username).get
+    val map: Map[String,JsValue] = Map(
+      "username" -> Json.toJson(student.username),
+      "timestamp" -> Json.toJson(student.timestamp)
+    )
+    Json.stringify(Json.toJson(map))
+  }
+
 }
 
 object OfficeHoursServer {
@@ -60,10 +70,15 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
-    server.socketToUsername += (socket -> username)
-    server.usernameToSocket += (username -> socket)
-    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    if (!server.usernameToSocket.contains(username)){
+      server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+      server.socketToUsername += (socket -> username)
+      server.usernameToSocket += (username -> socket)
+      server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    } else{
+      socket.sendEvent("alreadyExists", server.alreadyExistsJSON(username: String))
+    }
+
   }
 }
 
