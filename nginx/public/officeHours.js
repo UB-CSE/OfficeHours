@@ -26,3 +26,10 @@ function enterQueue() {
 function readyToHelp() {
     socket.emit("ready_for_student");
 }
+
+
+
+socket.on('bannedList', displayBannedList);
+function displayBannedList(BannedList) {
+    document.getElementById("bannedList").innerHTML = BannedList;
+}
