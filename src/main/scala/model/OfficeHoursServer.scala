@@ -14,12 +14,14 @@ class OfficeHoursServer() {
     new Database
   }
 
+  var listOfStudents:List[String]=List()
+
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
 
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
-    setPort(8080)
+    setPort(8081)
   }
 
   val server: SocketIOServer = new SocketIOServer(config)
@@ -27,7 +29,7 @@ class OfficeHoursServer() {
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
-
+  server.addEventListener("check_position",classOf[String],new CheckPositionListener(this))
   server.start()
 
   def queueJSON(): String = {
@@ -52,6 +54,8 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
         server.socketToUsername -= socket
       if (server.usernameToSocket.contains(username)) {
         server.usernameToSocket -= username
+        // remove student in the list if disconnect
+        server.listOfStudents=server.listOfStudents.filter(_!=username)
       }
     }
   }
@@ -60,6 +64,10 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
+
+    // add username into list
+    server.listOfStudents:+=username
+
     server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
@@ -70,12 +78,15 @@ class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String]
 
 class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[Nothing] {
   override def onData(socket: SocketIOClient, dirtyMessage: Nothing, ackRequest: AckRequest): Unit = {
+
     val queue = server.database.getQueue.sortBy(_.timestamp)
     if(queue.nonEmpty){
       val studentToHelp = queue.head
       server.database.removeStudentFromQueue(studentToHelp.username)
       socket.sendEvent("message", "You are now helping " + studentToHelp.username)
       if(server.usernameToSocket.contains(studentToHelp.username)){
+        // drop first student out of list
+        server.listOfStudents=server.listOfStudents.drop(1)
         server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")
       }
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
@@ -83,4 +94,13 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
   }
 }
 
+class CheckPositionListener(server: OfficeHoursServer) extends DataListener[String]{
+  override def onData(socketIOClient: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
 
+   val positionIndex:Int=(server.listOfStudents.indexOf(username))+1
+   // println(server.listOfStudents+"    " +"   In check position : "+positionIndex)
+    socketIOClient.sendEvent("index","your are in position "+positionIndex)
+    socketIOClient.sendEvent("position",positionIndex.toString)
+
+  }
+}
