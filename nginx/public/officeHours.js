@@ -2,9 +2,18 @@ const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
 
 socket.on('queue', displayQueue);
 socket.on('message', displayMessage);
+socket.on('alreadyExists', displayExistsMessage);
 
 function displayMessage(newMessage) {
     document.getElementById("message").innerHTML = newMessage;
+}
+
+function displayExistsMessage(newMessage) {
+    const msg = JSON.parse(newMessage)
+    let formattedMessage = "";
+    formattedMessage += msg['username'] + " has already entered the queue at timestamp " + msg['timestamp'] +
+        ". You cannot enter the queue twice." + "<br/>"
+    document.getElementById("already").innerHTML = formattedMessage;
 }
 
 function displayQueue(queueJSON) {
