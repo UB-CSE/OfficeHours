@@ -5,6 +5,7 @@ import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, S
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
 
+import main.scala.model._
 
 class OfficeHoursServer() {
 
@@ -16,6 +17,9 @@ class OfficeHoursServer() {
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
+
+
+
 
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
@@ -58,14 +62,44 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 }
 
 
+
+
+
+
+
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
-    server.socketToUsername += (socket -> username)
-    server.usernameToSocket += (username -> socket)
-    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+
+    ////@@@@@@@@@---(project contribution) - only the following two lines, and the lower new code are new in this server file. And nothing is changed within the server. Only added a newFunctionality file, and also a testing.
+    var ableToEnterQueue: Boolean = newFunctionality.eligibility(username)
+
+    if (ableToEnterQueue) {
+      server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+      server.socketToUsername += (socket -> username)
+      server.usernameToSocket += (username -> socket)
+      server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+
+
+      //also added new.
+      var bannedList: String = ""
+      for (username <- records.banned){
+        bannedList = bannedList + username + "<br/>"
+      }
+      server.server.getBroadcastOperations.sendEvent("bannedList", bannedList)
+    }
   }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[Nothing] {
@@ -75,6 +109,7 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
       val studentToHelp = queue.head
       server.database.removeStudentFromQueue(studentToHelp.username)
       socket.sendEvent("message", "You are now helping " + studentToHelp.username)
+      Thread.sleep(5000)
       if(server.usernameToSocket.contains(studentToHelp.username)){
         server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")
       }
