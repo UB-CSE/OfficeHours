@@ -2,6 +2,7 @@ const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
 
 socket.on('queue', displayQueue);
 socket.on('message', displayMessage);
+socket.on('averageTime', displayWaitTime);
 
 function displayMessage(newMessage) {
     document.getElementById("message").innerHTML = newMessage;
@@ -21,6 +22,10 @@ function enterQueue() {
     let name = document.getElementById("name").value;
     socket.emit("enter_queue", name);
     document.getElementById("name").value = "";
+}
+
+function displayWaitTime(time) {
+    document.getElementById("waitTime").innerHTML = time
 }
 
 function readyToHelp() {

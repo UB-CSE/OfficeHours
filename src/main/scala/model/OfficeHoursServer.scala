@@ -6,6 +6,26 @@ import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
 
 
+
+
+
+/**
+ *  lets develop a tool to get a average wait time
+ *  for a given office hours session
+ **/
+object serverExpansion {
+  var allWaitTimes: List[Long] = List()
+  var numStudentsHelp: Int = 0
+  var totalTime: Double = 0
+
+  def averageWaitTime(student: StudentInQueue): Double = {
+    this.numStudentsHelp += 1
+    this.totalTime += (System.nanoTime() - student.timestamp) / 1e9
+    this.totalTime / this.numStudentsHelp
+  }
+}
+
+
 class OfficeHoursServer() {
 
   val database: DatabaseAPI = if(Configuration.DEV_MODE){
@@ -64,6 +84,7 @@ class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String]
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+
   }
 }
 
@@ -73,8 +94,10 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
     val queue = server.database.getQueue.sortBy(_.timestamp)
     if(queue.nonEmpty){
       val studentToHelp = queue.head
+      val averageWaitTime = serverExpansion.averageWaitTime(studentToHelp)
       server.database.removeStudentFromQueue(studentToHelp.username)
       socket.sendEvent("message", "You are now helping " + studentToHelp.username)
+      socket.sendEvent("averageTime", "average wait time: " + averageWaitTime.toString  + "s")
       if(server.usernameToSocket.contains(studentToHelp.username)){
         server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")
       }
