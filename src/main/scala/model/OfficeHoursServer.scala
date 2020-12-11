@@ -5,6 +5,27 @@ import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, S
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
 
+
+
+
+
+/**
+ *  lets develop a tool to get a average wait time
+ *  for a given office hours session
+ **/
+object serverExpansion {
+  var allWaitTimes: List[Long] = List()
+  var numStudentsHelp: Int = 0
+  var totalTime: Double = 0
+
+  def averageWaitTime(student: StudentInQueue): Double = {
+    this.numStudentsHelp += 1
+    this.totalTime += (System.nanoTime() - student.timestamp) / 1e9
+    this.totalTime / this.numStudentsHelp
+  }
+}
+
+
 class OfficeHoursServer() {
 
   val database: DatabaseAPI = if(Configuration.DEV_MODE){
