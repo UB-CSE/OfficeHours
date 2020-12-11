@@ -23,7 +23,8 @@ object StudentInQueue {
 
 }
 
-class StudentInQueue(val username: String, val timestamp: Long) {
+class
+StudentInQueue(val username: String, val timestamp: Long) {
 
   def asJsValue(): JsValue ={
     val messageMap: Map[String, JsValue] = Map(
