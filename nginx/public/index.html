@@ -5,7 +5,7 @@
     <title>Office Hours</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 </head>
-<body>
+<body style="background-color:#ffc9df;">
 
 <br/>
 
@@ -16,7 +16,12 @@
 <button onclick="enterQueue();">Enter Queue</button>
 <br/><br/>
 
-<button onclick="readyToHelp();">TA Ready to Help</button>
+<button onclick="readyToHelp();">TA Ready to Help</button><br>
+<!--changes-->
+<!--line 8: changed background color of body-->
+<!--line 21:add button that opens a new tab with a picture of the office hours-->
+<input type="button" value="Schedule Picture" src="officehrs.jpg" onclick="window.open(this.src)"/>
+
 
 <br/>
 
