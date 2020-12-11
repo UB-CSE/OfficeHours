@@ -7,23 +7,26 @@
 </head>
 <body>
 
-<br/>
 
-<h3 id="message">Welcome!</h3>
+    <br/>
 
-<p>Name</p>
-<input type="text" id="name"/>
-<button onclick="enterQueue();">Enter Queue</button>
-<br/><br/>
+    <label for="username">Enter your username</label>
+    <input id="username" type="text">
 
-<button onclick="readyToHelp();">TA Ready to Help</button>
 
-<br/>
-
-<div id="queue"></div>
-
+    <button onclick="setForTA();">I am TA</button>
+    <button onclick="setForStudent();">I am Student</button>
+</div>
 <script src="officeHours.js"></script>
-
-
+<script>
+    function setForTA(){
+        window.location.href="TA.html"
+    }
+    function setForStudent(){
+        window.location.href="student.html"
+    }
+</script>
 </body>
 </html>
+
+
