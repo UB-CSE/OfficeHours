@@ -16,6 +16,7 @@ class OfficeHoursServer() {
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
+  var studentInQueue: Map[String,Int] = Map()
 
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
@@ -27,7 +28,6 @@ class OfficeHoursServer() {
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
-
   server.start()
 
   def queueJSON(): String = {
@@ -36,6 +36,10 @@ class OfficeHoursServer() {
     Json.stringify(Json.toJson(queueJSON))
   }
 
+  def warning(username:String):String = {
+    val message = username +" is already in queue"
+    Json.stringify(Json.toJson(message))
+  }
 }
 
 object OfficeHoursServer {
@@ -60,10 +64,16 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
-    server.socketToUsername += (socket -> username)
-    server.usernameToSocket += (username -> socket)
-    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    if (!server.studentInQueue.contains(username)) {
+      server.studentInQueue += (username -> 0)
+      server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+      server.socketToUsername += (socket -> username)
+      server.usernameToSocket += (username -> socket)
+      server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    }
+    else{
+      server.server.getBroadcastOperations.sendEvent("message", server.warning(username))
+    }
   }
 }
 
@@ -73,8 +83,9 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
     val queue = server.database.getQueue.sortBy(_.timestamp)
     if(queue.nonEmpty){
       val studentToHelp = queue.head
+      server.studentInQueue -= studentToHelp.username
       server.database.removeStudentFromQueue(studentToHelp.username)
-      socket.sendEvent("message", "You are now helping " + studentToHelp.username)
+      socket.sendEvent("message", "You are now helping " + studentToHelp.username )
       if(server.usernameToSocket.contains(studentToHelp.username)){
         server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")
       }
