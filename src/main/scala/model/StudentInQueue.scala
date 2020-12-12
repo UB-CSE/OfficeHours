@@ -25,10 +25,13 @@ object StudentInQueue {
 
 class StudentInQueue(val username: String, val timestamp: Long) {
 
+  var issue: String = "Reason not specified"
+
   def asJsValue(): JsValue ={
     val messageMap: Map[String, JsValue] = Map(
       "username" -> Json.toJson(username),
-      "timestamp" -> Json.toJson(timestamp)
+      "timestamp" -> Json.toJson(timestamp),
+      "issue" -> Json.toJson(issue)
     )
     Json.toJson(messageMap)
   }
