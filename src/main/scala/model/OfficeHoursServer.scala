@@ -6,6 +6,7 @@ import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
 
 
+
 class OfficeHoursServer() {
 
   val database: DatabaseAPI = if(Configuration.DEV_MODE){
@@ -60,9 +61,14 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
-    server.socketToUsername += (socket -> username)
-    server.usernameToSocket += (username -> socket)
+    val parsed: JsValue = Json.parse(username)
+    // unused values, but this is how we would extract message and timestamp
+    val username1: String = (parsed \ "name").as[String]
+    val timestamp1: String = (parsed \ "description").as[String]
+
+    server.database.addStudentToQueue(StudentInQueue(username1,System.nanoTime(),timestamp1))
+    server.socketToUsername += (socket -> username1)
+    server.usernameToSocket += (username1 -> socket)
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
   }
 }
