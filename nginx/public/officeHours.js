@@ -26,3 +26,7 @@ function enterQueue() {
 function readyToHelp() {
     socket.emit("ready_for_student");
 }
+
+function helpTwo() {
+    socket.emit("help_two_students");
+}
