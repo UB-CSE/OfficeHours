@@ -16,6 +16,8 @@ class OfficeHoursServer() {
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
+  var socketToStudentIQ: Map[SocketIOClient, StudentInQueue] = Map()
+  var studentIQToSocket: Map[StudentInQueue, SocketIOClient] = Map()
 
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
@@ -25,7 +27,7 @@ class OfficeHoursServer() {
   val server: SocketIOServer = new SocketIOServer(config)
 
   server.addDisconnectListener(new DisconnectionListener(this))
-  server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
+  server.addEventListener("enter_queue", classOf[Array[String]], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
 
   server.start()
@@ -58,9 +60,15 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 }
 
 
-class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
-  override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+class EnterQueueListener(server: OfficeHoursServer) extends DataListener[Array[String]] {
+  override def onData(socket: SocketIOClient, arguments: Array[String], ackRequest: AckRequest): Unit = {
+    val username: String = arguments.apply(0)
+    val issue: String = arguments.apply(1)
+    val student: StudentInQueue = new StudentInQueue(username, System.nanoTime())
+    student.issue = issue
+    server.database.addStudentToQueue(student)
+    server.socketToStudentIQ += (socket -> student)
+    server.studentIQToSocket += (student -> socket)
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
