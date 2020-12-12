@@ -13,6 +13,7 @@ class OfficeHoursServer() {
   }else{
     new Database
   }
+  var llst:List[String]=List()
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
@@ -49,7 +50,7 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
   override def onDisconnect(socket: SocketIOClient): Unit = {
     if (server.socketToUsername.contains(socket)) {
       val username = server.socketToUsername(socket)
-        server.socketToUsername -= socket
+      server.socketToUsername -= socket
       if (server.usernameToSocket.contains(username)) {
         server.usernameToSocket -= username
       }
@@ -60,10 +61,13 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
-    server.socketToUsername += (socket -> username)
-    server.usernameToSocket += (username -> socket)
-    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    if(server.llst.contains(username)){}else {
+      server.llst=server.llst:+username
+      server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+      server.socketToUsername += (socket -> username)
+      server.usernameToSocket += (username -> socket)
+      server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    }
   }
 }
 
@@ -78,6 +82,7 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
       if(server.usernameToSocket.contains(studentToHelp.username)){
         server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")
       }
+      server.llst=server.llst.tail
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     }
   }
