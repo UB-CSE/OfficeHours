@@ -1,5 +1,8 @@
 package model
 
+import java.time.LocalDateTime
+import java.time.LocalDateTime.now
+
 import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
@@ -60,7 +63,8 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+    val currentTime = LocalDateTime.now()
+    server.database.addStudentToQueue(StudentInQueue(username, currentTime))
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
@@ -70,7 +74,7 @@ class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String]
 
 class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[Nothing] {
   override def onData(socket: SocketIOClient, dirtyMessage: Nothing, ackRequest: AckRequest): Unit = {
-    val queue = server.database.getQueue.sortBy(_.timestamp)
+    val queue = server.database.getQueue
     if(queue.nonEmpty){
       val studentToHelp = queue.head
       server.database.removeStudentFromQueue(studentToHelp.username)
