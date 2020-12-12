@@ -16,6 +16,8 @@ class OfficeHoursServer() {
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
+  var TAToSocket: Map[String, SocketIOClient] = Map()
+  var socketToTA: Map[SocketIOClient, String] = Map()
 
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
@@ -26,7 +28,9 @@ class OfficeHoursServer() {
 
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
+  server.addEventListener("TA_sign_in", classOf[String], new TA_EnterListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
+  server.addEventListener("CheckQueue", classOf[String], new CheckQueueListener(this))
 
   server.start()
 
@@ -63,13 +67,58 @@ class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String]
     server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
-    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+
+    val queue: List[StudentInQueue] = server.database.getQueue.sortBy(_.timestamp)
+    val StringQueue: List[String] = queue.map(_.username)
+    var place: Int = 0
+    for (name <- StringQueue) {
+      if (name == username) {
+        place
+      } else {
+        place+=1
+      }
+    }
+    val placeInJson: JsValue = Json.toJson(place)
+
+    socket.sendEvent("position_in_queue", Json.stringify(placeInJson))
+    place = 0
+    //socket.sendEvent("queue", server.queueJSON()) //need chages
   }
 }
 
+class CheckQueueListener(server: OfficeHoursServer) extends DataListener[String] {
+  override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
+    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+
+    val queue: List[StudentInQueue] = server.database.getQueue.sortBy(_.timestamp)
+    val StringQueue: List[String] = queue.map(_.username)
+    var place: Int = 0
+    for (name <- StringQueue) {
+      if (name == username) {
+        place
+      } else {
+        place+=1
+      }
+    }
+    val placeInJson: JsValue = Json.toJson(place)
+    socket.sendEvent("position_in_queue", Json.stringify(placeInJson))
+    place = 0
+    //socket.sendEvent("queue", server.queueJSON()) //need chages
+  }
+}
+
+class TA_EnterListener(server: OfficeHoursServer) extends DataListener[String] {
+  override def onData(client: SocketIOClient, username: String, ackSender: AckRequest): Unit = {
+    server.TAToSocket += (username -> client)
+    server.socketToTA += (client -> username)
+    client.sendEvent("TA_in_progress")
+  }
+}
 
 class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[Nothing] {
   override def onData(socket: SocketIOClient, dirtyMessage: Nothing, ackRequest: AckRequest): Unit = {
+    val TA_name = server.socketToTA(socket)
+    val jsonTAname = Json.toJson(TA_name)
     val queue = server.database.getQueue.sortBy(_.timestamp)
     if(queue.nonEmpty){
       val studentToHelp = queue.head
@@ -79,6 +128,7 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
         server.usernameToSocket(studentToHelp.username).sendEvent("message", "A TA is ready to help you")
       }
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    server.usernameToSocket(studentToHelp.username).sendEvent("UpdateStudent", Json.stringify(jsonTAname))
     }
   }
 }

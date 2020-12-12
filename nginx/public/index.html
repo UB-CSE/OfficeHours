@@ -11,13 +11,15 @@
 
 <h3 id="message">Welcome!</h3>
 
-<p>Name</p>
-<input type="text" id="name"/>
-<button onclick="enterQueue();">Enter Queue</button>
-<br/><br/>
-
-<button onclick="readyToHelp();">TA Ready to Help</button>
-
+<div id="panel">
+    <p>Student Login</p>
+    <input type="text" id="name"/>
+    <button onclick="enterQueue();">Student Enter Queue</button>
+    <br/><br/>
+    <p>TA Login</p>
+    <input type="text" id="TAname"/>
+    <button onclick="TAShowUp();">TA Sign Up/In</button>
+</div>
 <br/>
 
 <div id="queue"></div>
