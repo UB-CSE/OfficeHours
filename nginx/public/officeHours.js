@@ -3,6 +3,8 @@ const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
 socket.on('queue', displayQueue);
 socket.on('message', displayMessage);
 
+
+
 function displayMessage(newMessage) {
     document.getElementById("message").innerHTML = newMessage;
 }
