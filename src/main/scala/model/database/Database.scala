@@ -1,8 +1,12 @@
 package model.database
 
 import java.sql.{Connection, DriverManager, ResultSet}
+import java.time.LocalDateTime
 
+import jdk.nashorn.internal.objects.NativeDate.{getMonth, now, setTime}
 import model.StudentInQueue
+import model.OfficeHoursServer
+
 
 
 class Database extends DatabaseAPI{
@@ -20,12 +24,14 @@ class Database extends DatabaseAPI{
     statement.execute("CREATE TABLE IF NOT EXISTS queue (username TEXT, timestamp BIGINT)")
   }
 
-
+  class LocalDateTime() {
+    LocalDateTime.now()
+  }
   override def addStudentToQueue(student: StudentInQueue): Unit = {
     val statement = connection.prepareStatement("INSERT INTO queue VALUE (?, ?)")
 
     statement.setString(1, student.username)
-    statement.setLong(2, student.timestamp)
+    statement.setObject(2, LocalDateTime.now())
 
     statement.execute()
   }
@@ -48,8 +54,7 @@ class Database extends DatabaseAPI{
 
     while (result.next()) {
       val username = result.getString("username")
-      val timestamp = result.getLong("timestamp")
-      queue = new StudentInQueue(username, timestamp) :: queue
+      queue = new StudentInQueue(username, LocalDateTime.now()) :: queue
     }
 
     queue.reverse
