@@ -4,20 +4,31 @@
     <meta charset="UTF-8">
     <title>Office Hours</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <br/>
 
-<h3 id="message">Welcome!</h3>
-
-<p>Name</p>
-<input type="text" id="name"/>
-<button onclick="enterQueue();">Enter Queue</button>
-<br/><br/>
-
-<button onclick="readyToHelp();">TA Ready to Help</button>
-
+<h3 id="message">Welcome to the TA Office Hours!</h3>
+<div id="name-div">
+    <div>
+        <p>Name:
+            <input placeholder="Enter name here" type="text" id="name"/>
+        </p>
+    </div>
+    <label>Select Your Class:</label>
+    <select id="dropdown">
+        <option value="116">CSE 116</option>
+        <option value="442">CSE 442</option>
+    </select>
+    <br>
+    <button onclick="enterQueue();">Enter Queue</button>
+    <br>
+    <button onclick="readyToHelp();">TA Ready to Help</button>
+</div>
 <br/>
 
 <div id="queue"></div>
