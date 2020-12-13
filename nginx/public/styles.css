@@ -1,0 +1,41 @@
+body {
+    background: rgb(34,193,195);
+    background: radial-gradient(circle, rgba(34,193,195,1) 0%, rgba(253,187,45,1) 100%);
+    font-family: "JetBrains Mono", monospace;
+    line-height: 40px;
+}
+
+h3 {
+    font-size: 48px;
+    text-align: center;
+}
+
+#name-div {
+    width: 33%;
+    margin: auto;
+    font-size: 30px;
+}
+
+button {
+    border-radius: 5%;
+    font-size: 22px;
+    font-family: "JetBrains Mono", monospace;
+}
+
+input {
+    height: 36px;
+    font-size: 22px;
+    font-family: "JetBrains Mono", monospace;
+}
+
+#dropdown {
+    height: 36px;
+    font-size: 22px;
+    font-family: "JetBrains Mono", monospace;
+}
+
+p {
+    margin-bottom: 2px;
+}
+
+
