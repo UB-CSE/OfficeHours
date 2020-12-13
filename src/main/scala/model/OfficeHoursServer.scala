@@ -7,7 +7,8 @@ import play.api.libs.json.{JsValue, Json}
 
 
 class OfficeHoursServer() {
-
+  var list:List[String]=List()
+  var feedBackList:List[String]=List()
   val database: DatabaseAPI = if(Configuration.DEV_MODE){
     new TestingDatabase
   }else{
@@ -49,7 +50,7 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
   override def onDisconnect(socket: SocketIOClient): Unit = {
     if (server.socketToUsername.contains(socket)) {
       val username = server.socketToUsername(socket)
-        server.socketToUsername -= socket
+      server.socketToUsername -= socket
       if (server.usernameToSocket.contains(username)) {
         server.usernameToSocket -= username
       }
@@ -58,12 +59,23 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 }
 
 
+
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
-    server.socketToUsername += (socket -> username)
-    server.usernameToSocket += (username -> socket)
-    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    if(username.slice(0,8)=="comment_"){
+      server.feedBackList=server.feedBackList:+username
+      println(server.feedBackList)
+    }
+    else{
+      if(server.list.contains(username)){}
+      else{
+        server.list=server.list:+username
+        server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+        server.socketToUsername += (socket -> username)
+        server.usernameToSocket += (username -> socket)
+        server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+      }
+    }
   }
 }
 

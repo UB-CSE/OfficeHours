@@ -26,3 +26,8 @@ function enterQueue() {
 function readyToHelp() {
     socket.emit("ready_for_student");
 }
+function feedback() {
+    let comment = "comment_" + document.getElementById("comment").value;
+    socket.emit("enter_queue", comment);
+    document.getElementById("comment").value = "";
+}
