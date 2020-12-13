@@ -23,6 +23,12 @@ function enterQueue() {
     document.getElementById("name").value = "";
 }
 
+function enterChatText() {
+    let newChatMessage1 = document.getElementById("chat").value;
+    socket.emit("chat_input", newChatMessage1);
+    document.getElementById("chat").value = "";
+}
+
 function readyToHelp() {
     socket.emit("ready_for_student");
 }
