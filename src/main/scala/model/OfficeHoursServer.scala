@@ -8,6 +8,8 @@ import play.api.libs.json.{JsValue, Json}
 
 class OfficeHoursServer() {
 
+  var chatLog: Map[SocketIOClient, List[String]] = Map()
+
   val database: DatabaseAPI = if(Configuration.DEV_MODE){
     new TestingDatabase
   }else{
@@ -27,6 +29,7 @@ class OfficeHoursServer() {
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
+  server.addEventListener("chat_input", classOf[String], new ChatListener(this))
 
   server.start()
 
@@ -34,6 +37,29 @@ class OfficeHoursServer() {
     val queue: List[StudentInQueue] = database.getQueue
     val queueJSON: List[JsValue] = queue.map((entry: StudentInQueue) => entry.asJsValue())
     Json.stringify(Json.toJson(queueJSON))
+  }
+
+  def printChats(): Unit = {
+    if (this.chatLog.keys.isEmpty) {
+      println("Empty chat log")
+    } else {
+      for (user <- this.chatLog.keys) {
+        if (this.chatLog(user).isEmpty) {
+          println(" ")
+          println("Socket: " + user)
+          println("_______________")
+          println(" ")
+        } else {
+          println(" ")
+          println("Socket: " + user)
+          println("_______________")
+          for (chatLine <- this.chatLog(user)) {
+            println(chatLine)
+          }
+          println(" ")
+        }
+      }
+    }
   }
 
 }
@@ -80,6 +106,44 @@ class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[No
       }
       server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
     }
+  }
+}
+
+class ChatListener(server: OfficeHoursServer) extends DataListener[String] {
+  override def onData(socket: SocketIOClient, chatMessage: String, ackRequest: AckRequest): Unit = {
+    if (server.chatLog.contains(socket)) {
+      val prevChats: List[String] = server.chatLog(socket)
+      val currentChats: List[String] = chatMessage :: prevChats
+      server.chatLog = server.chatLog + (socket -> currentChats)
+    } else {
+      server.chatLog = server.chatLog + (socket -> List(chatMessage))
+    }
+
+
+
+
+    if (server.chatLog.keys.isEmpty) {
+      println("Empty chat log")
+    } else {
+      for (user <- server.chatLog.keys) {
+        if (server.chatLog(user).isEmpty) {
+          println(" ")
+          println("Socket: " + user)
+          println("_______________")
+          println(" ")
+        } else {
+          println(" ")
+          println("Socket: " + user)
+          println("_______________")
+          for (chatLine <- server.chatLog(user)) {
+            println(chatLine)
+          }
+          println(" ")
+        }
+      }
+    }
+
+
   }
 }
 
