@@ -1,29 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Office Hours</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 </head>
 <body>
+<body style = "background-color: lightskyblue;">
 
 <br/>
+<h1><b>University at Buffalo!</b></h1>
+<h3 id="message">Welcome to CSE116 OH!</h3>
 
-<h3 id="message">Welcome!</h3>
-
-<p>Name</p>
+<p>Name
 <input type="text" id="name"/>
 <button onclick="enterQueue();">Enter Queue</button>
+Question <input type="text" id="question"/>
+<button onclick="question();">Submit Question</button>
+<label for="timeslot">Choose a timeslot</label>
+<select name="timeslot" id="timeslot">
+    <option value="blank">-</option>
+    <option value="8am">8:00am</option>
+    <option value="830am">8:30am</option>
+    <option value="9am">9:00am</option>
+    <option value="930am">9:30am</option>
+    <option value="10am">10:00am</option>
+    <option value="1030am">10:30am</option>
+    <option value="11am">11:00am</option>
+    <option value="12am">12:00pm</option>
+    <option value="4am">4:00pm</option>
+    <option value="530am">5:30pm</option>
+</select>
+    <label for="date">Choose a date</label>
+    <select name="data" id="date">
+        <option value="blank">-</option>
+        <option value="Monday">Monday</option>
+        <option value="Tuesday">Tuesday</option>
+        <option value="Wednesday">Wednesday</option>
+        <option value="Thursday">Thursday</option>
+        <option value="Friday">Friday</option>
+    </select>
+    <label for="ta">Choose a preferred TA</label>
+    <select name="ta" id="ta">
+        <option value="blank">-</option>
+        <option value="Jesse Hartloff">Jesse Hartloff</option>
+        <option value="Joe Brown">Joe Brown</option>
+        <option value="John Dunaske">John Dunaske</option>
+        <option value="Jon Rodriguez">Jon Rodriguez</option>
+        <option value="Lana Boyko">Lana Boyko</option>
+        <option value="Megan Wu">Megan Wu</option>
+        <option value="Jacob Snyderman">Jacob Snyderman</option>
+        <option value="Mike Cleversley">Mike Cleversley</option>
+        <option value="Tanvie Kirane">Tanvie Kirane</option>
+        <option value="Taisia Goncharouk">Taisia Goncharouk</option>
+        <option value="Mike Cleversley">Mike Cleversley</option>
+        <option value="Stpehen Malinowski">Stpehen Malinowski</option>
+        <option value="Logan Ramhap">Logan Ramhap</option>
+        <option value="Rin Krivolrysenko">Rin Krivolrysenko</option>
+        <option value="Mike Cleversley">Mike Cleversley</option>
+        <option value="John Tantillo">John Tantillo</option>
+        <option value="Snigdha Motadaka">Snigdha Motadaka</option>
+    </select>
+</p>
 <br/><br/>
 
 <button onclick="readyToHelp();">TA Ready to Help</button>
 
 <br/>
+<br>
+<br>
+<table style="width:100%;height:70%">
+    <tr>
+        <th>Available</th>
+        <th>Monday</th>
+        <th>Tuesday</th>
+        <th>Wednesday</th>
+        <th>Thursday</th>
+        <th>Friday</th>
+    </tr>
+    <tr>
+        <th>Jesse Hartloff</th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th>x</th>
+    </tr>
+    <tr>
+        <th>Joe Brown</th>
+        <th></th>
+        <th>x</th>
+        <th></th>
+        <th></th>
+        <th></th>
+    </tr>
+    <tr>
+        <th>John Dunaske</th>
+        <th>x</th>
+        <th></th>
+        <th>x</th>
+        <th></th>
+        <th></th>
+    </tr>
+    <tr>
+        <th>Jon Rodriguez</th>
+        <th></th>
+        <th></th>
+        <th>x</th>
+        <th>x</th>
+        <th></th>
+    </tr>
+    <tr>
+        <th>Lana Boyko</th>
+        <th></th>
+        <th></th>
+        <th>x</th>
+        <th>x</th>
+        <th>x</th>
+    </tr>
+    <tr>
+        <th>Megan Wu</th>
+        <th></th>
+        <th>x</th>
+        <th></th>
+        <th></th>
+        <th></th>
+    </tr>
+    <tr>
+        <th>Jacob Snyderman</th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th>x</th>
+        <th></th>
+    </tr>
+    <tr>
+        <th>Mike Cleversley</th>
+        <th>x</th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+    </tr>
+    <tr>
+        <th>Tanvie Kirane</th>
+        <th>x</th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th>x</th>
+    </tr>
+    <tr>
+        <th>Taisia Goncharouk</th>
+        <th></th>
+        <th></th>
+        <th>x</th>
+        <th>x</th>
+        <th></th>
+    </tr>
+    <tr>
+        <th>Mike Cleversley</th>
+        <th></th>
+        <th></th>
+        <th>x</th>
+        <th></th>
+        <th></th>
+    </tr>
+    <tr>
+        <th>Stpehen Malinowski</th>
+        <th>x</th>
+        <th>x</th>
+        <th></th>
+        <th></th>
+        <th></th>
+    </tr>
+    <tr>
+        <th>Logan Ramhap</th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th>x</th>
+    </tr>
+    <tr>
+        <th>Shamroy Pellow</th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th>x</th>
+        <th></th>
+    </tr>
+    <tr>
+        <th>Rin Krivolrysenko</th>
+        <th>x</th>
+        <th></th>
+        <th></th>
+        <th>x</th>
+        <th></th>
+    </tr>
+    <tr>
+        <th>John Tantillo</th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th>x</th>
+    </tr>
+    <tr>
+        <th>Snigdha Motadaka</th>
+        <th></th>
+        <th>x</th>
+        <th>x</th>
+        <th></th>
+        <th></th>
+    </tr>
+</table>
 
 <div id="queue"></div>
 
 <script src="officeHours.js"></script>
 
-
+</body>
 </body>
 </html>
