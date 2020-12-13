@@ -60,10 +60,20 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
-    server.socketToUsername += (socket -> username)
-    server.usernameToSocket += (username -> socket)
-    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    if (server.database.getQueue.exists(s => s.username == username)){
+      println("User already in queue")
+      val messageMap: Map[String, JsValue] = Map("username" -> Json.toJson(username), "repeat" -> Json.toJson("yes"))
+      val sendMsg = Json.stringify(Json.toJson(messageMap))
+      server.server.getBroadcastOperations.sendEvent("repeat", sendMsg)
+    }else{
+      server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+      server.socketToUsername += (socket -> username)
+      server.usernameToSocket += (username -> socket)
+      val messageMap: Map[String, JsValue] = Map("username" -> Json.toJson(username), "repeat" -> Json.toJson("no"))
+      val sendMsg = Json.stringify(Json.toJson(messageMap))
+      server.server.getBroadcastOperations.sendEvent("repeat", sendMsg)
+      server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+    }
   }
 }
 
