@@ -36,6 +36,15 @@ class OfficeHoursServer() {
     Json.stringify(Json.toJson(queueJSON))
   }
 
+  //new stuff
+  def currentEstimateWaitTime():Double={
+    var totalTime:Double=0
+    for(s <-database.getQueue){
+      totalTime+=s.maxTime
+    }
+    totalTime
+  }
+
 }
 
 object OfficeHoursServer {
@@ -63,6 +72,9 @@ class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String]
     server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
+
+    socket.sendEvent("ACK","Current estimated wait time is: "+ server.currentEstimateWaitTime()+" minutes")
+
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
   }
 }

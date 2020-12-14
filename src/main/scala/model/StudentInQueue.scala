@@ -25,6 +25,8 @@ object StudentInQueue {
 
 class StudentInQueue(val username: String, val timestamp: Long) {
 
+  val maxTime:Double=(Math.random()*11)+10 //max time a student in queue gets to spend in office hours with a TA, 10-20 minutes
+
   def asJsValue(): JsValue ={
     val messageMap: Map[String, JsValue] = Map(
       "username" -> Json.toJson(username),
