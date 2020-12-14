@@ -3,24 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <title>Office Hours</title>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+<BODY BGCOLOR="#F4F0DB"></BODY>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 </head>
 <body>
 
+<style>
+    .aligncenter {
+        text-align: center;
+    }
+
+    #outer
+    {
+        width:100%;
+        text-align: center;
+    }
+    .inner
+    {
+        display: inline-block;
+    }
+
+</style>
+<! -- this is a comment -->
 <br/>
 
-<h3 id="message">Welcome!</h3>
+<p class="aligncenter">
+    <img src="https://upload.wikimedia.org/wikipedia/en/e/eb/University_at_Buffalo_seal.svg" alt="UB Symbol">
+<h3 id="message" style="text-align:center;">Welcome!</h3>
+<hr width=1200 size=1>
+<p id="intro" style="text-align:center;">This is the CSE116 office hour queue system modified by students. My personal
+    modifications have been modifying the HTML and adding CSS to make the website look more pleasant to the eye. Please
+    resize yor window to the most comfortable experience since everything is scalable! Join the queue, a TA will be with
+    you shortly!
+</p>
 
-<p>Name</p>
-<input type="text" id="name"/>
-<button onclick="enterQueue();">Enter Queue</button>
-<br/><br/>
+</p>
 
-<button onclick="readyToHelp();">TA Ready to Help</button>
 
-<br/>
+<center><a href="mailto:hartloff@buffalo.edu" style="color:grey" target="_top">Send Mail To Professor If A TA Cannot Assist You!</a></p></center>
 
-<div id="queue"></div>
+
+
+<div id="outer">
+    <div class="inner" id="queue" ><p>Input UBIT Below</p><input type="text" id="name"/><button onclick="enterQueue();">Enter Queue</button></div>
+    <div class="inner"><button onclick="readyToHelp();">TA Ready to Help</button></div>
+
+</div>
+
+<br>
+<br>
+
+<br>
+<br>
+<center><A HREF="https://www.jesseleehartloff.com/" style="color:grey" target="_blank"><br>Got time to kill while waiting? Check out Jesse's fan made website!</br></p></A></center>
+
+<div ></div>
 
 <script src="officeHours.js"></script>
 
