@@ -16,6 +16,7 @@ class OfficeHoursServer() {
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
+  var descriptions: Map[String,String] = Map()
 
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
@@ -26,6 +27,7 @@ class OfficeHoursServer() {
 
   server.addDisconnectListener(new DisconnectionListener(this))
   server.addEventListener("enter_queue", classOf[String], new EnterQueueListener(this))
+  server.addEventListener("description",classOf[String],new DescriptionListener(this))
   server.addEventListener("ready_for_student", classOf[Nothing], new ReadyForStudentListener(this))
 
   server.start()
@@ -35,6 +37,7 @@ class OfficeHoursServer() {
     val queueJSON: List[JsValue] = queue.map((entry: StudentInQueue) => entry.asJsValue())
     Json.stringify(Json.toJson(queueJSON))
   }
+
 
 }
 
@@ -52,6 +55,19 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
         server.socketToUsername -= socket
       if (server.usernameToSocket.contains(username)) {
         server.usernameToSocket -= username
+      }
+    }
+  }
+}
+
+class DescriptionListener(server: OfficeHoursServer) extends DataListener[String] {
+  override def onData(client: SocketIOClient, description: String, ackSender: AckRequest): Unit = {
+    val queue = server.database.getQueue
+    for(student <- queue){
+      if(student.username.equals(server.socketToUsername(client))){
+        val username = student.username
+        server.usernameToSocket(username).sendEvent("message", "Your description was received")
+        server.descriptions += (username,description)
       }
     }
   }
