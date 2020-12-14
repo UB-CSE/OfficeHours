@@ -8,4 +8,5 @@ trait DatabaseAPI {
   def removeStudentFromQueue(username: String): Unit
   def getQueue: List[StudentInQueue]
 
+
 }
