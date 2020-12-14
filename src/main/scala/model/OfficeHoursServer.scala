@@ -16,6 +16,7 @@ class OfficeHoursServer() {
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
+  var userDescription: Map[SocketIOClient, String] = Map()
 
   val config: Configuration = new Configuration {
     setHostname("0.0.0.0")
@@ -59,10 +60,13 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
-  override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+  override def onData(socket: SocketIOClient, userdesc: String, ackRequest: AckRequest): Unit = {
+    val username = userdesc.split("::")(0)
+    val description = userdesc.split("::")(1)
+    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime(), description))
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
+    server.userDescription += (socket -> description)
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
   }
 }
