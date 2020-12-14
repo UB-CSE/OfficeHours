@@ -22,6 +22,8 @@ class OfficeHoursServer() {
     setPort(8080)
   }
 
+  var nextPosition: Int = 0
+
   val server: SocketIOServer = new SocketIOServer(config)
 
   server.addDisconnectListener(new DisconnectionListener(this))
@@ -60,7 +62,8 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
-    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
+    val position: Int = server.database.getQueue.sortBy(_.timestamp).length + 1
+    server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime(), position))
     server.socketToUsername += (socket -> username)
     server.usernameToSocket += (username -> socket)
     server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
