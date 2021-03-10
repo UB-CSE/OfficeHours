@@ -1,14 +1,15 @@
 package model
 
+import model.{Configuration => LocalConfiguration}
 import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
-import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
+import com.corundumstudio.socketio.{AckRequest, Configuration => SocketIOConfiguration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
 
 
 class OfficeHoursServer() {
 
-  val database: DatabaseAPI = if(Configuration.DEV_MODE){
+  val database: DatabaseAPI = if(LocalConfiguration.DEV_MODE){
     new TestingDatabase
   }else{
     new Database
@@ -17,7 +18,7 @@ class OfficeHoursServer() {
   var usernameToSocket: Map[String, SocketIOClient] = Map()
   var socketToUsername: Map[SocketIOClient, String] = Map()
 
-  val config: Configuration = new Configuration {
+  val config: SocketIOConfiguration = new SocketIOConfiguration {
     setHostname("0.0.0.0")
     setPort(8080)
   }
