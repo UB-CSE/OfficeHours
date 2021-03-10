@@ -5,14 +5,16 @@ import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration => SocketIOConfiguration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
+import helper.Dotenv
 
 
 class OfficeHoursServer() {
 
-  val database: DatabaseAPI = if(LocalConfiguration.DEV_MODE){
-    new TestingDatabase
-  }else{
+  val database: DatabaseAPI = if(LocalConfiguration.DB_TYPE == "MySQL") {
     new Database
+  } else {
+    // fallback to using List as DB if it's "List" or others
+    new TestingDatabase
   }
 
   var usernameToSocket: Map[String, SocketIOClient] = Map()
@@ -41,6 +43,9 @@ class OfficeHoursServer() {
 
 object OfficeHoursServer {
   def main(args: Array[String]): Unit = {
+    // Load environmental variables
+    Dotenv.loadEnv()
+
     new OfficeHoursServer()
   }
 }
