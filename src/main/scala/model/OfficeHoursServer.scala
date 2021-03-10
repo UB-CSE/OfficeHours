@@ -2,10 +2,10 @@ package model
 
 import model.{Configuration => LocalConfiguration}
 import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
-import com.corundumstudio.socketio.{AckRequest, Configuration => SocketIOConfiguration, SocketIOClient, SocketIOServer}
+import com.corundumstudio.socketio.{AckRequest, SocketIOClient, SocketIOServer, Configuration => SocketIOConfiguration}
+import helper.dotenv.Dotenv
 import model.database.{Database, DatabaseAPI, TestingDatabase}
 import play.api.libs.json.{JsValue, Json}
-import helper.Dotenv
 
 
 class OfficeHoursServer() {

@@ -1,9 +1,8 @@
-package helper
-
+package helper.dotenv
 
 import java.util.Collections
-import scala.util.{ Failure, Success, Try }
 import scala.util.control.NonFatal
+import scala.util.{Failure, Success, Try}
 
 /**
  * Rewrite the runtime Environment, embedding entries from the .env file.
