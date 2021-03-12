@@ -2,6 +2,7 @@ package helper.dotenv
 
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
+import collection.JavaConverters._
 
 object Dotenv {
   // To load .env file to the Environmental Variables for development
