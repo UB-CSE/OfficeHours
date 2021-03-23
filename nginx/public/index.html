@@ -4,20 +4,29 @@
     <meta charset="UTF-8">
     <title>Office Hours</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
-<body>
+<body class="text-center text-light bg-dark">
 
 <br/>
 
-<h3 id="message">Welcome!</h3>
+<h3 id="message" class="display-3">Welcome to office hours!</h3>
+<h4 class="text-success">Now with dark mode for the true programmers!</h4>
 
-<p>Name</p>
-<input type="text" id="name"/>
-<button onclick="enterQueue();">Enter Queue</button>
+<p>Enter your name to join the queue</p>
+<input type="text" id="name" class="form-control-lg"/>
+<br>
+<br>
+<button onclick="enterQueue();" class="btn btn-success btn-lg">Enter Queue</button>
 <br/><br/>
 
-<button onclick="readyToHelp();">TA Ready to Help</button>
+<button onclick="readyToHelp();" class="btn btn-primary">TA Ready to Help</button>
 
+<br>
+<br>
+<button onclick="jumbotronButtonPressed();" class="btn btn-sm btn-danger">Use this screen as a JUMBOTRON!</button>
+
+<br/>
 <br/>
 
 <div id="queue"></div>
