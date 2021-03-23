@@ -3,6 +3,7 @@ package model
 import com.corundumstudio.socketio.listener.{DataListener, DisconnectListener}
 import com.corundumstudio.socketio.{AckRequest, Configuration, SocketIOClient, SocketIOServer}
 import model.database.{Database, DatabaseAPI, TestingDatabase}
+import play.api.libs.json
 import play.api.libs.json.{JsValue, Json}
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 
@@ -92,7 +93,17 @@ class DisconnectionListener(server: OfficeHoursServer) extends DisconnectListene
 
 //noinspection DuplicatedCode
 class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String] {
-  override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
+
+  override def onData(socket: SocketIOClient, jsonData: String, ackRequest: AckRequest): Unit = {
+    val parsedJson: JsValue = Json.parse(jsonData)
+    val username: String =  (parsedJson \ "name").as[String]
+    val helpDescription: String = (parsedJson \ "helpDescription").as[String]
+    server.database.addStudentToQueue(StudentInQueue(username, helpDescription, System.nanoTime()))
+    server.socketToUsername += (socket -> username)
+    server.usernameToSocket += (username -> socket)
+    server.server.getBroadcastOperations.sendEvent("queue", server.queueJSON())
+
+   override def onData(socket: SocketIOClient, username: String, ackRequest: AckRequest): Unit = {
     if (!server.TA_socketToUsername.contains(socket) && !server.socketToUsername.contains(socket)) {
       server.database.addStudentToQueue(StudentInQueue(username, System.nanoTime()))
       server.socketToUsername += (socket -> username)
@@ -108,6 +119,7 @@ class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String]
 class ReadyForStudentListener(server: OfficeHoursServer) extends DataListener[Nothing] {
   override def onData(socket: SocketIOClient, dirtyMessage: Nothing, ackRequest: AckRequest): Unit = {
     val queue = server.database.getQueue.sortBy(_.timestamp)
+
     if(queue.nonEmpty && server.TA_socketToUsername.contains(socket)){
       val studentToHelp = queue.head
       server.database.removeStudentFromQueue(studentToHelp.username)
@@ -137,5 +149,3 @@ class TALogin(server: OfficeHoursServer) extends DataListener[String] {
     else socketIOClient.sendEvent("login_failed", "")
   }
 }
-
-
