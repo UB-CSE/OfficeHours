@@ -13,8 +13,8 @@
         <h2 class="text-center">CSE116 Office Hours</h2>
     </head>
 
-    <body class="container">
-        <br>
+<body class="text-center text-light bg-dark">
+  <br>
         <p>TA's, Login here!</p>
         <input type="text" id="ta_user" placeholder="Username"/>
         <input type="password" id="ta_password" placeholder="Password" />
@@ -33,6 +33,36 @@
 
         <div id="queue"></div>
 
+  
+<br/>
+
+<h3 id="message" class="display-3">Welcome to office hours!</h3>
+<h4 class="text-success">Now with dark mode for the true programmers!</h4>
+
+<p>Enter your name to join the queue</p>
+<input type="text" id="name" class="form-control-lg"/>
+<br>
+<br>
+<button onclick="enterQueue();" class="btn btn-success btn-lg">Enter Queue</button>
+<br/><br/>
+
+<button onclick="readyToHelp();" class="btn btn-primary">TA Ready to Help</button>
+
+<br>
+<br>
+<button onclick="jumbotronButtonPressed();" class="btn btn-sm btn-danger">Use this screen as a JUMBOTRON!</button>
+
+<br/>
+<br/>
+
+<div id="queue"></div>
+
+<script src="officeHours.js"></script>
+
+
+  
+  
+  
         <script src="officeHours.js"></script>
     </body>
 </html>
