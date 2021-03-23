@@ -79,10 +79,13 @@ class Database extends DatabaseAPI {
 
       var username = result.getString("username")
       if (username.length > 20) username = username.slice(0, 20) + "..."
-      if (username == user) username = user
-      else username = "Student " + counter.toString
+      if (username == user) {
+        username = user
+      } else {
+        username = "Student " + counter.toString
+      }
       val timestamp = result.getLong("timestamp")
-      queue = new StudentInQueue(username, timestamp) :: queue
+      queue = new StudentInQueue(username, "", timestamp) :: queue
       counter += 1
     }
     queue

@@ -1,5 +1,5 @@
-// const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
-const socket = io.connect({transports: ['websocket']});
+const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
+// const socket = io.connect({transports: ['websocket']});
 
 
 let isJumbotron = false; // Keep track of if this is being used as a jumbotron
@@ -62,28 +62,23 @@ function ta_login() {
     password.value ="";
 }
 
-function release_button() {
-    let buttonElement = document.createElement("BUTTON");
-    buttonElement.innerHTML = "Help Next Student";
-    buttonElement.onclick = readyToHelp;
-    document.body.appendChild(buttonElement);
-}
 
 function invalid_login() {
-    alert("Incorrect username or password. Try Again.")
+    alert("Incorrect username or password. Try Again.");
 }
 
 function showAlert() {
-    alert("Login Successful!")
+    alert("Login Successful!");
 }
 
 function already_in() {
-    alert("You are already logged in!")
+    alert("You are already logged in!");
+}
 
 function jumbotronButtonPressed() {
     socket.emit("jumbotron");
     isJumbotron = true;
-    showJumbotron()
+    showJumbotron();
 }
 
 function updateJumbotron(queueJSON) {

@@ -21,7 +21,12 @@ class TestingDatabase extends DatabaseAPI {
     data.reverse
   }
 
-  override def checkTACredentials(credentials: String): Boolean = ???
+  override def checkTACredentials(credentials: String): Boolean = {
+    true
+  }
 
-  override def getStudent_queue(user: String): List[StudentInQueue] = List()
+  override def getStudent_queue(user: String): List[StudentInQueue] = {
+    data.filter(_.username != user)
+  }
+
 }
