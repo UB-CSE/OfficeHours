@@ -117,6 +117,8 @@ class EnterQueueListener(server: OfficeHoursServer) extends DataListener[String]
         i.sendEvent("queue", server.queueJSON_TA())
       }
 
+    }else{
+      socket.sendEvent("changeUsername","This username has been used by another student in the queue, please use another username.")
     }
   }
 }

@@ -45,8 +45,22 @@ class Database extends DatabaseAPI {
 
     statement.execute()
   }
+  override def moveToEndOfQueue(student: StudentInQueue): Unit = {
+    val statement1 = connection.prepareStatement("DELETE FROM queue WHERE username=?")
+    statement1.setString(1, student.username)
+    statement1.execute()
 
+    val statement2 = connection.prepareStatement("INSERT INTO queue VALUE (?, ?, ?)")
+    statement2.setString(1, student.username)
+    statement2.setString(2, student.helpDescription)
+    statement2.setLong(3, System.nanoTime())
+    statement2.execute()
+  }
 
+  override def clearQueue:Unit = {
+    val statement = connection.prepareStatement("TRUNCATE TABLE queue")
+    statement.execute()
+  }
   override def removeStudentFromQueue(username: String): Unit = {
     val statement = connection.prepareStatement("DELETE FROM queue WHERE username=?")
     statement.setString(1, username)
